@@ -2999,7 +2999,7 @@ public class SportsWorld
 	private int TargetSize(League league)
 	{
 		int users = CountUserTeams(league);
-		int target = Math.Max(Math.Max(4, Math.Min(16, Settings.LeagueSize)), users);
+		int target = Math.Max(Math.Max(4, Math.Min(20, Settings.LeagueSize)), users);
 		if (target % 2 == 1)
 		{
 			target++;
