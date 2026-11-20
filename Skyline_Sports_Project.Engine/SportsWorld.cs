@@ -252,7 +252,6 @@ public class SportsWorld
 		{ "Мексика", "Mexico" },
 		{ "Швеция", "Sweden" },
 		{ "Финляндия", "Finland" },
-		{ "Россия", "Russia" },
 		{ "Чехия", "Czechia" },
 		{ "Словакия", "Slovakia" },
 		{ "Швейцария", "Switzerland" },
