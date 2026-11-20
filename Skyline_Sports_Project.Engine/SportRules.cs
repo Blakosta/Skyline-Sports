@@ -224,11 +224,31 @@ public static class SportRules
 
 	public static string LevelLabel(Sport sport, Level level)
 	{
-		if (!IsSecondDivision(sport, level))
+		if (sport == Sport.Hockey)
 		{
-			return LevelLabel(level);
+			return level switch
+			{
+				Level.Pro => "КХЛ",
+				Level.Minor => "ВХЛ",
+				Level.Junior => "МХЛ",
+				Level.College => "СХЛ",
+				Level.HighSchool => "ДЮСШ",
+				_ => LevelLabel(level),
+			};
 		}
-		return "Вторая лига";
+		if (sport == Sport.Soccer)
+		{
+			return level switch
+			{
+				Level.Pro => "РПЛ",
+				Level.Minor => "ФНЛ",
+				Level.Junior => "МФЛ",
+				Level.College => "НСФЛ",
+				Level.HighSchool => "ДЮСШ",
+				_ => LevelLabel(level),
+			};
+		}
+		return LevelLabel(level);
 	}
 
 	public static string LevelLabel(Level level)
