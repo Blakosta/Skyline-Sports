@@ -144,13 +144,13 @@ namespace SkylineSportsRussianLocalization
             { "Czech Republic", "Чехия" },
             { "USA", "США" },
             { "United States", "США" },
-            { "Chinese Taipei", "Тайвань" },
-            { "The qualifiers decide the last spots.", "Оставшиеся места определяются по итогам квалификации." },
-            { "National teams are picked from the players in your sports world by where they're from; the spots nobody fills go to players from clubs abroad.", "Составы сборных формируются из игроков вашего спортивного мира по стране их происхождения. Недостающие места занимают игроки зарубежных клубов." },
-            { "Most awards won.", "Больше всего завоёванных наград." },
-            { "The best single regular seasons ever in this league. A record stays until someone beats it.", "Лучшие отдельные сезоны в истории этой лиги. Рекорд сохраняется, пока его не побьют." },
-            { "Career totals while playing in this league (regular season). Rate stats need about four full seasons to qualify.", "Суммарная статистика за карьеру в этой лиге (регулярный сезон). Для попадания в рейтинг по средним показателям требуется около четырёх полных сезонов." },
-            { "Under 20.", "Турнир среди игроков до 20 лет." },
+
+
+
+
+
+
+
             { "(kick)", "(удар)" },
             { "American Samoa", "Американское Самоа" },
             { "Today", "Сегодня" },
