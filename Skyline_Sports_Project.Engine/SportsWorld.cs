@@ -9058,7 +9058,7 @@ public class SportsWorld
 		t.TicketPriceResidents = Math.Max(1, Math.Min(1500, residents));
 		t.TicketPriceVisitors = Math.Max(1, Math.Min(1500, visitors));
 		Revision++;
-		return CommandResult.Success("Цены билетов обновлены: жители — " + Economy.Money(t.TicketPriceResidents) + ", туристы — " + Economy.Money(t.TicketPriceVisitors) + ".");
+		return CommandResult.Success("Цены билетов обновлены: жители — " + t.TicketPriceResidents.ToString("N0") + " ¢, туристы — " + t.TicketPriceVisitors.ToString("N0") + " ¢.");
 	}
 
 	public CommandResult TransferClubFunds(int teamId, int amount, bool toClub)
@@ -9089,7 +9089,7 @@ public class SportsWorld
 			t.ClubBalance -= amount;
 		}
 		Revision++;
-		return CommandResult.Success(toClub ? ("В бюджет клуба перечислено " + Economy.Money(amount) + ".") : ("Из бюджета клуба перечислено в город " + Economy.Money(amount) + "."));
+		return CommandResult.Success(toClub ? ("В бюджет клуба перечислено " + amount.ToString("N0") + " ¢.") : ("Из бюджета клуба перечислено в город " + amount.ToString("N0") + " ¢."));
 	}
 
 	public CommandResult Resign(int playerId, int now)
