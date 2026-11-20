@@ -104,6 +104,8 @@ public class SportsWorld
 
 	public bool CityUnlimited;
 
+	public string FinanceNotice = "";
+
 	public int VisitorAttendancePercent = 20;
 
 	private readonly Random _random;
