@@ -229,7 +229,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 			.WithAll<District>()
 			.WithNone<Deleted, Temp>()
 			.Build(this);
-		Mod.log.Info((object)"SportsDataSystem created");
+		Mod.log.Info((object)"Система спортивных данных создана");
 	}
 
 	[Preserve]
@@ -243,7 +243,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 				m_ResetRequested = false;
 				Sports.Clear();
 				m_VenueEntities.Clear();
-				Mod.log.Info((object)"All sports data was reset from the options menu.");
+				Mod.log.Info((object)"Все спортивные данные сброшены через меню настроек.");
 			}
 			if (TryGetNow(out var now))
 			{
@@ -262,7 +262,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 		}
 		catch (Exception ex)
 		{
-			Mod.Error("Sports update failed", ex);
+			Mod.Error("Не удалось обновить спортивные данные", ex);
 		}
 	}
 
@@ -279,7 +279,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 				if (++m_ClimateTries > 20)
 				{
 					m_ClimateGaveUp = true;
-					Mod.log.Info((object)"City weather: climate system not found, games use a normal four-season climate.");
+					Mod.log.Info((object)"Погода города: система климата не найдена, для матчей используется обычный климат с четырьмя сезонами.");
 					return;
 				}
 				Type type = FindType("Game.Simulation.ClimateSystem");
@@ -304,13 +304,13 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 				{
 					return;
 				}
-				Mod.log.Info((object)"City weather: reading the city's climate.");
+				Mod.log.Info((object)"Погода города: получены данные о климате города.");
 			}
 			float temp = ReadFloat(m_Climate, "temperature");
 			if (float.IsNaN(temp))
 			{
 				m_ClimateGaveUp = true;
-				Mod.log.Info((object)"City weather: no temperature, games use a normal four-season climate.");
+				Mod.log.Info((object)"Погода города: температура недоступна, для матчей используется обычный климат с четырьмя сезонами.");
 				return;
 			}
 			float precip = ReadFloat(m_Climate, "precipitation");
@@ -322,7 +322,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 		catch (Exception ex)
 		{
 			m_ClimateGaveUp = true;
-			Mod.log.Info((object)("City weather turned off: " + ex.Message));
+			Mod.log.Info((object)("Синхронизация погоды отключена: " + ex.Message));
 		}
 	}
 
@@ -599,7 +599,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 		}
 		foreach (int id2 in gone)
 		{
-			Mod.log.Info((object)("Venue " + id2 + " was removed from the city, removing its teams."));
+			Mod.log.Info((object)("Venue " + id2 + " удалён из города; связанные с ним команды также удаляются."));
 			Sports.RemoveVenue(id2, now);
 			m_VenueEntities.Remove(id2);
 		}
@@ -640,7 +640,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 		}
 		catch (Exception ex)
 		{
-			Mod.log.Warn((object)("Could not read the district names: " + ex.Message));
+			Mod.log.Warn((object)("Не удалось получить названия районов: " + ex.Message));
 		}
 	}
 
@@ -686,7 +686,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 		}
 		catch (Exception ex)
 		{
-			Mod.log.Warn((object)("Could not read the district name: " + ex.Message));
+			Mod.log.Warn((object)("Не удалось получить название района: " + ex.Message));
 		}
 		return ctx;
 	}
@@ -834,7 +834,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 		if (version < 1 || version > 2)
 		{
 			Sports.LoadProblem = "Спортивные данные этого города сохранены более новой версией мода «Спорт России», поэтому их нельзя отобразить. Обновите мод, чтобы восстановить их.";
-			Mod.log.Warn((object)("Sports data in this save is from a newer version of the mod (" + version + "), it was not loaded."));
+			Mod.log.Warn((object)("Спортивные данные сохранения созданы более новой версией мода (" + version + "); данные не загружены."));
 			return;
 		}
 		int chunks = default;
@@ -890,7 +890,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 			m_UnreadEntities = entities;
 			string copy = BackUp(text);
 			Sports.LoadProblem = "Не удалось прочитать спортивные данные этого города (" + error + "). Данные сохранены в файле города" + ((copy.Length > 0) ? (" и в копии " + copy) : "") + ". Создание нового спортивного объекта начнёт спортивную историю этого города заново.";
-			Mod.log.Warn((object)("Sports data could not be read: " + error + ((copy.Length > 0) ? (" A copy was saved to " + copy) : "")));
+			Mod.log.Warn((object)("Не удалось прочитать спортивные данные: " + error + ((copy.Length > 0) ? (" Копия сохранена в " + copy) : "")));
 			return;
 		}
 		foreach (KeyValuePair<int, Entity> kv in entities)
@@ -900,7 +900,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 				m_VenueEntities[kv.Key] = kv.Value;
 			}
 		}
-		Mod.log.Info((object)("Loaded sports data: " + Sports.Venues.Count + " venues, " + Sports.UserTeams().Count + " teams."));
+		Mod.log.Info((object)("Загружены спортивные данные: " + Sports.Venues.Count + " спортивных объектов, " + Sports.UserTeams().Count + " teams."));
 	}
 
 	public void SetDefaults(Context context)
@@ -925,7 +925,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 		}
 		catch (Exception ex)
 		{
-			Mod.log.Warn((object)("Could not write a copy of the sports data: " + ex.Message));
+			Mod.log.Warn((object)("Не удалось создать резервную копию спортивных данных: " + ex.Message));
 			return "";
 		}
 	}
@@ -1001,11 +1001,11 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 						FanGame fanGame = new FanGame();
 						fanGame.Building = building;
 						fanGame.Target = Math.Max(1, s.RealFansCount);
-						fanGame.Name = Sports.TeamName(g.AwayTeamId) + " at " + Sports.TeamName(g.HomeTeamId);
+						fanGame.Name = Sports.TeamName(g.AwayTeamId) + " — " + Sports.TeamName(g.HomeTeamId);
 						fg = fanGame;
 						fg.VisitorTarget = ((s.VisitorFans && m_FanApi.TouristHousehold != null) ? Math.Max(1, fg.Target / 4) : 0);
 						m_FanTrips[g.Id] = fg;
-						Mod.log.Info((object)("Real fans: " + fg.Name + ", " + fg.Target + " fans start leaving home (trip purpose " + m_FanApi.GoOutName + ")."));
+						Mod.log.Info((object)("Болельщики: " + fg.Name + ", " + fg.Target + " болельщиков отправляются из дома (цель поездки " + m_FanApi.GoOutName + ")."));
 					}
 					if (now < start)
 					{
@@ -1029,25 +1029,25 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 						fg.LastCount = now;
 					}
 					FanCount c = fg.Count;
-					string note = "Fans from your city: " + c.Inside + " inside the venue" + ((c.HeadingHere > 0) ? (", " + c.HeadingHere + " on their way") : "") + ((c.VisitorsInside > 0) ? (" (" + c.VisitorsInside + " inside are visitors from out of town)") : ((fg.Visitors.Count > 0) ? (" (" + fg.Visitors.Count + " visitors from out of town are coming too)") : "")) + "." + ((BoostNote(building).Length > 0) ? (" " + BoostNote(building)) : "");
+					string note = "Болельщики из вашего города: " + c.Inside + " на объекте" + ((c.HeadingHere > 0) ? (", " + c.HeadingHere + " в пути") : "") + ((c.VisitorsInside > 0) ? (" (" + c.VisitorsInside + " на объекте находятся гости из других городов)") : ((fg.Visitors.Count > 0) ? (" (" + fg.Visitors.Count + " гостей из других городов также направляются на матч)") : "")) + "." + ((BoostNote(building).Length > 0) ? (" " + BoostNote(building)) : "");
 					if (!Sports.FanNotes.TryGetValue(g.Id, out var old) || old != note)
 					{
 						Sports.FanNotes[g.Id] = note;
 						Sports.Revision++;
 					}
 					bool kickoff = now >= start && !fg.KickoffLogged;
-					if (kickoff)
+					if (начало матча)
 					{
 						fg.KickoffLogged = true;
 					}
 					if (kickoff || fg.LastLog == int.MinValue || now - fg.LastLog >= 60)
 					{
 						fg.LastLog = now;
-						Mod.log.Info((object)("Real fans: " + fg.Name + (kickoff ? " (kickoff)" : "") + ": " + fg.Fans.Count + " sent, " + c.OnTheWay + " on the way (" + c.HeadingHere + " heading to the venue, " + c.HeadingElsewhere + " heading somewhere else, " + c.InOtherBuilding + " inside another building, " + c.NoTarget + " no destination found), " + c.Inside + " inside, " + c.Elsewhere + " elsewhere" + ((c.Doing.Length > 0) ? (" (" + c.Doing + ")") : "") + "."));
+						Mod.log.Info((object)("Болельщики: " + fg.Name + (kickoff ? " (начало матча)" : "") + ": " + fg.Fans.Count + " отправлено, " + c.OnTheWay + " on the way (" + c.HeadingHere + " направляются к объекту, " + c.HeadingElsewhere + " направляются в другое место, " + c.InOtherBuilding + " находятся в другом здании, " + c.NoTarget + " место назначения не найдено), " + c.Inside + " на объекте, " + c.Elsewhere + " в других местах" + ((c.Doing.Length > 0) ? (" (" + c.Doing + ")") : "") + "."));
 					}
 					if (g.Played || now >= end)
 					{
-						Mod.log.Info((object)("Real fans: " + fg.Name + " final whistle, " + c.Inside + " of " + fg.Fans.Count + " fans were inside; they head home."));
+						Mod.log.Info((object)("Болельщики: " + fg.Name + " финальный свисток, " + c.Inside + " of " + fg.Fans.Count + " болельщиков были на объекте; они возвращаются домой."));
 						EndFans(g.Id);
 					}
 				}
@@ -1066,7 +1066,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 			}
 			catch (Exception ex)
 			{
-				StopFans("something went wrong (" + ex.GetType().Name + ": " + ex.Message + ")");
+				StopFans("произошла ошибка (" + ex.GetType().Name + ": " + ex.Message + ")");
 			}
 		}
 	}
@@ -1341,12 +1341,12 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 				int value = (Has(m_FanApi.Attractiveness, b3) ? ((int)m_FanApi.AttractField.GetValue(Get(m_FanApi.Attractiveness, b3))) : int.MinValue);
 				if (value == bo.Boosted)
 				{
-					Mod.log.Info((object)("Real fans: the tourism boost held (venue attractiveness " + value + ")."));
+					Mod.log.Info((object)("Болельщики: бонус привлекательности для туристов сохранён (привлекательность объекта " + value + ")."));
 					continue;
 				}
 				m_BoostBroken = true;
 				m_Boosts.Remove(b3);
-				Mod.log.Info((object)("Real fans: the game set the venue's attractiveness back by itself (" + value + ", boosted " + bo.Boosted + "); the tourism boost can't work this way and is off."));
+				Mod.log.Info((object)("Болельщики: игра самостоятельно изменила привлекательность объекта (" + value + ", после повышения до " + bo.Boosted + "); бонус туризма не может работать таким образом и отключён."));
 			}
 		}
 	}
@@ -1390,7 +1390,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 			if (!Has(m_FanApi.Attractiveness, b))
 			{
 				m_BoostBroken = true;
-				Mod.log.Info((object)"Real fans: the venue isn't an attraction in the game, so the tourism boost is off for it.");
+				Mod.log.Info((object)"Болельщики: объект не считается достопримечательностью в игре, поэтому бонус туризма для него отключён.");
 				return;
 			}
 			object v = Get(m_FanApi.Attractiveness, b);
@@ -1399,12 +1399,12 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 			m_FanApi.AttractField.SetValue(v, bo.Boosted);
 			Set(m_FanApi.Attractiveness, b, v);
 			m_Boosts[b] = bo;
-			Mod.log.Info((object)("Real fans: game day, the venue draws tourists (attractiveness " + bo.Original + " to " + bo.Boosted + (bo.Added ? ", made an attraction for the day" : "") + ")."));
+			Mod.log.Info((object)("Болельщики: в день матча объект привлекает туристов (привлекательность " + bo.Original + " to " + bo.Boosted + (bo.Added ? ", объект временно стал достопримечательностью" : "") + ")."));
 		}
 		catch (Exception ex)
 		{
 			m_BoostBroken = true;
-			Mod.log.Info((object)("Real fans: the tourism boost is off (" + ex.GetType().Name + ": " + ex.Message + ")."));
+			Mod.log.Info((object)("Болельщики: бонус туризма отключён (" + ex.GetType().Name + ": " + ex.Message + ")."));
 		}
 	}
 
@@ -1458,7 +1458,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 					Set(m_FanApi.Attractiveness, b, v);
 				}
 			}
-			Mod.log.Info((object)"Real fans: game day over, the venue is back to normal.");
+			Mod.log.Info((object)"Болельщики: матч завершён, объект вернулся к обычному состоянию.");
 		}
 		catch (Exception)
 		{
@@ -1488,7 +1488,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 	{
 		m_FansBroken = true;
 		Sports.FanStatus = "Система болельщиков временно отключена: " + why + ". Подробности — в журнале Skyline_Sports_Project.log.";
-		Mod.log.Info((object)("Real fans turned off: " + why));
+		Mod.log.Info((object)("Система болельщиков отключена: " + why));
 		Sports.Revision++;
 	}
 
@@ -1524,12 +1524,12 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 		for (int i = 0; i < array.Length; i++)
 		{
 			KeyValuePair<string, Type> kv = array[i];
-			report.Add(kv.Key + ((kv.Value == null) ? " MISSING" : (" = " + kv.Value.FullName + Fields(kv.Value))));
+			report.Add(kv.Key + ((kv.Value == null) ? " ОТСУТСТВУЕТ" : (" = " + kv.Value.FullName + Fields(kv.Value))));
 		}
-		Mod.log.Info((object)("Real fans, the game's citizen parts: " + string.Join("; ", report.ToArray())));
+		Mod.log.Info((object)("Система болельщиков, компоненты жителей игры: " + string.Join("; ", report.ToArray())));
 		if (a.Citizen == null || a.HouseholdMember == null || a.CurrentBuilding == null || a.TripNeeded == null || a.PropertyRenter == null || a.PurposeEnum == null)
 		{
-			StopFans("this game version doesn't have the parts it needs");
+			StopFans("в этой версии игры отсутствуют необходимые компоненты");
 			return false;
 		}
 		a.TripTarget = FieldOf(a.TripNeeded, "m_TargetAgent", typeof(Entity));
@@ -1543,11 +1543,11 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 		}
 		if (a.TripTarget == null || a.TripPurpose == null || a.CurrentBuildingField == null || a.HouseholdField == null || a.PropertyField == null)
 		{
-			StopFans("a citizen part works differently than expected");
+			StopFans("компонент жителя устроен иначе, чем ожидалось");
 			return false;
 		}
 		string[] names = Enum.GetNames(a.PurposeEnum);
-		Mod.log.Info((object)("Real fans, trip purposes: " + string.Join(", ", names)));
+		Mod.log.Info((object)("Система болельщиков, цели поездок: " + string.Join(", ", names)));
 		string[] array2 = new string[3] { "Leisure", "VisitAttractions", "Shopping" };
 		foreach (string n in array2)
 		{
@@ -1564,7 +1564,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 		}
 		if (a.GoOut == null || a.GoHome == null)
 		{
-			StopFans("no trip purpose to send fans out and home");
+			StopFans("не найдены цели поездки для отправки болельщиков на матч и возвращения домой");
 			return false;
 		}
 		a.HasComponent = GenericEntityMethod("HasComponent", 1);
@@ -1592,17 +1592,17 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 		{
 			a.TargetField = FieldOf(a.Target, "m_Target", typeof(Entity));
 		}
-		Mod.log.Info((object)("Real fans, travel: CurrentTransport " + ((a.CurrentTransport == null) ? "MISSING" : (a.CurrentTransport.FullName + Fields(a.CurrentTransport))) + "; Target " + ((a.Target == null) ? "MISSING" : (a.Target.FullName + Fields(a.Target)))));
-		Mod.log.Info((object)("Real fans, visitors: TouristHousehold " + ((a.TouristHousehold == null) ? "MISSING" : (a.TouristHousehold.FullName + Fields(a.TouristHousehold))) + "; AttractivenessProvider " + ((a.Attractiveness == null) ? "MISSING" : (a.Attractiveness.FullName + Fields(a.Attractiveness)))));
+		Mod.log.Info((object)("Система болельщиков, транспорт: CurrentTransport " + ((a.CurrentTransport == null) ? "MISSING" : (a.CurrentTransport.FullName + Fields(a.CurrentTransport))) + "; Target " + ((a.Target == null) ? "MISSING" : (a.Target.FullName + Fields(a.Target)))));
+		Mod.log.Info((object)("Система болельщиков, посетители: TouristHousehold " + ((a.TouristHousehold == null) ? "MISSING" : (a.TouristHousehold.FullName + Fields(a.TouristHousehold))) + "; AttractivenessProvider " + ((a.Attractiveness == null) ? "MISSING" : (a.Attractiveness.FullName + Fields(a.Attractiveness)))));
 		if (a.HasComponent == null || a.GetComponent == null || a.HasBuffer == null || a.GetBuffer == null)
 		{
-			StopFans("the entity manager works differently than expected");
+			StopFans("менеджер сущностей работает иначе, чем ожидалось");
 			return false;
 		}
 		MethodInfo readOnly = typeof(ComponentType).GetMethod("ReadOnly", new Type[1] { typeof(Type) });
 		if (readOnly == null)
 		{
-			StopFans("can't look up citizens");
+			StopFans("не удалось получить доступ к жителям");
 			return false;
 		}
 		ComponentType[] citizenTypes = new ComponentType[]
@@ -1618,7 +1618,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 		m_CitizenQueryMade = true;
 		m_FanApi = a;
 		Sports.FanStatus = "";
-		Mod.log.Info((object)("Real fans is ready (trips: " + a.GoOutName + " to the venue, GoingHome after)."));
+		Mod.log.Info((object)("Система болельщиков готова (поездка на матч: " + a.GoOutName + " to the venue, затем возвращение домой)."));
 		return true;
 	}
 
@@ -1973,7 +1973,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 			{
 			}
 		}
-		Mod.log.Info((object)("Real fans: " + home + " fans head home from the " + fg.Name + " game."));
+		Mod.log.Info((object)("Болельщики: " + home + " болельщиков возвращаются домой после матча " + fg.Name + " game."));
 	}
 
 	[Preserve]
