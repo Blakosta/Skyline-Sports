@@ -13725,7 +13725,7 @@ public class SportsWorld
 		int today = GameClock.MonthStartDay(now) - 1;
 		int year = GameClock.YearOfDay(today + 1);
 		int target = TargetGames(league);
-		bool firstSoccerSeason = league.Sport == Sport.Soccer && league.History.Count == 0 && league.Previous == null;
+		bool requireFullSoccerSeason = league.Sport == Sport.Soccer;
 		int chosen = int.MinValue;
 		for (int y = year - 1; y <= year + 1; y++)
 		{
@@ -13741,7 +13741,7 @@ public class SportsWorld
 					chosen = y;
 					break;
 				}
-				if (!firstSoccerSeason && ScheduleBuilder.RemainingGames(p, y, target, today) >= MinimumPartialGames(target))
+				if (!requireFullSoccerSeason && ScheduleBuilder.RemainingGames(p, y, target, today) >= MinimumPartialGames(target))
 				{
 					chosen = y;
 				}
