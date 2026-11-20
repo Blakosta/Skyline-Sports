@@ -521,28 +521,7 @@ public static class Bios
 			{
 				return "*";
 			}
-			if (p.Sport == Sport.Hockey)
-			{
-				double canada;
-				if (p.Level == Level.Pro || p.Level == Level.Minor)
-				{
-					canada = 0.55;
-				}
-				else if (p.Level == Level.College)
-				{
-					canada = 0.3;
-				}
-				else
-				{
-					canada = ((p.Level == Level.Junior) ? 0.25 : 0.1);
-				}
-				if (!(random.NextDouble() < canada))
-				{
-					return Any(USHockey, random);
-				}
-				return Any(Canada, random);
-			}
-			return Any(US, random);
+			return (p.Sport == Sport.Hockey) ? Any(USHockey, random) : Any(US, random);
 		}
 		if (p.Level == Level.HighSchool && origin != "fr" && random.NextDouble() < 0.75)
 		{
