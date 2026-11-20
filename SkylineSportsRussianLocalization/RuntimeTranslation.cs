@@ -19,6 +19,124 @@ namespace SkylineSportsRussianLocalization
         private static string[] _russianFirstNames;
         private static string[] _russianLastNames;
 
+
+        private static readonly Dictionary<string, string> HometownRegions = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "ON", "Онтарио" }, { "AB", "Альберта" }, { "SK", "Саскачеван" }, { "MB", "Манитоба" },
+            { "BC", "Британская Колумбия" }, { "NS", "Новая Шотландия" }, { "NB", "Нью-Брансуик" },
+            { "NL", "Ньюфаундленд и Лабрадор" }, { "QC", "Квебек" }, { "PE", "Остров Принца Эдуарда" },
+            { "YT", "Юкон" }, { "NT", "Северо-Западные территории" }, { "NU", "Нунавут" },
+            { "HI", "Гавайи" }, { "UT", "Юта" }, { "CA", "Калифорния" }, { "TX", "Техас" },
+            { "GA", "Джорджия" }, { "MD", "Мэриленд" }, { "NJ", "Нью-Джерси" }, { "NC", "Северная Каролина" },
+            { "DC", "округ Колумбия" }, { "OH", "Огайо" },
+            { "France", "Франция" }, { "Ukraine", "Украина" }, { "Czechia", "Чехия" },
+            { "Slovakia", "Словакия" }, { "Sweden", "Швеция" }, { "Norway", "Норвегия" },
+            { "Denmark", "Дания" }, { "Finland", "Финляндия" }, { "Germany", "Германия" },
+            { "Switzerland", "Швейцария" }, { "Austria", "Австрия" }, { "Italy", "Италия" },
+            { "Dominican Republic", "Доминиканская Республика" }, { "Venezuela", "Венесуэла" },
+            { "Cuba", "Куба" }, { "Puerto Rico", "Пуэрто-Рико" }, { "Mexico", "Мексика" },
+            { "Panama", "Панама" }, { "Colombia", "Колумбия" }, { "Nicaragua", "Никарагуа" },
+            { "Argentina", "Аргентина" }, { "Spain", "Испания" }, { "Uruguay", "Уругвай" },
+            { "Chile", "Чили" }, { "Peru", "Перу" }, { "Costa Rica", "Коста-Рика" },
+            { "Ecuador", "Эквадор" }, { "Brazil", "Бразилия" }, { "Portugal", "Португалия" },
+            { "Serbia", "Сербия" }, { "Montenegro", "Черногория" }, { "Bosnia", "Босния и Герцеговина" },
+            { "England", "Англия" }, { "Scotland", "Шотландия" }, { "Wales", "Уэльс" },
+            { "Northern Ireland", "Северная Ирландия" }, { "Australia", "Австралия" },
+            { "Japan", "Япония" }, { "South Korea", "Южная Корея" }, { "Ghana", "Гана" },
+            { "Nigeria", "Нигерия" }, { "Senegal", "Сенегал" }, { "Mali", "Мали" },
+            { "Ivory Coast", "Кот-д’Ивуар" }, { "Guinea", "Гвинея" }, { "Morocco", "Марокко" },
+            { "Egypt", "Египет" }, { "Tunisia", "Тунис" }, { "Algeria", "Алжир" },
+            { "American Samoa", "Американское Самоа" }, { "New Zealand", "Новая Зеландия" },
+            { "Tonga", "Тонга" }, { "Samoa", "Самоа" }
+        };
+
+        private static readonly Dictionary<string, string> HometownExceptions = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "Paris", "Париж" }, { "Lyon", "Лион" }, { "Marseille", "Марсель" }, { "Lille", "Лилль" },
+            { "Bordeaux", "Бордо" }, { "Nantes", "Нант" }, { "Le Mans", "Ле-Ман" }, { "Strasbourg", "Страсбург" },
+            { "Kyiv", "Киев" }, { "Kharkiv", "Харьков" }, { "Lviv", "Львов" }, { "Odesa", "Одесса" },
+            { "Dnipro", "Днепр" }, { "Zaporizhzhia", "Запорожье" }, { "Prague", "Прага" }, { "Brno", "Брно" },
+            { "Ostrava", "Острава" }, { "Bratislava", "Братислава" }, { "Stockholm", "Стокгольм" },
+            { "Gothenburg", "Гётеборг" }, { "Malmo", "Мальмё" }, { "Oslo", "Осло" },
+            { "Copenhagen", "Копенгаген" }, { "Helsinki", "Хельсинки" }, { "Berlin", "Берлин" },
+            { "Munich", "Мюнхен" }, { "Cologne", "Кёльн" }, { "Hamburg", "Гамбург" },
+            { "Zurich", "Цюрих" }, { "Vienna", "Вена" }, { "Milan", "Милан" }, { "Rome", "Рим" },
+            { "Naples", "Неаполь" }, { "Turin", "Турин" }, { "Florence", "Флоренция" }, { "Bologna", "Болонья" },
+            { "London", "Лондон" }, { "Manchester", "Манчестер" }, { "Liverpool", "Ливерпуль" },
+            { "Birmingham", "Бирмингем" }, { "Leeds", "Лидс" }, { "Newcastle", "Ньюкасл" },
+            { "Glasgow", "Глазго" }, { "Edinburgh", "Эдинбург" }, { "Cardiff", "Кардифф" },
+            { "Belfast", "Белфаст" }, { "Tokyo", "Токио" }, { "Osaka", "Осака" }, { "Yokohama", "Йокогама" },
+            { "Nagoya", "Нагоя" }, { "Sapporo", "Саппоро" }, { "Fukuoka", "Фукуока" },
+            { "Hiroshima", "Хиросима" }, { "Sendai", "Сендай" }, { "Seoul", "Сеул" },
+            { "Busan", "Пусан" }, { "Incheon", "Инчхон" }, { "Daegu", "Тэгу" }, { "Gwangju", "Кванджу" },
+            { "Buenos Aires", "Буэнос-Айрес" }, { "Sao Paulo", "Сан-Паулу" }, { "Rio de Janeiro", "Рио-де-Жанейро" },
+            { "Mexico City", "Мехико" }, { "Bogota", "Богота" }, { "Montevideo", "Монтевидео" },
+            { "Lisbon", "Лиссабон" }, { "Belgrade", "Белград" }, { "Podgorica", "Подгорица" },
+            { "Santo Domingo", "Санто-Доминго" }, { "San Juan", "Сан-Хуан" }, { "Panama City", "Панама" },
+            { "Auckland", "Окленд" }, { "Pago Pago", "Паго-Паго" }, { "Honolulu", "Гонолулу" },
+            { "Toronto", "Торонто" }, { "Montreal", "Монреаль" }, { "Vancouver", "Ванкувер" },
+            { "Ottawa", "Оттава" }, { "Calgary", "Калгари" }, { "Edmonton", "Эдмонтон" },
+            { "Winnipeg", "Виннипег" }, { "Quebec City", "Квебек" }, { "Hamilton", "Гамильтон" },
+            { "Mississauga", "Миссиссога" }, { "Sault Ste. Marie", "Су-Сент-Мари" }, { "St. John's", "Сент-Джонс" },
+            { "New York", "Нью-Йорк" }, { "Salt Lake City", "Солт-Лейк-Сити" }, { "Washington", "Вашингтон" },
+            { "Houston", "Хьюстон" }, { "Dallas", "Даллас" }, { "Atlanta", "Атланта" },
+            { "Baltimore", "Балтимор" }, { "Newark", "Ньюарк" }, { "Charlotte", "Шарлотт" }, { "Columbus", "Колумбус" }
+        };
+
+        private static string LocalizeHometown(string value)
+        {
+            Match match = Regex.Match(value ?? "", @"^(.+?), ([A-Za-z ]{2,})$");
+            if (!match.Success) return value;
+            string region = match.Groups[2].Value.Trim();
+            if (!HometownRegions.TryGetValue(region, out string localizedRegion)) return value;
+            string city = match.Groups[1].Value.Trim();
+            if (!HometownExceptions.TryGetValue(city, out string localizedCity))
+                localizedCity = TransliterateCity(city);
+            return localizedCity + ", " + localizedRegion;
+        }
+
+        private static string TransliterateCity(string value)
+        {
+            string input = (value ?? "").ToLowerInvariant();
+            string result = "";
+            for (int i = 0; i < input.Length; i++)
+            {
+                string pair = i + 1 < input.Length ? input.Substring(i, 2) : "";
+                string digraph = null;
+                switch (pair)
+                {
+                    case "sh": digraph = "ш"; break;
+                    case "ch": digraph = "ч"; break;
+                    case "zh": digraph = "ж"; break;
+                    case "kh": digraph = "х"; break;
+                    case "ts": digraph = "ц"; break;
+                    case "ya": digraph = "я"; break;
+                    case "yu": digraph = "ю"; break;
+                    case "yo": digraph = "ё"; break;
+                    case "ph": digraph = "ф"; break;
+                    case "th": digraph = "т"; break;
+                    case "qu": digraph = "кв"; break;
+                }
+                if (digraph != null) { result += digraph; i++; continue; }
+                switch (input[i])
+                {
+                    case 'a': result += "а"; break; case 'b': result += "б"; break; case 'c': result += "к"; break;
+                    case 'd': result += "д"; break; case 'e': result += "е"; break; case 'f': result += "ф"; break;
+                    case 'g': result += "г"; break; case 'h': result += "х"; break; case 'i': result += "и"; break;
+                    case 'j': result += "дж"; break; case 'k': result += "к"; break; case 'l': result += "л"; break;
+                    case 'm': result += "м"; break; case 'n': result += "н"; break; case 'o': result += "о"; break;
+                    case 'p': result += "п"; break; case 'r': result += "р"; break; case 's': result += "с"; break;
+                    case 't': result += "т"; break; case 'u': result += "у"; break; case 'v': result += "в"; break;
+                    case 'w': result += "в"; break; case 'x': result += "кс"; break; case 'y': result += "й"; break;
+                    case 'z': result += "з"; break; default: result += input[i]; break;
+                }
+            }
+            string[] words = result.Split(' ');
+            for (int i = 0; i < words.Length; i++)
+                if (words[i].Length > 0) words[i] = char.ToUpperInvariant(words[i][0]) + words[i].Substring(1);
+            return string.Join(" ", words);
+        }
+
         private static readonly Dictionary<string, string> Exact = new Dictionary<string, string>(StringComparer.Ordinal)
         {
             { "Single season", "Один сезон" },
@@ -453,6 +571,14 @@ namespace SkylineSportsRussianLocalization
             if (Exact.TryGetValue(__0, out string translated))
             {
                 __0 = translated;
+                return;
+            }
+
+            // Hometown labels are generated data: localize both city and region without touching player/team names.
+            string hometown = LocalizeHometown(__0);
+            if (!string.Equals(hometown, __0, StringComparison.Ordinal))
+            {
+                __0 = hometown;
                 return;
             }
 
