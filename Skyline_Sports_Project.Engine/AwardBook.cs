@@ -648,8 +648,8 @@ public static class AwardBook
 			switch (sport)
 			{
 			case Sport.Hockey:
-				list.Add(Mvp(sport, "Самый ценный игрок", "Золотая клюшка"));
-				list.Add(Freshman(sport, "Новичок года", "Приз имени Алексея Черепанова"));
+				list.Add(Mvp(sport, "Самый ценный игрок", "Самый ценный игрок регулярного чемпионата ВХЛ"));
+				list.Add(Freshman(sport, "Новичок года", "Лучший новичок ВХЛ"));
 				list.Add(PlayoffMvp(sport, "Самый ценный игрок плей-офф", "Самый ценный игрок плей-офф Кубка Петрова"));
 				break;
 			case Sport.Basketball:
