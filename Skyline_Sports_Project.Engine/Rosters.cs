@@ -225,6 +225,18 @@ public static class Rosters
 		return PositionLabel(p);
 	}
 
+	public static Position[] Positions(Sport sport)
+	{
+		return sport switch
+		{
+			Sport.Hockey => new Position[] { Position.Center, Position.LeftWing, Position.RightWing, Position.Defense, Position.Goalie },
+			Sport.Basketball => new Position[] { Position.PointGuard, Position.ShootingGuard, Position.SmallForward, Position.PowerForward, Position.BigMan },
+			Sport.Football => new Position[] { Position.Quarterback, Position.RunningBack, Position.WideReceiver, Position.TightEnd, Position.OffensiveLine, Position.DefensiveLine, Position.Linebacker, Position.Cornerback, Position.Safety, Position.Kicker, Position.Punter },
+			Sport.Baseball => new Position[] { Position.StartingPitcher, Position.ReliefPitcher, Position.Catcher, Position.FirstBase, Position.SecondBase, Position.Shortstop, Position.ThirdBase, Position.LeftField, Position.CenterField, Position.RightField },
+			_ => new Position[] { Position.Goalkeeper, Position.Defender, Position.Midfielder, Position.Forward }
+		};
+	}
+
 	public static string NewsPositionLabel(Position p, Sport sport)
 	{
 		if (sport == Sport.Hockey)
