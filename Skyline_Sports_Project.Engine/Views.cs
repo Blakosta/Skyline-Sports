@@ -1172,7 +1172,7 @@ public static class Views
 			jsonBuilder.Prop("q", value).Prop("clock", Timeline.MinSec(left)).Prop("team", off)
 				.Prop("home", home)
 				.Prop("from", FieldPosition(Math.Max(1, Math.Min(99, from)), off, def) + (onside ? " (короткий начальный удар)" : ""))
-				.Prop("plays", plays + ((plays == 1) ? " play, " : " plays, ") + yards + ((yards == 1 || yards == -1) ? " yd" : " yds"))
+				.Prop("plays", plays + " розыгр., " + yards + " ярд.")
 				.Prop("time", Timeline.MinSec(Math.Max(0, end - start)))
 				.Prop("result", DriveResult(result))
 				.Prop("scored", result == 0 || result == 1)
@@ -1890,7 +1890,7 @@ public static class Views
 			}
 			j.Prop("id", sel.Id);
 			j.Prop("name", sel.Label);
-			j.Prop("summary", "In " + sel.Host + ", " + DayRange(sel) + "." + (sel.Under20 ? " Under 20." : "") + ((field > 0) ? (" " + field + " nations" + ((qualifiers > 0) ? (" (" + qualifiers + " through the qualifiers)") : "") + ".") : " The qualifiers decide the last spots.") + " National teams are picked from the players in your sports world by where they're from; the spots nobody fills go to players from clubs abroad.");
+			j.Prop("summary", "Место проведения: " + sel.Host + ". Даты: " + DayRange(sel) + "." + (sel.Under20 ? " Турнир среди игроков до 20 лет." : "") + ((field > 0) ? (" Участников: " + field + (qualifiers > 0 ? (" (из них " + qualifiers + " прошли квалификацию)") : "") + ".") : " Оставшиеся места определятся по итогам квалификации.") + " Составы сборных формируются из игроков вашего спортивного мира по стране их происхождения. Недостающие места занимают игроки зарубежных клубов.");
 			j.Prop("medals", sel.Complete ? ("Золото: " + sel.Gold + "  ·  Серебро: " + sel.Silver + "  ·  Бронза: " + sel.Bronze) : "");
 			j.Name("groups").BeginArray();
 			int groups = field / 4;
