@@ -896,7 +896,7 @@ namespace SkylineSportsRussianLocalization
                     match => Exact.TryGetValue(match.Value, out string position) ? position : match.Value);
             }
 
-            __0 = Regex.Replace(__0, @"\bTD\b", "ТД");
+            __0 = Regex.Replace(__0, @"\bTD\b", "тачдаунов");
             __0 = Regex.Replace(__0, @"\bFG\b", "полевых голов");
             __0 = Regex.Replace(__0, @"\bGroup ([A-Z])\b", "Группа $1");
             __0 = Regex.Replace(__0, @"([A-Z][a-z]{2} \d{1,2}) to ([A-Z][a-z]{2} \d{1,2}, \d{4})", "$1 — $2");
