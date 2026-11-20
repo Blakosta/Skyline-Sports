@@ -23,5 +23,7 @@ namespace Skyline_Sports_Project
         public string Version { get; set; }
 
         public Setting(IMod mod) : base(mod) { }
+
+        public override void SetDefaults() { }
     }
 }
