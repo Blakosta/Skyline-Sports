@@ -11216,7 +11216,11 @@ public class SportsWorld
 		int comma = town.IndexOf(',');
 		string text = ((comma > 0) ? town.Substring(0, comma) : town);
 		string[] names = NameGenerator.HighSchoolNames;
-		string school = names[_random.Next(names.Length)] + " школа";
+		string school = names[_random.Next(names.Length)];
+		if (!school.EndsWith(" школа", StringComparison.OrdinalIgnoreCase))
+		{
+			school += " школа";
+		}
 		if (text.Length <= 0)
 		{
 			return school;
