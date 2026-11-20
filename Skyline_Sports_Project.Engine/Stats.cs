@@ -2370,15 +2370,15 @@ public static class Stats
 		case Sport.Football:
 			if (Get(s, 2) > 0)
 			{
-				bits.Add(Get(s, 3) + " ярдов пасом, " + Get(s, 4) + " TD");
+				bits.Add(Get(s, 3) + " ярдов пасом, " + Get(s, 4) + " тачдаунов");
 			}
 			else if (Get(s, 6) >= 8)
 			{
-				bits.Add(Get(s, 7) + " ярдов на выносе" + ((Get(s, 8) > 0) ? (", " + Get(s, 8) + " TD") : ""));
+				bits.Add(Get(s, 7) + " ярдов на выносе" + ((Get(s, 8) > 0) ? (", " + Get(s, 8) + " тачдаунов") : ""));
 			}
 			else if (Get(s, 9) > 0)
 			{
-				bits.Add(Get(s, 9) + " приёмов, " + Get(s, 10) + " ярдов" + ((Get(s, 11) > 0) ? (", " + Get(s, 11) + " TD") : ""));
+				bits.Add(Get(s, 9) + " приёмов, " + Get(s, 10) + " ярдов" + ((Get(s, 11) > 0) ? (", " + Get(s, 11) + " тачдаунов") : ""));
 			}
 			else if (Get(s, 13) + Get(s, 14) > 0)
 			{
