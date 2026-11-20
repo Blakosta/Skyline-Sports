@@ -108,7 +108,7 @@ namespace SkylineSportsRussianLocalization
             { "Rabat", "Рабат" }, { "Marrakesh", "Марракеш" }, { "Tangier", "Танжер" }, { "Cairo", "Каир" },
             { "Tunis", "Тунис" }, { "Algiers", "Алжир" }, { "Oran", "Оран" }, { "Laie", "Лаие" },
             { "Kahuku", "Кахуку" }, { "Carson", "Карсон" }, { "Euless", "Юлесс" }, { "Nuku'alofa", "Нукуалофа" },
-            { "Apia", "Апиа" }
+            { "Apia", "Апиа" }, { "Santiago", "Сантьяго" }, { "Valencia", "Валенсия" }, { "Dakar", "Дакар" }
         };
 
         private static string LocalizeHometown(string value)
