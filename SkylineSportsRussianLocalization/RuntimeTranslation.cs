@@ -542,6 +542,17 @@ namespace SkylineSportsRussianLocalization
                     (lastSeason.Groups[2].Value == "down" ? " в прошлом сезоне выбыла в лигу ниже." : " в прошлом сезоне поднялась в лигу выше.") +
                     lastSeason.Groups[3].Value;
 
+            Match hand = Regex.Match(__0, @"^Bats ([LRS]), throws ([LRS])$");
+            if (hand.Success)
+            {
+                string batHand = hand.Groups[1].Value == "L" ? "левой" : hand.Groups[1].Value == "R" ? "правой" : "обеими";
+                string throwHand = hand.Groups[2].Value == "L" ? "левой" : hand.Groups[2].Value == "R" ? "правой" : "обеими";
+                __0 = "Бьёт " + batHand + ", бросает " + throwHand;
+            }
+
+            Match overtime = Regex.Match(__0, @"^(\\d*)OT$");
+            if (overtime.Success) __0 = overtime.Groups[1].Value + "ОТ";
+
             // Football drive summaries are complete values, not standalone dictionary fragments.
             Match plays = Regex.Match(__0, @"^(\d+) plays?, (-?\d+) yds?$");
             if (plays.Success)
