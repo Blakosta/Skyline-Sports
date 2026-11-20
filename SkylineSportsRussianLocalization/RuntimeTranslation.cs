@@ -344,8 +344,43 @@ namespace SkylineSportsRussianLocalization
             MethodInfo prefix = typeof(RuntimeTranslation).GetMethod(nameof(TranslateValue),
                 BindingFlags.NonPublic | BindingFlags.Static);
             _harmony.Patch(target, prefix: new HarmonyMethod(prefix));
+
+            // The Russian-themed name pools already exist in the original mod.
+            // Select them consistently for newly generated players without changing game rules.
+            Type playerNames = assembly.GetType("Skyline_Sports_Project.Engine.PlayerNames", false);
+            MethodInfo worldShare = playerNames == null ? null : playerNames.GetMethod(
+                "WorldShare", BindingFlags.Public | BindingFlags.Static);
+            if (worldShare != null)
+            {
+                MethodInfo russianNames = typeof(RuntimeTranslation).GetMethod(
+                    nameof(ForceRussianNameOrigin), BindingFlags.NonPublic | BindingFlags.Static);
+                _harmony.Patch(worldShare, postfix: new HarmonyMethod(russianNames));
+            }
+
+            Type nameGenerator = assembly.GetType("Skyline_Sports_Project.Engine.NameGenerator", false);
+            MethodInfo schoolName = nameGenerator == null ? null : nameGenerator.GetMethods(
+                BindingFlags.Public | BindingFlags.Instance).FirstOrDefault(m =>
+                    m.Name == "HighSchoolName" && m.ReturnType == typeof(string));
+            if (schoolName != null)
+            {
+                MethodInfo russianSchool = typeof(RuntimeTranslation).GetMethod(
+                    nameof(LocalizeSchoolName), BindingFlags.NonPublic | BindingFlags.Static);
+                _harmony.Patch(schoolName, postfix: new HarmonyMethod(russianSchool));
+            }
+
             _installed = true;
-            UnityEngine.Debug.Log("[Skyline Sports RU] Runtime UI text translation attached.");
+            UnityEngine.Debug.Log("[Skyline Sports RU] Runtime UI and Russian naming patches attached.");
+        }
+
+        private static void ForceRussianNameOrigin(ref double __result)
+        {
+            __result = 0.0;
+        }
+
+        private static void LocalizeSchoolName(ref string __result)
+        {
+            if (!string.IsNullOrEmpty(__result) && __result.EndsWith(" High", StringComparison.Ordinal))
+                __result = __result.Substring(0, __result.Length - " High".Length) + " школа";
         }
 
         private static void TranslateValue(ref string __0)
