@@ -14417,8 +14417,10 @@ public class SportsWorld
 				{
 					add += (second ? 800 : 2000);
 				}
+				int previousBudget = t.TransferBudget;
 				t.TransferBudget = Math.Min(60000, t.TransferBudget + add);
-				t.ClubBalance = (int)Math.Min(int.MaxValue, (long)t.ClubBalance + (long)add * 1000L);
+				int actualIncrease = Math.Max(0, t.TransferBudget - previousBudget);
+				t.ClubBalance = (int)Math.Min(int.MaxValue, (long)t.ClubBalance + (long)actualIncrease * 1000L);
 			}
 		}
 	}
