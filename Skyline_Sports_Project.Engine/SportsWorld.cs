@@ -3258,7 +3258,7 @@ public class SportsWorld
 			org.Mascot = _names.PickSchoolMascot(takenMascots);
 			break;
 		case Level.Junior:
-			org.Name = ((ctx.CityName.Length > 0) ? NameGenerator.CleanName(ctx.CityName, 40) : "Metro");
+			org.Name = ((ctx.CityName.Length > 0) ? NameGenerator.CleanName(ctx.CityName, 40) : "Город");
 			org.Mascot = "Юниоры " + _names.PickMascot(sport, Level.Junior, takenMascots);
 			break;
 		case Level.Minor:
@@ -3271,14 +3271,14 @@ public class SportsWorld
 			}
 			else
 			{
-				text = ((ctx.CityName.Length > 0) ? NameGenerator.CleanName(ctx.CityName, 40) : "Metro");
+				text = ((ctx.CityName.Length > 0) ? NameGenerator.CleanName(ctx.CityName, 40) : "Город");
 			}
 			name = text;
 			org.Mascot = _names.PickMascot(sport, Level.Pro, takenMascots, org.Name);
 			break;
 		}
 		default:
-			org.Name = ((ctx.CityName.Length > 0) ? NameGenerator.CleanName(ctx.CityName, 40) : "Metro");
+			org.Name = ((ctx.CityName.Length > 0) ? NameGenerator.CleanName(ctx.CityName, 40) : "Город");
 			org.Mascot = _names.PickMascot(sport, Level.Pro, takenMascots, org.Name);
 			break;
 		}
