@@ -4643,40 +4643,40 @@ public static class Views
 	{
 		return p switch
 		{
-			Position.Center => "Центральный нападающий", 
-			Position.LeftWing => "Левый нападающий", 
-			Position.RightWing => "Правый нападающий", 
-			Position.Defense => "Защитник", 
-			Position.Goalie => "Вратарь", 
-			Position.PointGuard => "Разыгрывающий защитник", 
-			Position.ShootingGuard => "Атакующий защитник", 
-			Position.SmallForward => "Лёгкий форвард", 
-			Position.PowerForward => "Тяжёлый форвард", 
-			Position.BigMan => "Центровой", 
-			Position.Quarterback => "Квотербек", 
-			Position.RunningBack => "Раннинбек", 
-			Position.WideReceiver => "Ресивер", 
-			Position.TightEnd => "Тайт-энд", 
-			Position.OffensiveLine => "Линейный нападения", 
-			Position.DefensiveLine => "Линейный защиты", 
-			Position.Linebacker => "Лайнбекер", 
-			Position.Cornerback => "Корнербек", 
-			Position.Safety => "Сейфти", 
-			Position.Kicker => "Кикер", 
-			Position.Punter => "Пантер", 
-			Position.StartingPitcher => "Стартовый питчер", 
-			Position.ReliefPitcher => "Релиф-питчер", 
-			Position.Catcher => "Кетчер", 
-			Position.FirstBase => "Игрок первой базы", 
-			Position.SecondBase => "Игрок второй базы", 
-			Position.Shortstop => "Шортстоп", 
-			Position.ThirdBase => "Игрок третьей базы", 
-			Position.LeftField => "Левый аутфилдер", 
-			Position.CenterField => "Центральный аутфилдер", 
-			Position.RightField => "Правый аутфилдер", 
-			Position.Goalkeeper => "Вратарь", 
-			Position.Defender => "Защитник", 
-			Position.Midfielder => "Полузащитник", 
+			Position.Center => "Центральный нападающий",
+			Position.LeftWing => "Левый крайний нападающий",
+			Position.RightWing => "Правый крайний нападающий",
+			Position.Defense => "Защитник",
+			Position.Goalie => "Вратарь",
+			Position.PointGuard => "Разыгрывающий",
+			Position.ShootingGuard => "Атакующий защитник",
+			Position.SmallForward => "Лёгкий форвард",
+			Position.PowerForward => "Тяжёлый форвард",
+			Position.BigMan => "Центровой",
+			Position.Quarterback => "Квотербек (пасующий)",
+			Position.RunningBack => "Раннинбек (выносной)",
+			Position.WideReceiver => "Уайд-ресивер (принимающий)",
+			Position.TightEnd => "Тайт-энд",
+			Position.OffensiveLine => "Линейный нападения",
+			Position.DefensiveLine => "Линейный защиты",
+			Position.Linebacker => "Лайнбекер",
+			Position.Cornerback => "Корнербек",
+			Position.Safety => "Сейфти (защитник глубины)",
+			Position.Kicker => "Кикер (бьющий)",
+			Position.Punter => "Пантер",
+			Position.StartingPitcher => "Стартовый питчер",
+			Position.ReliefPitcher => "Реливер",
+			Position.Catcher => "Кэтчер (ловящий)",
+			Position.FirstBase => "Первый базовый",
+			Position.SecondBase => "Второй базовый",
+			Position.Shortstop => "Шорт-стоп",
+			Position.ThirdBase => "Третий базовый",
+			Position.LeftField => "Левый аутфилдер",
+			Position.CenterField => "Центральный аутфилдер",
+			Position.RightField => "Правый аутфилдер",
+			Position.Goalkeeper => "Вратарь",
+			Position.Defender => "Защитник",
+			Position.Midfielder => "Полузащитник",
 			_ => "Нападающий", 
 		};
 	}
@@ -4811,9 +4811,10 @@ public static class Views
 		{
 			bio("Курс", ClassName(p.ClassYear));
 		}
-		bio("Рост", Bios.HeightLabel(Bios.ShownHeight(p)));
-		int weight = Bios.ShownWeight(p);
-		bio("Вес", (weight > 0) ? (weight + " фунтов") : "");
+		int heightCm = (int)Math.Round(Bios.ShownHeight(p) * 2.54);
+		bio("Рост", (heightCm > 0) ? (heightCm + " см") : "");
+		int weightKg = (int)Math.Round(Bios.ShownWeight(p) * 0.45359237);
+		bio("Вес", (weightKg > 0) ? (weightKg + " кг") : "");
 		bio((p.Sport == Sport.Baseball && !Rosters.IsPitcher(p.Position)) ? "Бьёт и бросает" : "Рука", p.Hand);
 		bio("Родной город", world.HometownOf(p));
 		bio("Откуда пришёл", (string.IsNullOrEmpty(p.From) || p.From == "Prospect") ? "" : p.From);
