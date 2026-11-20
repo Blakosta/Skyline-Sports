@@ -9,6 +9,9 @@
     <GameManagedDir Condition="'$(GameManagedDir)' == ''">$(MSBuildThisFileDirectory)game-managed</GameManagedDir>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="SkylineSportsRussianLocalization/**/*.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="Game"><HintPath>$(GameManagedDir)\Game.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="Colossal.Logging"><HintPath>$(GameManagedDir)\Colossal.Logging.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="Colossal.IO.AssetDatabase"><HintPath>$(GameManagedDir)\Colossal.IO.AssetDatabase.dll</HintPath><Private>false</Private></Reference>
