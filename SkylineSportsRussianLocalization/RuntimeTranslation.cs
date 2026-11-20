@@ -550,7 +550,7 @@ namespace SkylineSportsRussianLocalization
                 __0 = "Бьёт " + batHand + ", бросает " + throwHand;
             }
 
-            Match overtime = Regex.Match(__0, @"^(\\d*)OT$");
+            Match overtime = Regex.Match(__0, @"^(\d*)OT$");
             if (overtime.Success) __0 = overtime.Groups[1].Value + "ОТ";
 
             // Football drive summaries are complete values, not standalone dictionary fragments.
