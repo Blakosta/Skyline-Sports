@@ -9063,6 +9063,25 @@ public class SportsWorld
 		return CommandResult.Success("Цены билетов обновлены: жители — " + t.TicketPriceResidents.ToString("N0") + " ¢, туристы — " + t.TicketPriceVisitors.ToString("N0") + " ¢.");
 	}
 
+	public void EnsureClubBalance(Team team)
+	{
+		if (team == null || team.ClubBalance >= 0)
+		{
+			return;
+		}
+		long initial = 0L;
+		if (team.Sport == Sport.Soccer && SportRules.ProLike(team.Sport, team.Level))
+		{
+			EnsureTransferBudget(team);
+			initial = (long)Math.Max(0, team.TransferBudget) * 1000L;
+		}
+		else if (Economy.Get(team.Sport).Type == CapType.Budget)
+		{
+			initial = (long)Math.Max(0, team.Budget) * 1000L;
+		}
+		team.ClubBalance = (int)Math.Max(0L, Math.Min(int.MaxValue, initial));
+	}
+
 	public CommandResult TransferClubFunds(int teamId, int amount, bool toClub)
 	{
 		Team t = GetTeam(teamId);
@@ -9070,6 +9089,7 @@ public class SportsWorld
 		{
 			return CommandResult.Fail("Переводы доступны только для вашей команды.");
 		}
+		EnsureClubBalance(t);
 		if (amount <= 0)
 		{
 			return CommandResult.Fail("Укажите положительную сумму перевода.");
@@ -9081,6 +9101,16 @@ public class SportsWorld
 				return CommandResult.Fail("Баланс клуба достиг максимального значения.");
 			}
 			t.ClubBalance += amount;
+			int budgetUnits = amount / 1000;
+			if (t.Sport == Sport.Soccer && SportRules.ProLike(t.Sport, t.Level))
+			{
+				EnsureTransferBudget(t);
+				t.TransferBudget = Math.Min(60000, t.TransferBudget + budgetUnits);
+			}
+			else if (Economy.Get(t.Sport).Type == CapType.Budget)
+			{
+				t.Budget = (int)Math.Min(int.MaxValue, (long)t.Budget + budgetUnits);
+			}
 		}
 		else
 		{
@@ -9089,6 +9119,17 @@ public class SportsWorld
 				return CommandResult.Fail("На счёте клуба недостаточно средств.");
 			}
 			t.ClubBalance -= amount;
+			int budgetUnits = amount / 1000;
+			if (t.Sport == Sport.Soccer && SportRules.ProLike(t.Sport, t.Level))
+			{
+				EnsureTransferBudget(t);
+				t.TransferBudget = Math.Max(0, t.TransferBudget - budgetUnits);
+			}
+			else if (Economy.Get(t.Sport).Type == CapType.Budget)
+			{
+				int payrollFloor = Economy.Payroll(SignedPlayers(t.Id)) + Economy.DeadNow(t);
+				t.Budget = Math.Max(payrollFloor, t.Budget - budgetUnits);
+			}
 		}
 		Revision++;
 		return CommandResult.Success(toClub ? ("В бюджет клуба перечислено " + amount.ToString("N0") + " ¢.") : ("Из бюджета клуба перечислено в город " + amount.ToString("N0") + " ¢."));
@@ -14351,6 +14392,7 @@ public class SportsWorld
 	public int TransferBudgetOf(Team t)
 	{
 		EnsureTransferBudget(t);
+		EnsureClubBalance(t);
 		return Math.Max(0, t.TransferBudget);
 	}
 
@@ -14368,6 +14410,7 @@ public class SportsWorld
 			if (t != null)
 			{
 				EnsureTransferBudget(t);
+				EnsureClubBalance(t);
 				int rank = table.FindIndex((StandingRow r) => r.TeamId == id);
 				int add = (second ? (1400 + ((rank >= 0) ? ((rank == 0) ? 1200 : ((rank < table.Count / 2) ? 600 : 200)) : 0)) : (3500 + ((rank >= 0) ? ((rank == 0) ? 3000 : ((rank < table.Count / 2) ? 1500 : 500)) : 0)));
 				if (league.Previous != null && league.Previous.ChampionTeamId == id)
@@ -14375,6 +14418,7 @@ public class SportsWorld
 					add += (second ? 800 : 2000);
 				}
 				t.TransferBudget = Math.Min(60000, t.TransferBudget + add);
+				t.ClubBalance = (int)Math.Min(int.MaxValue, (long)t.ClubBalance + (long)add * 1000L);
 			}
 		}
 	}
@@ -14527,11 +14571,15 @@ public class SportsWorld
 			from = (string.IsNullOrEmpty(p.From) ? "зарубежный клуб" : p.From);
 		}
 		EnsureTransferBudget(buyer);
+		EnsureClubBalance(buyer);
 		buyer.TransferBudget = Math.Max(0, buyer.TransferBudget - fee);
+		buyer.ClubBalance = Math.Max(0, buyer.ClubBalance - fee * 1000);
 		if (seller != null)
 		{
 			EnsureTransferBudget(seller);
+			EnsureClubBalance(seller);
 			seller.TransferBudget = Math.Min(60000, seller.TransferBudget + fee);
+			seller.ClubBalance = (int)Math.Min(int.MaxValue, (long)seller.ClubBalance + (long)fee * 1000L);
 			seller.Block.Remove(p.Id);
 			p.LastTeamId = seller.Id;
 		}
@@ -14573,7 +14621,9 @@ public class SportsWorld
 	private void SellAbroad(League league, Team seller, Player p, string club, int fee, int now)
 	{
 		EnsureTransferBudget(seller);
+		EnsureClubBalance(seller);
 		seller.TransferBudget = Math.Min(60000, seller.TransferBudget + fee);
+		seller.ClubBalance = (int)Math.Min(int.MaxValue, (long)seller.ClubBalance + (long)fee * 1000L);
 		seller.Block.Remove(p.Id);
 		TransferOffers.RemoveAll((TransferOffer o) => o.PlayerId == p.Id);
 		string line = Rosters.PositionLabel(p.Position) + " " + p.Name + " (" + Rosters.Ovr(p) + "): из клуба " + TeamName(seller.Id) + " в " + club + ", " + Economy.Money(fee);
