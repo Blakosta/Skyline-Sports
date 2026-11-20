@@ -98,7 +98,7 @@ public static class SaveCodec
 
 		public TokenReader(string blob)
 		{
-			_tokens = blob.Split('\u001f', StringSplitOptions.None);
+			_tokens = blob.Split(new[] { '\u001f' }, StringSplitOptions.None);
 		}
 
 		private string Next()
@@ -157,7 +157,7 @@ public static class SaveCodec
 			{
 				return new int[0];
 			}
-			string[] parts = t.Split(',', StringSplitOptions.None);
+			string[] parts = t.Split(new[] { ',' }, StringSplitOptions.None);
 			if (parts.Length > 200)
 			{
 				throw new FormatException("bad stat line");
