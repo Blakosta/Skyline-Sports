@@ -92,7 +92,7 @@ public class SportsUISystem : UISystemBase
 		}
 		catch (Exception ex)
 		{
-			Mod.Error("Sports panel update failed", ex);
+			Mod.Error("Не удалось обновить спортивную панель", ex);
 		}
 	}
 
@@ -129,7 +129,7 @@ public class SportsUISystem : UISystemBase
 			if (ui == null)
 			{
 				m_UnitsUnreadable = true;
-				Mod.log.Info((object)"Temperature: the game's unit setting wasn't found, showing Fahrenheit (pick Celsius in Options).");
+				Mod.log.Info((object)"Настройка единиц измерения игры не найдена; используется Фаренгейт. Выберите Цельсий в настройках игры.");
 				return false;
 			}
 			if (m_UnitMember == null)
@@ -148,7 +148,7 @@ public class SportsUISystem : UISystemBase
 			if (unit == null)
 			{
 				m_UnitsUnreadable = true;
-				Mod.log.Info((object)"Temperature: the game's unit setting wasn't found, showing Fahrenheit (pick Celsius in Options).");
+				Mod.log.Info((object)"Настройка единиц измерения игры не найдена; используется Фаренгейт. Выберите Цельсий в настройках игры.");
 				return false;
 			}
 			return unit.ToString() == "Metric";
@@ -156,7 +156,7 @@ public class SportsUISystem : UISystemBase
 		catch (Exception ex)
 		{
 			m_UnitsUnreadable = true;
-			Mod.log.Info((object)("Temperature: couldn't read the game's unit setting (" + ex.Message + "), showing Fahrenheit."));
+			Mod.log.Info((object)("Не удалось прочитать настройку единиц измерения игры (" + ex.Message + "); используется Фаренгейт."));
 			return false;
 		}
 	}
@@ -180,7 +180,7 @@ public class SportsUISystem : UISystemBase
 		}
 		catch (Exception ex)
 		{
-			Mod.Error("Sports panel update failed", ex);
+			Mod.Error("Не удалось обновить спортивную панель", ex);
 		}
 	}
 
@@ -207,7 +207,7 @@ public class SportsUISystem : UISystemBase
 		}
 		catch (Exception ex)
 		{
-			Mod.Error("Sports panel update failed", ex);
+			Mod.Error("Не удалось обновить спортивную панель", ex);
 		}
 	}
 
