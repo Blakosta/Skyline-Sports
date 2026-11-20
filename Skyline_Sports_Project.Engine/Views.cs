@@ -4659,9 +4659,11 @@ public static class Views
 				.Prop("kind", p.Kind.ToString())
 				.Prop("account", p.Account)
 				.Prop("handle", p.Handle)
-				.Prop("text", ShortNewsText(world, p.Text))
-				.Prop("teamLogoIds", NewsTeamLogoIds(world, p))
-				.Prop("isUser", p.IsUser)
+				.Prop("text", ShortNewsText(world, p.Text));
+			j.Name("teamLogoIds").BeginArray();
+			foreach (int logoId in NewsTeamLogoIds(world, p)) j.Value(logoId);
+			j.EndArray();
+			j.Prop("isUser", p.IsUser)
 				.Prop("likes", p.Likes)
 				.Prop("reposts", p.Reposts)
 				.EndObject();
