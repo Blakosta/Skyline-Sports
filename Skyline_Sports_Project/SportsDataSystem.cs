@@ -1592,8 +1592,8 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 		{
 			a.TargetField = FieldOf(a.Target, "m_Target", typeof(Entity));
 		}
-		Mod.log.Info((object)("Система болельщиков, транспорт: CurrentTransport " + ((a.CurrentTransport == null) ? "ОТСУТСТВУЕТ" : (a.CurrentTransport.FullName + Fields(a.CurrentTransport))) + "; цель " + ((a.Target == null) ? "ОТСУТСТВУЕТ" : (a.Target.FullName + Fields(a.Target)))));
-		Mod.log.Info((object)("Система болельщиков, посетители: TouristHousehold " + ((a.TouristHousehold == null) ? "ОТСУТСТВУЕТ" : (a.TouristHousehold.FullName + Fields(a.TouristHousehold))) + "; компонент привлекательности " + ((a.Attractiveness == null) ? "ОТСУТСТВУЕТ" : (a.Attractiveness.FullName + Fields(a.Attractiveness)))));
+		Mod.log.Info((object)("Система болельщиков, транспорт: текущий транспорт " + ((a.CurrentTransport == null) ? "ОТСУТСТВУЕТ" : (a.CurrentTransport.FullName + Fields(a.CurrentTransport))) + "; цель " + ((a.Target == null) ? "ОТСУТСТВУЕТ" : (a.Target.FullName + Fields(a.Target)))));
+		Mod.log.Info((object)("Система болельщиков, посетители: домохозяйства туристов " + ((a.TouristHousehold == null) ? "ОТСУТСТВУЕТ" : (a.TouristHousehold.FullName + Fields(a.TouristHousehold))) + "; компонент привлекательности " + ((a.Attractiveness == null) ? "ОТСУТСТВУЕТ" : (a.Attractiveness.FullName + Fields(a.Attractiveness)))));
 		if (a.HasComponent == null || a.GetComponent == null || a.HasBuffer == null || a.GetBuffer == null)
 		{
 			StopFans("менеджер сущностей работает иначе, чем ожидалось");
