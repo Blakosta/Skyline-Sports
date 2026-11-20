@@ -5602,7 +5602,7 @@ public class SportsWorld
 					int start = GameClock.DayNumber(StartOf(kv.Value, y));
 					if (start >= today)
 					{
-						list.Add(new KeyValuePair<int, string>(start, y + " " + kv.Value.Name + ": " + StartOf(kv.Value, y).ToString("MMM d, yyyy", CultureInfo.InvariantCulture)));
+						list.Add(new KeyValuePair<int, string>(start, y + " " + kv.Value.Name + ": " + StartOf(kv.Value, y).ToString("d MMM yyyy", CultureInfo.GetCultureInfo("ru-RU"))));
 						break;
 					}
 				}
@@ -6416,11 +6416,11 @@ public class SportsWorld
 				Team club = ((p == null) ? null : GetTeam(p.TeamId));
 				if (club != null && club.IsUser)
 				{
-					mine.Add(Rosters.PositionLabel(p.Position) + " " + p.Name + " (" + n.Nation + ", " + TeamName(club.Id) + ")");
+					mine.Add(Rosters.PositionLabel(p.Position) + " " + p.Name + " (" + NationLabel(n.Nation) + ", " + TeamName(club.Id) + ")");
 				}
 			}
 		}
-		string when = GameClock.DateOf(t.StartDay).ToString("MMM d", CultureInfo.InvariantCulture);
+		string when = GameClock.DateOf(t.StartDay).ToString("d MMM", CultureInfo.GetCultureInfo("ru-RU"));
 		string homeLine = "";
 		int hi = t.Teams.FindIndex((NationTeam nationTeam) => nationTeam.Nation == HomeNation(t.Sport));
 		int firstQualifier = t.Teams.FindIndex((NationTeam nationTeam) => nationTeam.Qualifier);
