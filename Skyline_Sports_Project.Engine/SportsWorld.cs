@@ -551,9 +551,9 @@ public class SportsWorld
 	{
 		string n = kind switch
 		{
-			2 => "Second", 
-			1 => "First", 
-			_ => "Third", 
+			2 => "Вторая", 
+			1 => "Первая", 
+			_ => "Третья", 
 		};
 		return sport switch
 		{
@@ -3086,7 +3086,7 @@ public class SportsWorld
 		StaffChanged();
 		RostersChanged();
 		string where = (SportRules.ProLike(league.Sport, league.Level) ? (" " + freeAgents + " игроков стали свободными агентами" + ((retired > 0) ? (", " + retired + " завершили карьеру") : "") + ((secondTier > 0) ? (", " + secondTier + " перешёл в " + SecondTierName(league.Sport)) : "") + ".") : "");
-		Post(league, NewsKind.General, Wire, "FOLDED: The " + TeamName(t.Id) + " have folded after " + ((league.History.Count > 0) ? ("the " + league.History[0].Season + " season") : "the season") + "." + where, isUser: false, now, 2);
+		Post(league, NewsKind.General, Wire, "РАСФОРМИРОВАНА: команда «" + TeamName(t.Id) + "» прекратила существование после " + ((league.History.Count > 0) ? ("сезона " + league.History[0].Season) : "завершения сезона") + "." + where, isUser: false, now, 2);
 	}
 
 	private int PickAiToReplace(League league)
@@ -6350,9 +6350,9 @@ public class SportsWorld
 				Player player = GetPlayer(id2);
 				return player != null && (player.Hometown ?? "").StartsWith("*");
 			}).Count;
-			homeLine = " " + h.Nation + ", your city's country, " + (h.Qualifier ? "plays in the qualifiers" : "is in the main event") + ((local > 0) ? (", with " + local + ((local == 1) ? " player who grew up in your city" : " players who grew up in your city")) : "") + ".";
+			homeLine = " " + h.Nation + ", страна вашего города, " + (h.Qualifier ? "участвует в квалификации" : "вышла в основной турнир") + ((local > 0) ? (", в составе " + local + (local == 1 ? " игрок, выросший в вашем городе" : " игрока, выросших в вашем городе")) : "") + ".";
 		}
-		string text = "NATIONAL TEAMS: the " + t.Label + " starts " + when + " in " + t.Host + "." + homeLine + ((mine.Count > 0) ? (" Your players called up: " + string.Join("; ", mine.GetRange(0, Math.Min(8, mine.Count)).ToArray()) + ((mine.Count > 8) ? (" and " + (mine.Count - 8) + " more") : "") + ".") : "");
+		string text = "СБОРНЫЕ: турнир «" + t.Label + "» начинается " + when + " в городе " + t.Host + "." + homeLine + ((mine.Count > 0) ? (" Ваши игроки вызваны в сборные: " + string.Join("; ", mine.GetRange(0, Math.Min(8, mine.Count)).ToArray()) + ((mine.Count > 8) ? (" и ещё " + (mine.Count - 8)) : "") + ".") : "");
 		Post(league, NewsKind.General, Wire, text, mine.Count > 0 || homeLine.Length > 0, now, (mine.Count <= 0 && homeLine.Length <= 0) ? 1 : 2);
 	}
 
@@ -11371,7 +11371,7 @@ public class SportsWorld
 		r.CommittedTo = best.Id;
 		string stars = r.Stars + "-star";
 		Organization o = GetOrg(best.OrgId);
-		AddPost(league, NewsKind.Recruiting, Campus.Name, Campus.Handle, (flip ? "FLIP: " : "COMMIT: ") + stars + " " + Rosters.PositionLabel(p.Position) + " " + p.Name + ((p.From.Length > 0 && !r.National) ? (" from " + p.From) : (r.National ? (" (" + HometownOf(p) + ")") : "")) + (flip ? (" flips from " + from + " to ") : " commits to ") + ((o == null) ? TeamName(best.Id) : o.Name) + "!", isUser: true, now, (r.Stars >= 4) ? 3 : 2);
+		AddPost(league, NewsKind.Recruiting, Campus.Name, Campus.Handle, (flip ? "СМЕНА РЕШЕНИЯ: " : "ВЫБОР: ") + stars + " " + Rosters.PositionLabel(p.Position) + " " + p.Name + ((p.From.Length > 0 && !r.National) ? (" из " + p.From) : (r.National ? (" (" + HometownOf(p) + ")") : "")) + (flip ? (" меняет решение: вместо " + from + " выбирает ") : " выбирает ") + ((o == null) ? TeamName(best.Id) : o.Name) + "!"", isUser: true, now, (r.Stars >= 4) ? 3 : 2);
 		Revision++;
 		return true;
 	}
@@ -14232,7 +14232,7 @@ public class SportsWorld
 		}
 		if (announce || buyer.IsUser || (seller != null && seller.IsUser))
 		{
-			Post(league, NewsKind.Signing, Insider, "TRANSFER: The " + TeamName(buyer.Id) + " sign " + Rosters.PositionLabel(p.Position) + " " + p.Name + " (" + Rosters.Ovr(p) + " OVR) from " + ((seller != null) ? ("the " + from) : from) + " for " + Economy.Money(fee) + ".", buyer.IsUser || (seller?.IsUser ?? false), now, 2);
+			Post(league, NewsKind.Signing, Insider, "ТРАНСФЕР: «" + TeamName(buyer.Id) + "» подписывает " + Rosters.PositionLabel(p.Position) + " " + p.Name + " (" + Rosters.Ovr(p) + " ОБЩ) из клуба " + from + " за " + Economy.Money(fee) + "."", buyer.IsUser || (seller?.IsUser ?? false), now, 2);
 		}
 		if (seller != null && seller.IsUser)
 		{
@@ -15575,17 +15575,17 @@ public class SportsWorld
 		string round;
 		if (a.Round == 1)
 		{
-			round = "1st";
+			round = "1-й";
 		}
 		else if (a.Round == 2)
 		{
-			round = "2nd";
+			round = "2-й";
 		}
 		else
 		{
-			round = ((a.Round == 3) ? "3rd" : (a.Round + "th"));
+			round = ((a.Round == 3) ? "3-й" : (a.Round + "-й"));
 		}
-		string label = DraftYearLabel(league, a.Year) + " " + round + " round pick";
+		string label = DraftYearLabel(league, a.Year) + " выбор " + round + " раунда";
 		if (a.OriginalTeamId != a.OwnerTeamId)
 		{
 			label = label + " (от " + TeamShortName(a.OriginalTeamId) + " )";
