@@ -439,9 +439,9 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 	public CommandResult TransferCityFunds(int teamId, int amount, bool toClub)
 	{
 		Team team = Sports.GetTeam(teamId);
-		if (team == null || team.Retired || !team.IsUser)
+		if (team == null || team.Retired)
 		{
-			return CommandResult.Fail("Переводы доступны только для вашей команды.");
+			return CommandResult.Fail("Команда не найдена или расформирована.");
 		}
 		Sports.EnsureClubBalance(team);
 		if (amount <= 0)
