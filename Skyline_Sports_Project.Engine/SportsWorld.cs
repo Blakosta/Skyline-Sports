@@ -9084,6 +9084,105 @@ public class SportsWorld
 		return CommandResult.Success(manual ? ("Теперь вы управляете " + TeamName(t.Id) + ": контракты, свободные агенты, обмены, драфт и тренерский состав. Недостающие места в составе автоматически заполняются, чтобы матчи могли проходить.") : ("Генеральный менеджер снова управляет " + TeamName(t.Id) + "."));
 	}
 
+	public CommandResult EditClub(int teamId, string city, string clubName, int venueId, int now)
+	{
+		Team team = GetTeam(teamId);
+		if (team == null || team.Retired || !team.IsUser)
+		{
+			return CommandResult.Fail("Редактировать можно только вашу команду.");
+		}
+		Organization org = GetOrg(team.OrgId);
+		if (org == null)
+		{
+			return CommandResult.Fail("Организация клуба не найдена.");
+		}
+		Venue venue = GetVenue(venueId);
+		if (venue == null)
+		{
+			return CommandResult.Fail("Выберите существующий спортивный объект.");
+		}
+		if (venueId != team.VenueId && !CanHost(venue, team.Sport, team.Level, team.Id, out var reason))
+		{
+			return CommandResult.Fail(reason);
+		}
+		CommandResult renamed = RenameOrg(team.OrgId, city, clubName);
+		if (!renamed.Ok) return renamed;
+		if (venueId != team.VenueId)
+		{
+			CommandResult moved = MoveTeam(team.Id, venueId, "арену №" + venueId, now);
+			if (!moved.Ok) return CommandResult.Fail("Название клуба обновлено, но стадион не изменён: " + moved.Message);
+			return CommandResult.Success(renamed.Message + " " + moved.Message);
+		}
+		return renamed;
+	}
+
+	public CommandResult EditPlayer(int playerId, string firstName, string lastName, int number, int birthYear, int position, int overall, int potential, int height, int weight, string hometown, string hand)
+	{
+		Player player = GetPlayer(playerId);
+		if (player == null) return CommandResult.Fail("Игрок не найден.");
+		Team team = GetTeam(player.TeamId);
+		if (team == null || !team.IsUser) return CommandResult.Fail("Редактировать можно игроков ваших клубов.");
+		string first = NameGenerator.CleanName(firstName, 30);
+		string last = NameGenerator.CleanName(lastName, 30);
+		if (first.Length == 0 || last.Length == 0) return CommandResult.Fail("Имя и фамилия не могут быть пустыми.");
+		Position selected = (Position)position;
+		if (!Array.Exists(Rosters.Positions(player.Sport), (Position value) => value == selected))
+		{
+			return CommandResult.Fail("Эта позиция недоступна для выбранного вида спорта.");
+		}
+		int year = CurrentYear();
+		if (birthYear < year - 60 || birthYear > year - 13) return CommandResult.Fail("Проверьте год рождения игрока.");
+		if (number < 0 || number > 99) return CommandResult.Fail("Игровой номер должен быть от 0 до 99.");
+		if (overall < 1 || overall > 99 || potential < 1 || potential > 99) return CommandResult.Fail("Рейтинги должны быть от 1 до 99.");
+		player.FirstName = first;
+		player.LastName = last;
+		player.Number = number;
+		player.BirthYear = birthYear;
+		player.Position = selected;
+		player.Overall = overall;
+		player.Potential = Math.Max(overall, potential);
+		player.Height = Math.Max(0, Math.Min(100, height));
+		player.Weight = Math.Max(0, Math.Min(500, weight));
+		player.Hometown = NameGenerator.CleanName(hometown, 40);
+		player.Hand = NameGenerator.CleanName(hand, 12);
+		player.PeakOvr = Math.Max(player.PeakOvr, overall);
+		UpdateRating(team);
+		RostersChanged();
+		Revision++;
+		return CommandResult.Success("Данные игрока " + player.Name + " обновлены. Возраст автоматически пересчитан по году рождения.");
+	}
+
+	public CommandResult EditCoach(int coachId, string firstName, string lastName, int birthYear, int role, int development, int tactics, int motivation, int recruiting, int potential)
+	{
+		if (!Coaches.TryGetValue(coachId, out var coach)) return CommandResult.Fail("Тренер не найден.");
+		Team team = GetTeam(coach.TeamId);
+		if (team == null || !team.IsUser) return CommandResult.Fail("Редактировать можно тренеров ваших клубов.");
+		string first = NameGenerator.CleanName(firstName, 30);
+		string last = NameGenerator.CleanName(lastName, 30);
+		if (first.Length == 0 || last.Length == 0) return CommandResult.Fail("Имя и фамилия не могут быть пустыми.");
+		CoachRole selectedRole = (CoachRole)role;
+		CoachRole[] allowed = coach.Sport == Sport.Football ? new CoachRole[] { CoachRole.Head, CoachRole.Offense, CoachRole.Defense } : new CoachRole[] { CoachRole.Head };
+		if (!Array.Exists(allowed, (CoachRole value) => value == selectedRole)) return CommandResult.Fail("Эта специализация недоступна для данного вида спорта.");
+		Coach occupied = CoachOf(team.Id, selectedRole);
+		if (selectedRole != coach.Role && occupied != null && occupied.Id != coach.Id) return CommandResult.Fail("В этой команде уже есть тренер с такой специализацией.");
+		int year = CurrentYear();
+		if (birthYear < year - 85 || birthYear > year - 22) return CommandResult.Fail("Проверьте год рождения тренера.");
+		if (development < 1 || development > 99 || tactics < 1 || tactics > 99 || motivation < 1 || motivation > 99 || recruiting < 1 || recruiting > 99 || potential < 1 || potential > 99)
+			return CommandResult.Fail("Характеристики тренера должны быть от 1 до 99.");
+		coach.FirstName = first;
+		coach.LastName = last;
+		coach.BirthYear = birthYear;
+		coach.Role = selectedRole;
+		coach.Development = development;
+		coach.Tactics = tactics;
+		coach.Motivation = motivation;
+		coach.Recruiting = recruiting;
+		coach.Potential = Math.Max(coach.Overall, potential);
+		StaffChanged();
+		Revision++;
+		return CommandResult.Success("Данные тренера " + coach.Name + " обновлены.");
+	}
+
 	public CommandResult SetTicketPrices(int teamId, int residents, int visitors)
 	{
 		Team t = GetTeam(teamId);
