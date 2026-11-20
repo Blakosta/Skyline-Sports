@@ -575,7 +575,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 			}
 		}
 		}
-		if (cityTotal > 0
+		if (cityTotal > 0)
 		{
 			Sports.Revision++;
 			Mod.log.Info((object)("Билетные доходы: в городской бюджет зачислено " + cityTotal.ToString("N0") + "."));
