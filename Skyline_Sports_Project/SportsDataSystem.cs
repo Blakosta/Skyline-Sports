@@ -354,6 +354,10 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 			}
 			return result;
 		}
+		if (TryGetCityMoney(out var cityAccount, out var cityMoney) && cityMoney.m_Unlimited)
+		{
+			return CommandResult.Fail("Городской бюджет безлимитный — отключите безлимитные деньги, чтобы переводить средства из клуба в казну.");
+		}
 		CommandResult withdrawal = Sports.TransferClubFunds(teamId, amount, toClub: false);
 		if (!withdrawal.Ok)
 		{
