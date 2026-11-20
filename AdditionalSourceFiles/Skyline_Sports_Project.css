@@ -37,3 +37,5 @@
 .clubEditorPanel .chipRow_CUi,.playerEditorPanel .chipRow_CUi,.coachEditorPanel .chipRow_CUi{display:flex;flex-wrap:wrap;gap:5rem;margin:6rem 0}
 .clubEditorPanel button,.playerEditorPanel button,.coachEditorPanel button{flex-shrink:0}
 .playerEditorPanel .field_PzS,.coachEditorPanel .field_PzS,.clubEditorPanel .field_PzS{margin:5rem 0}
+
+.clubBrandingSection{margin-top:10rem;padding-top:6rem;border-top:1rem solid rgba(255,255,255,.12)}.clubLogoGrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6rem;margin-top:6rem;margin-bottom:8rem}.clubLogoChoice{display:flex;align-items:center;justify-content:center;min-height:48rem;padding:4rem;border:2rem solid rgba(255,255,255,.12);border-radius:5rem;background:rgba(255,255,255,.035);cursor:pointer}.clubLogoChoice:hover{background:rgba(255,255,255,.1);border-color:rgba(150,215,255,.65)}.clubLogoSelected{background:rgba(43,140,220,.2);border-color:#46aaf5}.clubLogo{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;flex:0 0 auto;margin-right:6rem}
