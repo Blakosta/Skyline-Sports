@@ -350,48 +350,66 @@ namespace SkylineSportsRussianLocalization
             MethodInfo prefix = typeof(RuntimeTranslation).GetMethod(nameof(TranslateValue),
                 BindingFlags.NonPublic | BindingFlags.Static);
             _harmony.Patch(target, prefix: new HarmonyMethod(prefix));
+            _installed = true;
+            UnityEngine.Debug.Log("[Skyline Sports RU] Runtime UI text translation attached.");
 
-            // The Russian-themed name pools already exist in the original mod.
-            // Select them consistently for newly generated players without changing game rules.
+            // Optional content patches must never prevent the UI translation from working.
             Type playerNames = assembly.GetType("Skyline_Sports_Project.Engine.PlayerNames", false);
-            MethodInfo worldShare = playerNames == null ? null : playerNames.GetMethod(
-                "WorldShare", BindingFlags.Public | BindingFlags.Static);
-            if (worldShare != null)
-            {
-                MethodInfo russianNames = typeof(RuntimeTranslation).GetMethod(
-                    nameof(ForceRussianNameOrigin), BindingFlags.NonPublic | BindingFlags.Static);
-                _harmony.Patch(worldShare, postfix: new HarmonyMethod(russianNames));
-            }
-
             if (playerNames != null)
             {
-                FieldInfo firstField = playerNames.GetField("FirstUS", BindingFlags.NonPublic | BindingFlags.Static);
-                FieldInfo lastField = playerNames.GetField("LastUS", BindingFlags.NonPublic | BindingFlags.Static);
-                _russianFirstNames = firstField == null ? null : firstField.GetValue(null) as string[];
-                _russianLastNames = lastField == null ? null : lastField.GetValue(null) as string[];
-                MethodInfo pickNames = playerNames.GetMethods(BindingFlags.Public | BindingFlags.Static)
-                    .FirstOrDefault(m => m.Name == "Pick" && m.GetParameters().Length == 7);
-                if (pickNames != null && _russianFirstNames != null && _russianLastNames != null)
+                try
                 {
-                    MethodInfo russianPlayerName = typeof(RuntimeTranslation).GetMethod(
-                        nameof(EnsureRussianPlayerName), BindingFlags.NonPublic | BindingFlags.Static);
-                    _harmony.Patch(pickNames, postfix: new HarmonyMethod(russianPlayerName));
+                    MethodInfo worldShare = playerNames.GetMethod("WorldShare", BindingFlags.Public | BindingFlags.Static);
+                    if (worldShare != null)
+                    {
+                        MethodInfo russianNames = typeof(RuntimeTranslation).GetMethod(
+                            nameof(ForceRussianNameOrigin), BindingFlags.NonPublic | BindingFlags.Static);
+                        _harmony.Patch(worldShare, postfix: new HarmonyMethod(russianNames));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    UnityEngine.Debug.LogWarning("[Skyline Sports RU] Russian name-origin patch skipped: " + ex.Message);
+                }
+
+                try
+                {
+                    FieldInfo firstField = playerNames.GetField("FirstUS", BindingFlags.NonPublic | BindingFlags.Static);
+                    FieldInfo lastField = playerNames.GetField("LastUS", BindingFlags.NonPublic | BindingFlags.Static);
+                    _russianFirstNames = firstField == null ? null : firstField.GetValue(null) as string[];
+                    _russianLastNames = lastField == null ? null : lastField.GetValue(null) as string[];
+                    MethodInfo pickNames = playerNames.GetMethods(BindingFlags.Public | BindingFlags.Static)
+                        .FirstOrDefault(m => m.Name == "Pick" && m.GetParameters().Length == 7);
+                    if (pickNames != null && _russianFirstNames != null && _russianLastNames != null)
+                    {
+                        MethodInfo russianPlayerName = typeof(RuntimeTranslation).GetMethod(
+                            nameof(EnsureRussianPlayerName), BindingFlags.NonPublic | BindingFlags.Static);
+                        _harmony.Patch(pickNames, postfix: new HarmonyMethod(russianPlayerName));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    UnityEngine.Debug.LogWarning("[Skyline Sports RU] Russian player-name patch skipped: " + ex.Message);
                 }
             }
 
-            Type nameGenerator = assembly.GetType("Skyline_Sports_Project.Engine.NameGenerator", false);
-            MethodInfo schoolName = nameGenerator == null ? null : nameGenerator.GetMethods(
-                BindingFlags.Public | BindingFlags.Instance).FirstOrDefault(m =>
-                    m.Name == "HighSchoolName" && m.ReturnType == typeof(string));
-            if (schoolName != null)
+            try
             {
-                MethodInfo russianSchool = typeof(RuntimeTranslation).GetMethod(
-                    nameof(LocalizeSchoolName), BindingFlags.NonPublic | BindingFlags.Static);
-                _harmony.Patch(schoolName, postfix: new HarmonyMethod(russianSchool));
+                Type nameGenerator = assembly.GetType("Skyline_Sports_Project.Engine.NameGenerator", false);
+                MethodInfo schoolName = nameGenerator == null ? null : nameGenerator.GetMethods(
+                    BindingFlags.Public | BindingFlags.Instance).FirstOrDefault(m =>
+                        m.Name == "HighSchoolName" && m.ReturnType == typeof(string));
+                if (schoolName != null)
+                {
+                    MethodInfo russianSchool = typeof(RuntimeTranslation).GetMethod(
+                        nameof(LocalizeSchoolName), BindingFlags.NonPublic | BindingFlags.Static);
+                    _harmony.Patch(schoolName, postfix: new HarmonyMethod(russianSchool));
+                }
             }
-
-            _installed = true;
-            UnityEngine.Debug.Log("[Skyline Sports RU] Runtime UI and Russian naming patches attached.");
+            catch (Exception ex)
+            {
+                UnityEngine.Debug.LogWarning("[Skyline Sports RU] School-name patch skipped: " + ex.Message);
+            }
         }
 
         private static void ForceRussianNameOrigin(ref double __result)
