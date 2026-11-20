@@ -26,10 +26,10 @@ public class SportsVenueSection : InfoSectionBase
 	[Preserve]
 	protected override void OnCreate()
 	{
-		((InfoSectionBase)this).OnCreate();
+		base.OnCreate();
 		m_Data = ((ComponentSystemBase)this).World.GetOrCreateSystemManaged<SportsDataSystem>();
 		m_SelectedInfo = ((ComponentSystemBase)this).World.GetOrCreateSystemManaged<SelectedInfoUISystem>();
-		((UISystemBase)this).AddBinding((IBinding)(object)new TriggerBinding<string>("SkylineSports", "VenueCommand", (Action<string>)OnVenueCommand, (IReader<string>)null));
+		AddBinding((IBinding)(object)new TriggerBinding<string>("SkylineSports", "VenueCommand", (Action<string>)OnVenueCommand, (IReader<string>)null));
 	}
 
 	[Preserve]
@@ -42,7 +42,7 @@ public class SportsVenueSection : InfoSectionBase
 	protected override void OnUpdate()
 	{
 		//IL_0010: Unknown result type (might be due to invalid IL or missing references)
-		((InfoSectionBase)this).visible = m_Data != null && m_Data.IsBuilding(((InfoSectionBase)this).selectedEntity);
+		visible = m_Data != null && m_Data.IsBuilding(selectedEntity);
 	}
 
 	[Preserve]
@@ -54,12 +54,12 @@ public class SportsVenueSection : InfoSectionBase
 		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
 		try
 		{
-			if (m_MessageFor != ((InfoSectionBase)this).selectedEntity)
+			if (m_MessageFor != selectedEntity)
 			{
 				m_Message = "";
 			}
-			int venueId = m_Data.VenueIdFor(((InfoSectionBase)this).selectedEntity);
-			m_Json = Views.VenueSection(m_Data.Sports, venueId, m_Data.BuildingName(((InfoSectionBase)this).selectedEntity), m_Message, m_Data.NowOrLast());
+			int venueId = m_Data.VenueIdFor(selectedEntity);
+			m_Json = Views.VenueSection(m_Data.Sports, venueId, m_Data.BuildingName(selectedEntity), m_Message, m_Data.NowOrLast());
 		}
 		catch (Exception ex)
 		{
@@ -92,13 +92,13 @@ public class SportsVenueSection : InfoSectionBase
 		CommandResult result = null;
 		try
 		{
-			Entity building = ((InfoSectionBase)this).selectedEntity;
+			Entity building = selectedEntity;
 			if (!m_Data.IsBuilding(building))
 			{
 				return;
 			}
 			m_Data.ApplySettings();
-			string[] parts = (command ?? "").Split('\u001f', StringSplitOptions.None);
+			string[] parts = (command ?? "").Split(new[] { '\u001f' }, StringSplitOptions.None);
 			string name = ((parts.Length != 0) ? parts[0] : "");
 			int venueId = m_Data.VenueIdFor(building);
 			int now = m_Data.NowOrLast();
@@ -160,7 +160,7 @@ public class SportsVenueSection : InfoSectionBase
 		{
 			Mod.Error("Venue command failed (" + command + ")", ex);
 			m_Message = "Произошла ошибка. Подробности записаны в журнал Skyline Sports Project.";
-			m_MessageFor = ((InfoSectionBase)this).selectedEntity;
+			m_MessageFor = selectedEntity;
 		}
 		m_SelectedInfo.RequestUpdate();
 	}
