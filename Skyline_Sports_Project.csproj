@@ -23,5 +23,7 @@
     <Reference Include="Colossal.Localization"><HintPath>$(GameManagedDir)\Colossal.Localization.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="Unity.Collections"><HintPath>$(GameManagedDir)\Unity.Collections.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="Unity.Burst"><HintPath>$(GameManagedDir)\Unity.Burst.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Unity.Mathematics"><HintPath>$(GameManagedDir)\Unity.Mathematics.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Colossal.Mathematics"><HintPath>$(GameManagedDir)\Colossal.Mathematics.dll</HintPath><Private>false</Private></Reference>
   </ItemGroup>
 </Project>
