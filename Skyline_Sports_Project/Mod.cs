@@ -31,17 +31,17 @@ public class Mod : IMod
 		}
 		else if (n % 100 == 0)
 		{
-			log.Warn((object)(what + " (the same error " + n + " times): " + ex.Message));
+			log.Warn((object)(what + " (та же ошибка: " + n + " раз): " + ex.Message));
 		}
 	}
 
-	public void OnLoad(UpdateSystem updateSystem)
+	public void Загрузка мода(UpdateSystem updateSystem)
 	{
-		log.Info((object)"OnLoad");
+		log.Info((object)"Загрузка мода");
 		ExecutableAsset asset = default;
 		if (GameManager.instance.modManager.TryGetExecutableAsset((IMod)(object)this, out asset))
 		{
-			log.Info((object)("Current mod asset at " + ((AssetData)asset).path));
+			log.Info((object)("Текущий файл мода: " + ((AssetData)asset).path));
 		}
 		Settings = new Setting((IMod)(object)this);
 		((ModSetting)Settings).RegisterInOptionsUI();
@@ -53,9 +53,9 @@ public class Mod : IMod
 		AddVenueSection();
 	}
 
-	public void OnDispose()
+	public void Отключение мода()
 	{
-		log.Info((object)"OnDispose");
+		log.Info((object)"Отключение мода");
 		if (Settings != null)
 		{
 			((ModSetting)Settings).UnregisterInOptionsUI();
@@ -74,15 +74,15 @@ public class Mod : IMod
 			List<ISectionSource> middle = ((field == null) ? null : (field.GetValue(selectedInfo) as List<ISectionSource>));
 			if (middle == null)
 			{
-				log.Error((object)"Could not find the building panel's section list. The Sports section won't show.");
+				log.Error((object)"Не удалось найти список разделов панели зданий. Раздел «Спорт» не будет отображаться.");
 				return;
 			}
 			middle.Insert(0, (ISectionSource)(object)section);
-			log.Info((object)"Sports section added to the building panel.");
+			log.Info((object)"Раздел «Спорт» добавлен на панель зданий.");
 		}
 		catch (Exception ex)
 		{
-			log.Error((object)("Adding the Sports section failed: " + ex));
+			log.Error((object)("Не удалось добавить раздел «Спорт»: " + ex));
 		}
 	}
 }
