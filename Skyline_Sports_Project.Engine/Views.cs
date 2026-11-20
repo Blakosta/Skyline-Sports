@@ -1167,12 +1167,12 @@ public static class Views
 			}
 			else
 			{
-				value = ((period == 5) ? "OT" : (period - 4 + "OT"));
+				value = ((period == 5) ? "ОТ" : (period - 4 + "ОТ"));
 			}
 			jsonBuilder.Prop("q", value).Prop("clock", Timeline.MinSec(left)).Prop("team", off)
 				.Prop("home", home)
 				.Prop("from", FieldPosition(Math.Max(1, Math.Min(99, from)), off, def) + (onside ? " (короткий начальный удар)" : ""))
-				.Prop("plays", plays + ((plays == 1) ? " play, " : " plays, ") + yards + ((yards == 1 || yards == -1) ? " yd" : " yds"))
+				.Prop("plays", plays + ((plays == 1) ? " розыгрыш, " : " розыгрышей, ") + yards + " ярд.")
 				.Prop("time", Timeline.MinSec(Math.Max(0, end - start)))
 				.Prop("result", DriveResult(result))
 				.Prop("scored", result == 0 || result == 1)
@@ -1814,7 +1814,7 @@ public static class Views
 
 	private static string DayRange(Tournament t)
 	{
-		return GameClock.DateOf(t.StartDay).ToString("MMM d", CultureInfo.InvariantCulture) + " to " + GameClock.DateOf(t.StartDay + 10).ToString("MMM d, yyyy", CultureInfo.InvariantCulture);
+		return GameClock.DateOf(t.StartDay).ToString("dd.MM", CultureInfo.InvariantCulture) + " — " + GameClock.DateOf(t.StartDay + 10).ToString("dd.MM.yyyy", CultureInfo.InvariantCulture);
 	}
 
 	private static bool UserPlayer(SportsWorld world, int playerId)
@@ -2582,12 +2582,13 @@ public static class Views
 			userTeams.Add(world.TeamName(t.Id));
 		}
 		string[] groups = new string[4] { "Single season", "Career", "Awards", "Teams" };
-		string[] notes = new string[4] { "The best single regular seasons ever in this league. A record stays until someone beats it.", "Career totals while playing in this league (regular season). Rate stats need about four full seasons to qualify.", "Most awards won.", "Championships and the best regular season records." };
+		string[] labels = new string[4] { "Один сезон", "Карьера", "Награды", "Команды" };
+		string[] notes = new string[4] { "Лучшие результаты отдельных регулярных сезонов в этой лиге. Рекорд сохраняется, пока его кто-нибудь не побьёт.", "Суммарная статистика за карьеру в этой лиге (регулярный сезон). Для попадания в рейтинг по средним показателям обычно требуется около четырёх полных сезонов.", "Больше всего завоёванных наград.", "Чемпионские титулы и лучшие показатели регулярного сезона." };
 		j.Name("groups").BeginArray();
 		for (int g = 0; g < groups.Length; g++)
 		{
 			j.BeginObject();
-			j.Prop("name", groups[g]);
+			j.Prop("name", labels[g]);
 			j.Prop("note", notes[g]);
 			j.Name("boards").BeginArray();
 			foreach (RecordBoard b in league.Records)
@@ -4245,7 +4246,7 @@ public static class Views
 				young.Sort((Player a, Player b) => b.Potential.CompareTo(a.Potential));
 				if (young.Count == 0)
 				{
-					draft.Lines.Add("No young prospects on the market right now. A new class arrives every " + Economy.Get(t.Sport).DraftDate(world.CurrentYear()).ToString("MMMM") + ".");
+					draft.Lines.Add("Сейчас на рынке нет молодых перспективных игроков. Новое поколение появится в " + Economy.Get(t.Sport).DraftDate(world.CurrentYear()).ToString("MMMM") + ".");
 				}
 				else
 				{
@@ -4802,7 +4803,7 @@ public static class Views
 		}
 		bio("Рост", Bios.HeightLabel(Bios.ShownHeight(p)));
 		int weight = Bios.ShownWeight(p);
-		bio("Weight", (weight > 0) ? (weight + " lbs") : "");
+		bio("Вес", (weight > 0) ? (weight + " фунтов") : "");
 		bio((p.Sport == Sport.Baseball && !Rosters.IsPitcher(p.Position)) ? "Бьёт и бросает" : "Рука", p.Hand);
 		bio("Родной город", world.HometownOf(p));
 		bio("Откуда пришёл", (string.IsNullOrEmpty(p.From) || p.From == "Prospect") ? "" : p.From);
@@ -4826,7 +4827,7 @@ public static class Views
 			{
 				text2 = ((target.CommittedTo >= 0) ? (", дал согласие на переход в " + world.TeamShortName(target.CommittedTo)) : ", пока не определился");
 			}
-			action2("Recruiting", text + "звёздный новичок" + text2);
+			action2("Набор игроков", text + "-звёздный новичок" + text2);
 			bio("Чего он хочет", SportsWorld.WantsLabel(p.Priority));
 		}
 		j.EndArray();
