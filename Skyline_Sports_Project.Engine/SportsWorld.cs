@@ -9229,7 +9229,14 @@ public class SportsWorld
 			4 => 0.25,
 			_ => 0.0
 		};
-		return (long)Math.Round((double)Economy.Cap(team.Sport) * 1000.0 * share);
+		double levelFactor = team.Level switch
+		{
+			Level.Minor => 0.45,
+			Level.College => 0.20,
+			Level.Junior => 0.08,
+			_ => 1.0
+		};
+		return (long)Math.Round((double)Economy.Cap(team.Sport) * 1000.0 * share * levelFactor);
 	}
 
 	public static long SponsorPeriodRevenue(Team team)
@@ -9353,7 +9360,7 @@ public class SportsWorld
 		}
 		else if (Economy.Get(team.Sport).Type == CapType.Budget)
 		{
-			initial = (long)Math.Max(0, team.Budget) * 1000L;
+			initial = (long)Math.Max(0, Economy.Limit(team)) * 1000L;
 		}
 		team.ClubBalance = (int)Math.Max(0L, Math.Min(int.MaxValue, initial));
 	}
