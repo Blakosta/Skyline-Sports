@@ -2594,7 +2594,7 @@ public class SportsWorld
 		{
 			if (!SportRules.IsAllowed(type, t.Sport))
 			{
-				return CommandResult.Fail("Сначала удалите команду " + SportRules.SportLabel(t.Sport) + " . " + SportRules.VenueTypeLabel(type) + " не может принимать " + SportRules.SportLabel(t.Sport) + ".");
+				return CommandResult.Fail("Сначала удалите команду по виду спорта «" + SportRules.SportLabel(t.Sport) + "»: объект типа «" + SportRules.VenueTypeLabel(type) + "» не подходит для этого вида спорта.");
 			}
 		}
 		if (v.Type != type && (here.Count > SportRules.MaxTeams(type) || VenueLoad(venueId) > SportRules.HomeDateCapacity(type)))
@@ -2623,7 +2623,7 @@ public class SportsWorld
 		}
 		v.Level = level;
 		Revision++;
-		return CommandResult.Success("Новые команды здесь будут относиться к уровню " + SportRules.LevelLabel(level) + " .");
+		return CommandResult.Success("Новые команды здесь будут относиться к уровню «" + SportRules.LevelLabel(level) + "».");
 	}
 
 	public CommandResult MoveTeam(int teamId, int venueId, string venueName, int now)
