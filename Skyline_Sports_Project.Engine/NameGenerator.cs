@@ -162,7 +162,7 @@ public class NameGenerator
 	{
 		string[] skip = new string[9] { "high", "university", "of", "state", "college", "tech", "the", "fc", "sc" };
 		List<string> words = new List<string>();
-		string[] array = (name ?? "").Split(' ', StringSplitOptions.None);
+		string[] array = (name ?? "").Split(new[] { ' ' }, StringSplitOptions.None);
 		for (int i = 0; i < array.Length; i++)
 		{
 			string w = array[i].Trim();
