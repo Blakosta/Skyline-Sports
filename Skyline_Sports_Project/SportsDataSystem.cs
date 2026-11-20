@@ -384,6 +384,11 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 						game.TicketIncomePaid = true;
 						continue;
 					}
+					if (TryGetCityMoney(out var city, out var balance) && (balance.m_Unlimited || balance.money >= 2000000000L))
+					{
+						game.TicketIncomePaid = true;
+						continue;
+					}
 					if (ChangeCityMoney(game.TicketRevenue))
 					{
 						game.TicketIncomePaid = true;
