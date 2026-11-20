@@ -144,7 +144,7 @@ public static class AwardBook
 
 	private static string GoalieLine(int[] s)
 	{
-		return I(G(s, 5)) + " W, " + P3(SavePct(s)) + " SV%, " + D2(Per(G(s, 9), G(s, 11))) + " GAA";
+		return I(G(s, 5)) + " побед, " + P3(SavePct(s)) + " % отражённых бросков, " + D2(Per(G(s, 9), G(s, 11))) + " пропущенных шайб за матч";
 	}
 
 	private static double HockeyValue(AwardContext c, Player p, int[] s)
@@ -186,7 +186,7 @@ public static class AwardBook
 
 	private static string HoopLine(int[] s)
 	{
-		return D1(PerGame(s, 1)) + " PPG, " + D1(PerGame(s, 2)) + " RPG, " + D1(PerGame(s, 3)) + " APG";
+		return D1(PerGame(s, 1)) + " очк./матч, " + D1(PerGame(s, 2)) + " подб./матч, " + D1(PerGame(s, 3)) + " передач/матч";
 	}
 
 	private static bool HoopQualifies(AwardContext c, int[] s)
@@ -231,14 +231,14 @@ public static class AwardBook
 	{
 		if (p.Position == Position.Quarterback)
 		{
-			return I(G(s, 3)) + " pass yds, " + I(G(s, 4)) + " TD, " + I(G(s, 5)) + " INT";
+			return I(G(s, 3)) + " ярдов пасом, " + I(G(s, 4)) + " тачдаунов, " + I(G(s, 5)) + " перехватов";
 		}
-		return I(G(s, 7) + G(s, 10)) + " scrimmage yds, " + I(G(s, 8) + G(s, 11)) + " TD";
+		return I(G(s, 7) + G(s, 10)) + " ярдов в атаке, " + I(G(s, 8) + G(s, 11)) + " тачдаунов";
 	}
 
 	private static string DefenseLine(int[] s)
 	{
-		return I(G(s, 12)) + " tackles, " + I(G(s, 13)) + " sacks, " + I(G(s, 14)) + " INT";
+		return I(G(s, 12)) + " захватов, " + I(G(s, 13)) + " сэков, " + I(G(s, 14)) + " перехватов";
 	}
 
 	private static bool Offense(Position p)
@@ -787,7 +787,7 @@ public static class AwardBook
 						c.PointsPerGame.TryGetValue(p.TeamId, out var value);
 						return (double)p.Overall + value * 0.3;
 					},
-					Detail = (AwardContext c, Player p, int[] s) => I(G(s, 0)) + " games, " + I(Rosters.Ovr(p)) + " OVR"
+					Detail = (AwardContext c, Player p, int[] s) => I(G(s, 0)) + " матчей, общий рейтинг " + I(Rosters.Ovr(p))
 				});
 				list.Add(PlayoffMvp(sport, "Самый ценный игрок главного матча", "Кубок «Марлоу»"));
 				break;
