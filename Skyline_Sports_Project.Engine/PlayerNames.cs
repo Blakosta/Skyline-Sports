@@ -281,68 +281,10 @@ public static class PlayerNames
 
 	public static double WorldShare(Sport sport, Level level)
 	{
-		switch (sport)
-		{
-		case Sport.Hockey:
-			switch (level)
-			{
-			default:
-				return 0.06;
-			case Level.Junior:
-				return 0.15;
-			case Level.College:
-				return 0.22;
-			case Level.Pro:
-			case Level.Minor:
-				return 0.4;
-			}
-		case Sport.Soccer:
-			switch (level)
-			{
-			default:
-				return 0.1;
-			case Level.College:
-				return 0.3;
-			case Level.Pro:
-			case Level.Minor:
-				return 0.6;
-			}
-		case Sport.Baseball:
-			switch (level)
-			{
-			default:
-				return 0.06;
-			case Level.College:
-				return 0.12;
-			case Level.Pro:
-			case Level.Minor:
-				return 0.32;
-			}
-		case Sport.Basketball:
-			switch (level)
-			{
-			default:
-				return 0.03;
-			case Level.College:
-				return 0.12;
-			case Level.Pro:
-			case Level.Minor:
-				return 0.22;
-			}
-		default:
-			switch (level)
-			{
-			default:
-				return 0.02;
-			case Level.College:
-				return 0.06;
-			case Level.Pro:
-			case Level.Minor:
-				return 0.08;
-			}
-		}
-		*/
+		// All newly generated players use Russian first and last names.
+		return 0.0;
 	}
+
 	private static KeyValuePair<string, int>[] W(params object[] pairs)
 	{
 		KeyValuePair<string, int>[] list = new KeyValuePair<string, int>[pairs.Length / 2];
