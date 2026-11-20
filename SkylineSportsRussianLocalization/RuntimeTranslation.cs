@@ -211,29 +211,44 @@ namespace SkylineSportsRussianLocalization
                 return;
             }
 
-            // Translate common dynamic phrases without touching player/team names or numeric data.
-            __0 = __0.Replace("The qualifiers decide the last spots.", "Последние места определяются по итогам отборочного турнира.")
+            // Translate dynamic announcements while leaving player and team names intact.
+            __0 = __0.Replace("FOLDED: The ", "РАСПУСК: ")
+                     .Replace(" have folded after ", " завершили выступления после сезона ")
+                     .Replace("NATIONAL TEAMS: the ", "СБОРНЫЕ: ")
+                     .Replace(" starts ", " начинают выступление ")
+                     .Replace(" Your players called up: ", " Ваши игроки вызваны в сборную: ")
+                     .Replace(" and ", " и ")
+                     .Replace(" more", " ещё")
+                     .Replace("FLIP: ", "ПЕРЕМАНИЛИ: ")
+                     .Replace("COMMIT: ", "ПОДПИСАНИЕ: ")
+                     .Replace(" flips from ", " переходит из ")
+                     .Replace(" commits to ", " выбирает команду ")
+                     .Replace("TRANSFER: The ", "ТРАНСФЕР: ")
+                     .Replace(" sign ", " подписывает ")
+                     .Replace(" from the ", " из команды ")
+                     .Replace("Bats ", "Бьёт: ")
+                     .Replace(", throws ", ", бросает: ")
+                     .Replace("The qualifiers decide the last spots.", "Последние места определяются по итогам отборочного турнира.")
                      .Replace("through the qualifiers)", "по итогам отборочного турнира)")
                      .Replace("player who grew up in your city", "игрок, выросший в вашем городе")
                      .Replace("players who grew up in your city", "игроки, выросшие в вашем городе")
                      .Replace("Your players called up:", "Ваши игроки вызваны в сборную:")
-                     .Replace("more", "ещё")
-                     .Replace("spot", "место")
                      .Replace("free agency", "свободные агенты")
                      .Replace("round pick", "выбор раунда")
                      .Replace("from clubs abroad", "из зарубежных клубов");
-            __0 = Regex.Replace(__0, @"\\bJan\\b", "янв", RegexOptions.IgnoreCase);
-            __0 = Regex.Replace(__0, @"\\bFeb\\b", "фев", RegexOptions.IgnoreCase);
-            __0 = Regex.Replace(__0, @"\\bMar\\b", "мар", RegexOptions.IgnoreCase);
-            __0 = Regex.Replace(__0, @"\\bApr\\b", "апр", RegexOptions.IgnoreCase);
-            __0 = Regex.Replace(__0, @"\\bMay\\b", "май", RegexOptions.IgnoreCase);
-            __0 = Regex.Replace(__0, @"\\bJun\\b", "июн", RegexOptions.IgnoreCase);
-            __0 = Regex.Replace(__0, @"\\bJul\\b", "июл", RegexOptions.IgnoreCase);
-            __0 = Regex.Replace(__0, @"\\bAug\\b", "авг", RegexOptions.IgnoreCase);
-            __0 = Regex.Replace(__0, @"\\bSep\\b", "сен", RegexOptions.IgnoreCase);
-            __0 = Regex.Replace(__0, @"\\bOct\\b", "окт", RegexOptions.IgnoreCase);
-            __0 = Regex.Replace(__0, @"\\bNov\\b", "ноя", RegexOptions.IgnoreCase);
-            __0 = Regex.Replace(__0, @"\\bDec\\b", "дек", RegexOptions.IgnoreCase);
+
+            __0 = Regex.Replace(__0, @"\bJan\b", "янв", RegexOptions.IgnoreCase);
+            __0 = Regex.Replace(__0, @"\bFeb\b", "фев", RegexOptions.IgnoreCase);
+            __0 = Regex.Replace(__0, @"\bMar\b", "мар", RegexOptions.IgnoreCase);
+            __0 = Regex.Replace(__0, @"\bApr\b", "апр", RegexOptions.IgnoreCase);
+            __0 = Regex.Replace(__0, @"\bMay\b", "май", RegexOptions.IgnoreCase);
+            __0 = Regex.Replace(__0, @"\bJun\b", "июн", RegexOptions.IgnoreCase);
+            __0 = Regex.Replace(__0, @"\bJul\b", "июл", RegexOptions.IgnoreCase);
+            __0 = Regex.Replace(__0, @"\bAug\b", "авг", RegexOptions.IgnoreCase);
+            __0 = Regex.Replace(__0, @"\bSep\b", "сен", RegexOptions.IgnoreCase);
+            __0 = Regex.Replace(__0, @"\bOct\b", "окт", RegexOptions.IgnoreCase);
+            __0 = Regex.Replace(__0, @"\bNov\b", "ноя", RegexOptions.IgnoreCase);
+            __0 = Regex.Replace(__0, @"\bDec\b", "дек", RegexOptions.IgnoreCase);
         }
     }
 }
