@@ -119,6 +119,9 @@ public class SportsVenueSection : InfoSectionBase
 				}
 				result = sports.SetVenueType(venueId, (VenueType)IntArg(parts, 1));
 				break;
+			case "capacity":
+				result = sports.SetVenueCapacity(venueId, IntArg(parts, 1));
+				break;
 			case "level":
 				if (!Enum.IsDefined(typeof(Level), IntArg(parts, 1)))
 				{
