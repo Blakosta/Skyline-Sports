@@ -63,6 +63,8 @@ public static class Views
 			j.Prop("typeLabel", SportRules.VenueTypeLabel(v.Type));
 			j.Prop("level", (int)v.Level);
 			j.Prop("levelLabel", SportRules.LevelLabel(v.Level));
+			j.Prop("capacity", v.Capacity);
+			j.Prop("capacityLabel", v.Capacity > 0 ? ("Вместимость: " + v.Capacity.ToString("N0") + " мест") : "Вместимость рассчитывается автоматически по виду спорта и уровню.");
 			j.Prop("canChangeLevel", value: true);
 			j.Name("types").BeginArray();
 			VenueType[] allVenueTypes = SportRules.AllVenueTypes;
@@ -5375,6 +5377,15 @@ public static class Views
 		j.Prop("clubBalance", t.ClubBalance);
 		j.Prop("ticketPriceResidents", t.TicketPriceResidents);
 		j.Prop("ticketPriceVisitors", t.TicketPriceVisitors);
+		j.Prop("payrollBudgetEditable", Economy.Get(t.Sport).Type == CapType.Budget);
+		j.Prop("payrollBudget", Economy.Limit(t));
+		j.Prop("payrollUsed", Economy.Payroll(world.SignedPlayers(t.Id)) + Economy.DeadNow(t));
+		j.Prop("sponsorTier", t.SponsorTier);
+		j.Prop("sponsorFrequency", t.SponsorFrequency);
+		j.Prop("sponsorTierLabel", SportsWorld.SponsorTierLabel(t.SponsorTier));
+		j.Prop("sponsorFrequencyLabel", SportsWorld.SponsorFrequencyLabel(t.SponsorFrequency));
+		j.Prop("sponsorPeriodRevenue", (int)Math.Min(int.MaxValue, SportsWorld.SponsorPeriodRevenue(t)));
+		j.Prop("sponsorAnnualRevenue", (int)Math.Min(int.MaxValue, SportsWorld.SponsorAnnualRevenue(t)));
 		j.Prop("canManage", t.IsUser);
 		JsonBuilder jsonBuilder3 = j;
 		string value3;
