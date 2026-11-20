@@ -1167,7 +1167,7 @@ public static class Views
 			}
 			else
 			{
-				value = ((period == 5) ? "OT" : (period - 4 + "OT"));
+				value = ((period == 5) ? "ДВ" : (period - 4 + "ДВ"));
 			}
 			jsonBuilder.Prop("q", value).Prop("clock", Timeline.MinSec(left)).Prop("team", off)
 				.Prop("home", home)
