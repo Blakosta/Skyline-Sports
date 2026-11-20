@@ -129,19 +129,9 @@ public static class GameClock
 
 	public static string ClockLabel(int minuteOfDay)
 	{
-		int num = minuteOfDay / 60;
+		int hour = minuteOfDay / 60;
 		int minute = minuteOfDay % 60;
-		int h = num % 12;
-		if (h == 0)
-		{
-			h = 12;
-		}
-		string ampm = ((num < 12) ? " AM" : " PM");
-		if (minute != 0)
-		{
-			return h + ":" + minute.ToString("00") + ampm;
-		}
-		return h + ampm;
+		return hour.ToString("00") + ":" + minute.ToString("00");
 	}
 
 	public static string TimeLabel(int time)
