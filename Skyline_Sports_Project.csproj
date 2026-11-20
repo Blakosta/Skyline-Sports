@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>Skyline_Sports_Project</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TargetFramework>net48</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>14.0</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+  </PropertyGroup>
+  <PropertyGroup />
+  <ItemGroup />
+  <ItemGroup>
+    <Reference Include="Game" />
+    <Reference Include="Colossal.Logging" />
+    <Reference Include="Colossal.IO.AssetDatabase" />
+    <Reference Include="Colossal.Core" />
+    <Reference Include="Unity.Entities" />
+    <Reference Include="System.Core" />
+    <Reference Include="UnityEngine.CoreModule" />
+    <Reference Include="Colossal.UI.Binding" />
+    <Reference Include="Colossal.Localization" />
+    <Reference Include="Unity.Collections" />
+    <Reference Include="Unity.Burst" />
+  </ItemGroup>
+</Project>
