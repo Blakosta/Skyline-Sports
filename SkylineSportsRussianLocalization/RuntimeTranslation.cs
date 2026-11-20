@@ -231,7 +231,13 @@ namespace SkylineSportsRussianLocalization
                      .Replace("Your players called up:", "Ваши игроки вызваны в сборную:")
                      .Replace("free agency", "свободные агенты")
                      .Replace("round pick", "выбор раунда")
-                     .Replace("from clubs abroad", "из зарубежных клубов");
+                     .Replace("from clubs abroad", "из зарубежных клубов")
+                     .Replace(" plays in the qualifiers", " участвует в отборочном турнире")
+                     .Replace(" is in the main event", " участвует в основном турнире")
+                     .Replace(" nations", " сборных")
+                     .Replace("We have ", "У нас ")
+                     .Replace(". Thank you!", ". Спасибо!")
+                     .Replace(" Last season ", " В прошлом сезоне ");
 
             __0 = Regex.Replace(__0, @"\bJan\b", "янв", RegexOptions.IgnoreCase);
             __0 = Regex.Replace(__0, @"\bFeb\b", "фев", RegexOptions.IgnoreCase);
