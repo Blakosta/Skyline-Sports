@@ -86,7 +86,7 @@ return(0,i.jsxs)("div",{className:"clubEditorPanel",children:[!s?(0,i.jsx)(X,{ch
 (0,i.jsx)(Ve,{label:"Вместимость стадиона (мест)",value:p,onChange:b,onEnter:save}),
 (0,i.jsxs)("div",{className:"clubBrandingSection",children:[
 (0,i.jsx)("div",{className:ks,children:"Эмблема клуба"}),
-(0,i.jsx)("div",{className:"clubLogoGrid",children:Array.from({length:24},(t,q)=>(0,i.jsx)("div",{className:t("clubLogoChoice",logoId===q&&"clubLogoSelected"),onClick:()=>setLogoId(q),children:(0,i.jsx)(ClubLogo,{id:q,size:38})},q))}),
+(0,i.jsx)("div",{className:"clubLogoGrid",children:Array.from({length:24},(item,q)=>(0,i.jsx)("div",{className:t("clubLogoChoice",logoId===q&&"clubLogoSelected"),onClick:()=>setLogoId(q),children:(0,i.jsx)(ClubLogo,{id:q,size:38})},q))}),
 (0,i.jsx)("div",{className:ks,children:"Спонсор клуба"}),
 (0,i.jsx)(X,{children:[(0,i.jsx)(Z,{selected:sponsorId===-1,onClick:()=>setSponsorId(-1),children:"Без спонсора"}),(e.sponsorOptions||[]).map(t=>(0,i.jsx)(Z,{selected:sponsorId===t.id,onClick:()=>setSponsorId(t.id),children:t.name+" · "+t.tierLabel},t.id))]}),
 (0,i.jsx)("div",{className:ks,children:"Период выплат спонсора"}),
