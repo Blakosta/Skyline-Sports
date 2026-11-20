@@ -934,6 +934,7 @@ namespace SkylineSportsRussianLocalization
             __0 = Regex.Replace(__0, @"\bAPG\b", "передач за матч");
             __0 = Regex.Replace(__0, @"\bSV%", "% отражённых бросков");
             __0 = Regex.Replace(__0, @"\bGAA\b", "пропущенных шайб за матч");
+            __0 = Regex.Replace(__0, @"\b(\d+) lbs\b", "$1 фунтов");
             __0 = __0.Replace(" W, ", " побед, ");
             __0 = Regex.Replace(__0, @"\bpass yds\b", "ярдов пасом");
             __0 = Regex.Replace(__0, @"\bscrimmage yds\b", "ярдов на розыгрышах");
