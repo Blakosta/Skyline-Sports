@@ -159,7 +159,7 @@ public class SportsVenueSection : InfoSectionBase
 		catch (Exception ex)
 		{
 			Mod.Error("Не удалось выполнить команду спортивного объекта (" + command + ")", ex);
-			m_Message = "Произошла ошибка. Подробности записаны в журнал Skyline Sports Project.";
+			m_Message = "Произошла ошибка. Подробности записаны в журнал мода «Спорт России».";
 			m_MessageFor = selectedEntity;
 		}
 		m_SelectedInfo.RequestUpdate();
