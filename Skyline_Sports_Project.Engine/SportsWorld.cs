@@ -3668,7 +3668,7 @@ public class SportsWorld
 		}
 		string topTitle = Views.LeagueTitle(top);
 		string secondTitle = "Вторая лига";
-		Post(top, NewsKind.General, Wire, "ВЫЛЕТ: " + Capital(JoinNames(downNames)) + ((count == 1) ? " выбывает" : " выбывают") + " во вторую лигу " + secondTitle + " после " + label + " сезона. " + Capital(JoinNames(upNames.ConvertAll((string x) => x.Split('(', StringSplitOptions.None)[0].Trim()))) + ((count == 1) ? " занимает его место" : " занимают их места") + ".", isUser: false, now, 3);
+		Post(top, NewsKind.General, Wire, "ВЫЛЕТ: " + Capital(JoinNames(downNames)) + ((count == 1) ? " выбывает" : " выбывают") + " во вторую лигу " + secondTitle + " после " + label + " сезона. " + Capital(JoinNames(upNames.ConvertAll((string x) => x.Split(new[] { '(' }, StringSplitOptions.None)[0].Trim()))) + ((count == 1) ? " занимает его место" : " занимают их места") + ".", isUser: false, now, 3);
 		Post(second, NewsKind.General, Wire, "ПОВЫШЕНИЕ: " + Capital(JoinNames(upNames)) + ((count == 1) ? " выходит" : " выходят") + " в " + topTitle + ". " + Capital(JoinNames(downNames)) + ((count == 1) ? " выбывает" : " выбывают") + " в обратном направлении.", isUser: false, now, 3);
 		foreach (int id2 in up)
 		{
@@ -4307,7 +4307,7 @@ public class SportsWorld
 		{
 			return false;
 		}
-		string[] parts = h.Split('|', StringSplitOptions.None);
+		string[] parts = h.Split(new[] { '|' }, StringSplitOptions.None);
 		if (parts.Length < 3)
 		{
 			return false;
@@ -4605,7 +4605,7 @@ public class SportsWorld
 		bool user = false;
 		foreach (HallEntry e2 in inducted)
 		{
-			names.Add(e2.Position + " " + e2.Name + " (" + e2.Teams.Split(',', StringSplitOptions.None)[0] + " )");
+			names.Add(e2.Position + " " + e2.Name + " (" + e2.Teams.Split(new[] { ',' }, StringSplitOptions.None)[0] + " )");
 			Team t = GetTeam(e2.MainTeamId);
 			if (t != null && t.IsUser)
 			{
@@ -6377,7 +6377,7 @@ public class SportsWorld
 					Team club = GetTeam(p.TeamId);
 					if (club != null && club.IsUser)
 					{
-						mine.Add(p.Name + " (" + medal[k].Split(' ', StringSplitOptions.None)[0].ToLowerInvariant() + " with " + t.Teams[who[k]].Nation + ")");
+						mine.Add(p.Name + " (" + medal[k].Split(new[] { ' ' }, StringSplitOptions.None)[0].ToLowerInvariant() + " with " + t.Teams[who[k]].Nation + ")");
 					}
 				}
 			}
