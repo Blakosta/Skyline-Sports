@@ -185,7 +185,7 @@ public static class Views
 				}
 				jsonBuilder.Prop("time", value).Prop("live", live != null).Prop("featured", tonight)
 					.Prop("sport", (home == null) ? "" : SportRules.SportLabel(home.Sport))
-					.Prop("label", (home != null && home.Sport == Sport.Soccer) ? (world.TeamShortName(g.HomeTeamId) + " — " + world.TeamShortName(g.AwayTeamId)))
+					.Prop("label", world.TeamShortName(g.HomeTeamId) + " — " + world.TeamShortName(g.AwayTeamId))
 					.Prop("stage", (league == null) ? "" : world.StageLabel(league, g))
 					.EndObject();
 			}
