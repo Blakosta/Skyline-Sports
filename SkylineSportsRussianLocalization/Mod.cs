@@ -10,10 +10,12 @@ namespace SkylineSportsRussianLocalization
         {
             GameManager.instance.localizationManager.AddSource("ru-RU", new LocaleRU());
             RuntimeTranslation.Install();
+            AdditionalUiTranslations.Install();
         }
 
         public void OnDispose()
         {
+            AdditionalUiTranslations.Uninstall();
             RuntimeTranslation.Uninstall();
         }
     }
