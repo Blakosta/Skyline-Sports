@@ -7,4 +7,6 @@ public class Venue
 	public VenueType Type;
 
 	public Level Level;
+
+	public int Capacity;
 }
