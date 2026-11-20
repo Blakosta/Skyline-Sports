@@ -100,6 +100,12 @@ public class SportsWorld
 
 	public string CityName = "";
 
+	public long CityBalance;
+
+	public bool CityUnlimited;
+
+	public int VisitorAttendancePercent = 20;
+
 	private readonly Random _random;
 
 	private readonly NameGenerator _names;
@@ -2319,6 +2325,19 @@ public class SportsWorld
 				fill -= 0.06;
 			}
 		}
+		double referencePrice = league.Level switch
+		{
+			Level.Pro => ((league.Sport == Sport.Soccer) ? 30.0 : 25.0),
+			Level.Minor => 14.0,
+			Level.College => 10.0,
+			Level.Junior => 5.0,
+			_ => 3.0,
+		};
+		referencePrice *= 0.75 + (double)home.Rating / 200.0;
+		double touristShare = Math.Max(0.0, Math.Min(1.0, (double)VisitorAttendancePercent / 100.0));
+		double effectivePrice = (double)home.TicketPriceResidents * (1.0 - touristShare) + (double)home.TicketPriceVisitors * touristShare;
+		double priceFactor = Math.Pow(referencePrice / (double)Math.Max(1, (int)Math.Round(effectivePrice)), 0.28);
+		fill *= Math.Max(0.35, Math.Min(1.25, priceFactor));
 		fill += Rosters.Normal(r, 0.0, 0.04);
 		if (fill >= 0.99)
 		{
@@ -8987,6 +9006,50 @@ public class SportsWorld
 		return CommandResult.Success(manual ? ("Теперь вы управляете " + TeamName(t.Id) + ": контракты, свободные агенты, обмены, драфт и тренерский состав. Недостающие места в составе автоматически заполняются, чтобы матчи могли проходить.") : ("Генеральный менеджер снова управляет " + TeamName(t.Id) + "."));
 	}
 
+	public CommandResult SetTicketPrices(int teamId, int residents, int visitors)
+	{
+		Team t = GetTeam(teamId);
+		if (t == null || t.Retired || !t.IsUser)
+		{
+			return CommandResult.Fail("Изменять цены на билеты можно только у вашей команды.");
+		}
+		t.TicketPriceResidents = Math.Max(1, Math.Min(1500, residents));
+		t.TicketPriceVisitors = Math.Max(1, Math.Min(1500, visitors));
+		Revision++;
+		return CommandResult.Success("Цены билетов обновлены: жители — " + Economy.Money(t.TicketPriceResidents) + ", туристы — " + Economy.Money(t.TicketPriceVisitors) + ".");
+	}
+
+	public CommandResult TransferClubFunds(int teamId, int amount, bool toClub)
+	{
+		Team t = GetTeam(teamId);
+		if (t == null || t.Retired || !t.IsUser)
+		{
+			return CommandResult.Fail("Переводы доступны только для вашей команды.");
+		}
+		if (amount <= 0)
+		{
+			return CommandResult.Fail("Укажите положительную сумму перевода.");
+		}
+		if (toClub)
+		{
+			if ((long)t.ClubBalance + amount > int.MaxValue)
+			{
+				return CommandResult.Fail("Баланс клуба достиг максимального значения.");
+			}
+			t.ClubBalance += amount;
+		}
+		else
+		{
+			if (t.ClubBalance < amount)
+			{
+				return CommandResult.Fail("На счёте клуба недостаточно средств.");
+			}
+			t.ClubBalance -= amount;
+		}
+		Revision++;
+		return CommandResult.Success(toClub ? ("В бюджет клуба перечислено " + Economy.Money(amount) + ".") : ("Из бюджета клуба перечислено в город " + Economy.Money(amount) + "."));
+	}
+
 	public CommandResult Resign(int playerId, int now)
 	{
 		_clockHint = now;
@@ -12671,6 +12734,11 @@ public class SportsWorld
 		g.HomePenalties = live.HomePenalties;
 		g.AwayPenalties = live.AwayPenalties;
 		g.Played = true;
+		int visitorCount = (int)Math.Round((double)g.Attendance * Math.Max(0.0, Math.Min(1.0, (double)VisitorAttendancePercent / 100.0)));
+		g.TicketVisitorAttendance = Math.Max(0, Math.Min(g.Attendance, visitorCount));
+		g.TicketLocalAttendance = Math.Max(0, g.Attendance - g.TicketVisitorAttendance);
+		g.TicketRevenue = (home == null) ? 0 : (g.TicketLocalAttendance * home.TicketPriceResidents + g.TicketVisitorAttendance * home.TicketPriceVisitors);
+		g.TicketIncomePaid = g.TicketRevenue <= 0;
 		g.Live = null;
 		Momentum.UpdateForm(home, away, g, live.HomeChance);
 		RecordCoachResult(g);
