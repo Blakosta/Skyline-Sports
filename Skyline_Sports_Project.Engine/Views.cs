@@ -5428,6 +5428,13 @@ public static class Views
 		j.Prop("payrollBudgetEditable", Economy.Get(t.Sport).Type == CapType.Budget);
 		j.Prop("payrollBudget", Economy.Limit(t));
 		j.Prop("payrollUsed", Economy.Payroll(world.SignedPlayers(t.Id)) + Economy.DeadNow(t));
+		j.Prop("payrollExplanation", Economy.Get(t.Sport).Type switch
+		{
+			CapType.Mls => "Расходы по бюджету — сумма, учитываемая под потолком: для обычных игроков учитывается не более 803 тыс. $ на человека, а до трёх назначенных игроков могут превышать этот порог. «Всего фонд зарплат» — фактическая сумма всех контрактов и выплат по расторгнутым контрактам.",
+			CapType.Budget => "Фонд зарплат — фактические зарплаты игроков по контрактам плюс текущие выплаты по расторгнутым контрактам. Бюджет владельца — общий лимит клуба; он редактируется вручную за счёт клубной казны.",
+			CapType.Soft => "Фонд зарплат — сумма зарплат по контрактам и текущих выплат по расторгнутым контрактам. Лига использует мягкий потолок с отдельными исключениями.",
+			_ => "Фонд зарплат — сумма зарплат по контрактам и текущих выплат по расторгнутым контрактам. Жёсткий потолок задаётся правилами лиги."
+		});
 		j.Prop("sponsorTier", t.SponsorTier);
 		j.Prop("sponsorFrequency", t.SponsorFrequency);
 		j.Prop("sponsorTierLabel", SportsWorld.SponsorTierLabel(t.SponsorTier));
