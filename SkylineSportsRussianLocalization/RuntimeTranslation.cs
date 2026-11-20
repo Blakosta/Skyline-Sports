@@ -847,6 +847,10 @@ namespace SkylineSportsRussianLocalization
             __0 = Regex.Replace(__0, @"\b(\d{1,2}(?::\d{2})?)\s+AM\b", "$1 утра");
             __0 = Regex.Replace(__0, @"\b(\d{1,2}(?::\d{2})?)\s+PM\b", "$1 вечера");
 
+            Match shootout = Regex.Match(__0, @"^Shootout (\d+)-(\d+)$");
+            if (shootout.Success) __0 = "Буллиты " + shootout.Groups[1].Value + "–" + shootout.Groups[2].Value;
+            __0 = __0.Replace(" rolling", " на ходу");
+
             Match overtime = Regex.Match(__0, @"^(\d*)OT$");
             if (overtime.Success) __0 = overtime.Groups[1].Value + "ОТ";
 
