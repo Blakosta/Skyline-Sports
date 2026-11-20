@@ -5724,7 +5724,7 @@ public class SportsWorld
 		CountryName = known ?? clean;
 		CountryAbbrev = ((known != null && code == Codes[known]) ? "" : code);
 		Revision++;
-		string home = HomeCountry;
+		string home = NationLabel(HomeCountry);
 		return CommandResult.Success("Теперь ваш город находится в стране " + home + " (" + HomeAbbrev + "). Игроки, выросшие в вашем городе, выступают за " + home + " в следующих международных турнирах, а " + home + " всегда получает хотя бы одно место в квалификации.");
 	}
 
