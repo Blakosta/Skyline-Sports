@@ -177,7 +177,7 @@ public static class Views
 				string value;
 				if (live != null)
 				{
-					value = (home != null && home.Sport == Sport.Soccer) ? ("В ЭФИРЕ: " + world.TeamAbbrev(g.HomeTeamId) + " " + live.HomeScore + ", " + world.TeamAbbrev(g.AwayTeamId) + " " + live.AwayScore + " (" + live.Status + ")") : ("В ЭФИРЕ: " + world.TeamAbbrev(g.AwayTeamId) + " " + live.AwayScore + ", " + world.TeamAbbrev(g.HomeTeamId) + " " + live.HomeScore + " (" + live.Status + ")");
+					value = "В ЭФИРЕ: " + world.TeamAbbrev(g.HomeTeamId) + " " + live.HomeScore + ", " + world.TeamAbbrev(g.AwayTeamId) + " " + live.AwayScore + " (" + live.Status + ")";
 				}
 				else
 				{
@@ -185,7 +185,7 @@ public static class Views
 				}
 				jsonBuilder.Prop("time", value).Prop("live", live != null).Prop("featured", tonight)
 					.Prop("sport", (home == null) ? "" : SportRules.SportLabel(home.Sport))
-					.Prop("label", (home != null && home.Sport == Sport.Soccer) ? (world.TeamShortName(g.HomeTeamId) + " — " + world.TeamShortName(g.AwayTeamId)) : (world.TeamShortName(g.AwayTeamId) + " в " + world.TeamShortName(g.HomeTeamId)))
+					.Prop("label", (home != null && home.Sport == Sport.Soccer) ? (world.TeamShortName(g.HomeTeamId) + " — " + world.TeamShortName(g.AwayTeamId)))
 					.Prop("stage", (league == null) ? "" : world.StageLabel(league, g))
 					.EndObject();
 			}
@@ -4615,6 +4615,21 @@ public static class Views
 		};
 	}
 
+	private static string ShortNewsText(SportsWorld world, string text)
+	{
+		string result = text ?? "";
+		foreach (Organization org in world.Orgs.Values)
+		{
+			if (org == null || string.IsNullOrEmpty(org.FullName)) continue;
+			string shortName = (org.Level == Level.HighSchool || org.Level == Level.College || string.IsNullOrEmpty(org.Mascot)) ? org.Name : org.Mascot;
+			if (!string.IsNullOrEmpty(shortName) && !string.Equals(org.FullName, shortName, StringComparison.Ordinal))
+			{
+				result = result.Replace(org.FullName, shortName);
+			}
+		}
+		return result;
+	}
+
 	private static void WriteFeed(JsonBuilder j, SportsWorld world)
 	{
 		Dictionary<string, string> titles = new Dictionary<string, string>();
@@ -4633,7 +4648,7 @@ public static class Views
 				.Prop("kind", p.Kind.ToString())
 				.Prop("account", p.Account)
 				.Prop("handle", p.Handle)
-				.Prop("text", p.Text)
+				.Prop("text", ShortNewsText(world, p.Text))
 				.Prop("isUser", p.IsUser)
 				.Prop("likes", p.Likes)
 				.Prop("reposts", p.Reposts)
