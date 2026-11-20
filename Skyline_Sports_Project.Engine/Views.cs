@@ -1819,13 +1819,13 @@ public static class Views
 			}
 		}
 		j.Name("intl").BeginObject();
-		j.Name("country").BeginObject().Prop("name", world.HomeCountry)
+		j.Name("country").BeginObject().Prop("name", SportsWorld.NationLabel(world.HomeCountry))
 			.Prop("abbr", world.HomeAbbrev)
 			.Prop("custom", world.CustomCountry);
 		j.Name("known").BeginArray();
 		foreach (string c in SportsWorld.KnownCountries())
 		{
-			j.BeginObject().Prop("name", c).Prop("abbr", SportsWorld.Abbrev(c))
+			j.BeginObject().Prop("name", SportsWorld.NationLabel(c)).Prop("abbr", SportsWorld.Abbrev(c))
 				.EndObject();
 		}
 		j.EndArray().EndObject();
@@ -1873,7 +1873,7 @@ public static class Views
 			}
 			j.Prop("id", sel.Id);
 			j.Prop("name", sel.Label);
-			j.Prop("summary", "Место проведения: " + sel.Host + ". Даты: " + DayRange(sel) + "." + (sel.Under20 ? " Турнир среди игроков до 20 лет." : "") + ((field > 0) ? (" Участников: " + field + " сборных" + ((qualifiers > 0) ? (" (через квалификацию прошли " + qualifiers + ")") : "") + ".") : " Последние места определяются в квалификации.") + " Составы сборных формируются из игроков вашей спортивной вселенной с учётом их происхождения; недостающие места занимают игроки зарубежных клубов.");
+			j.Prop("summary", "Место проведения: " + SportsWorld.NationLabel(sel.Host) + ". Даты: " + DayRange(sel) + "." + (sel.Under20 ? " Турнир среди игроков до 20 лет." : "") + ((field > 0) ? (" Участников: " + field + " сборных" + ((qualifiers > 0) ? (" (через квалификацию прошли " + qualifiers + ")") : "") + ".") : " Последние места определяются в квалификации.") + " Составы сборных формируются из игроков вашей спортивной вселенной с учётом их происхождения; недостающие места занимают игроки зарубежных клубов.");
 			j.Prop("medals", sel.Complete ? ("Золото: " + sel.Gold + "  ·  Серебро: " + sel.Silver + "  ·  Бронза: " + sel.Bronze) : "");
 			j.Name("groups").BeginArray();
 			int groups = field / 4;
@@ -1886,7 +1886,7 @@ public static class Views
 				{
 					int[] row = world.GroupRow(i);
 					bool mine2 = sel.Teams[i].PlayerIds.Exists((int playerId) => UserPlayer(world, playerId));
-					j.BeginObject().Prop("nation", sel.Teams[i].Nation).Prop("abbr", world.NationAbbrev(sel.Teams[i].Nation))
+					j.BeginObject().Prop("nation", SportsWorld.NationLabel(sel.Teams[i].Nation)).Prop("abbr", world.NationAbbrev(sel.Teams[i].Nation))
 						.Prop("home", sel.Teams[i].Nation == world.HomeNation(sel.Sport))
 						.Prop("gp", row[6])
 						.Prop("w", row[3])
@@ -1909,8 +1909,8 @@ public static class Views
 				NationTeam a = sel.Teams[g2.Away];
 				string score = ((!g2.Played) ? "" : (g2.HomeScore + "-" + g2.AwayScore + ((g2.Suffix.Length > 0) ? (" " + g2.Suffix) : "") + ((g2.TieWinner >= 0) ? (" (" + sel.Teams[g2.TieWinner].Nation + " выигрывает серию буллитов)") : "")));
 				j.BeginObject().Prop("stage", g2.Stage).Prop("date", GameClock.ShortDayLabel(g2.Day) + ", " + GameClock.ClockLabel(g2.Minute))
-					.Prop("home", h.Nation)
-					.Prop("away", a.Nation)
+					.Prop("home", SportsWorld.NationLabel(h.Nation))
+					.Prop("away", SportsWorld.NationLabel(a.Nation))
 					.Prop("homeAbbr", world.NationAbbrev(h.Nation))
 					.Prop("awayAbbr", world.NationAbbrev(a.Nation))
 					.Prop("score", score)
@@ -1924,7 +1924,7 @@ public static class Views
 			j.Name("teams").BeginArray();
 			foreach (NationTeam n2 in list4)
 			{
-				JsonBuilder jsonBuilder = j.BeginObject().Prop("nation", n2.Nation).Prop("abbr", world.NationAbbrev(n2.Nation))
+				JsonBuilder jsonBuilder = j.BeginObject().Prop("nation", SportsWorld.NationLabel(n2.Nation)).Prop("abbr", world.NationAbbrev(n2.Nation))
 					.Prop("home", n2.Nation == world.HomeNation(sel.Sport));
 				string text = ((n2.Group >= 0) ? ("Группа " + (char)(65 + n2.Group)) : "Не прошла квалификацию");
 				string text2 = ((n2.Qualifier && n2.Group >= 0) ? ", через квалификацию" : "");
