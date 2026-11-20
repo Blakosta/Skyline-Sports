@@ -2687,7 +2687,7 @@ public class SportsWorld
 		reason = "";
 		if (!SportRules.IsAllowed(v.Type, sport))
 		{
-			reason = "A " + SportRules.VenueTypeLabel(v.Type) + " не может принимать " + SportRules.SportLabel(sport) + ".";
+			reason = SportRules.VenueTypeLabel(v.Type) + " не может принимать " + SportRules.SportLabel(sport) + ".";
 			return false;
 		}
 		if (!SportRules.LevelAllowed(sport, level))
@@ -2712,7 +2712,7 @@ public class SportsWorld
 		}
 		if (count >= SportRules.MaxTeams(v.Type))
 		{
-			reason = "Этот " + SportRules.VenueTypeLabel(v.Type) + " переполнен: он может быть домашней ареной для " + SportRules.MaxTeams(v.Type) + " .";
+			reason = "Для объекта «" + SportRules.VenueTypeLabel(v.Type) + "» достигнут лимит: он может быть домашней ареной не более чем для " + SportRules.MaxTeams(v.Type) + " команд.";
 			return false;
 		}
 		if (level == Level.Pro && sameSportPro >= 2)
