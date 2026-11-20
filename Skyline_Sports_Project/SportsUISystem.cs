@@ -255,7 +255,7 @@ public class SportsUISystem : UISystemBase
 		}
 		catch (Exception ex)
 		{
-			Mod.Error("Sports panel command failed", ex);
+			Mod.Error("Не удалось выполнить команду спортивной панели", ex);
 		}
 	}
 
