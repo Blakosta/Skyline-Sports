@@ -11217,7 +11217,9 @@ public class SportsWorld
 		string text = ((comma > 0) ? town.Substring(0, comma) : town);
 		string[] names = NameGenerator.HighSchoolNames;
 		string school = names[_random.Next(names.Length)];
-		if (!school.EndsWith(" школа", StringComparison.OrdinalIgnoreCase))
+		if (!school.EndsWith(" школа", StringComparison.OrdinalIgnoreCase) &&
+			!school.StartsWith("Лицей", StringComparison.OrdinalIgnoreCase) &&
+			!school.StartsWith("Гимназия", StringComparison.OrdinalIgnoreCase))
 		{
 			school += " школа";
 		}
