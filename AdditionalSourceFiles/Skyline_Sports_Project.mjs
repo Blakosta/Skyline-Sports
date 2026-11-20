@@ -90,7 +90,7 @@ const[s,a]=(0,n.useState)(!1),[l,c]=(0,n.useState)(e.orgCity||""),[d,r]=(0,n.use
 n.useEffect(()=>{c(e.orgCity||""),r(e.clubName||""),h(String(e.venueId??-1)),g(e.stadiumName||""),b(String(e.stadiumCapacity||500)),setLogoId(e.logoId??0),setLogoPickerOpen(!1)},[e.id,e.orgCity,e.clubName,e.venueId,e.stadiumName,e.stadiumCapacity,e.logoId]);
 if(!e.canEditClub)return null;
 const save=()=>{A("editClub",e.id,l,d,parseInt(u,10),Math.max(500,Math.min(150000,parseInt(p,10)||500)),v);A("clubLogo",e.id,logoId);a(!1);setLogoPickerOpen(!1)};
-const chooseLogo=id=>{setLogoId(id);setLogoPickerOpen(!1)};
+const chooseLogo=id=>{setLogoId(id);A("clubLogo",e.id,id);setLogoPickerOpen(!1)};
 const rplNames=["Зенит","Ахмат","Акрон","Балтика","ЦСКА","Динамо Махачкала","Динамо Москва","Факел","Краснодар","Крылья Советов","Локомотив","Оренбург","Родина","Ростов","Рубин","Спартак"];
 return(0,i.jsxs)("div",{className:"clubEditorPanel",children:[!s?(0,i.jsx)(X,{children:(0,i.jsx)(Z,{onClick:()=>a(!0),children:"✏️ Редактировать клуб"})}):(0,i.jsxs)("div",{children:[
 (0,i.jsx)(In,{title:"РЕДАКТОР КЛУБА"}),
