@@ -532,7 +532,8 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 
 	private void SettleTicketIncome()
 	{
-		long total = 0L;
+		long cityTotal = 0L;
+		long clubTotal = 0L;
 		foreach (League league in Sports.Leagues)
 		{
 			Season[] seasons = new Season[2] { league.Current, league.Previous };
@@ -547,6 +548,20 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 						game.TicketIncomePaid = true;
 						continue;
 					}
+
+					Team homeTeam = Sports.GetTeam(game.HomeTeamId);
+					if (homeTeam != null && !homeTeam.IsUser)
+					{
+						int clubIncome = (int)Math.Min(int.MaxValue, game.TicketRevenue);
+						CommandResult clubPayment = Sports.TransferClubFunds(homeTeam.Id, clubIncome, toClub: true);
+						if (clubPayment.Ok)
+						{
+							game.TicketIncomePaid = true;
+						clubTotal += clubIncome;
+						}
+						continue;
+					}
+
 					if (TryGetCityMoney(out var city, out var balance) && (CityMoneyUnlimited(balance) || CityMoneyValue(balance) >= 2000000000L))
 					{
 						game.TicketIncomePaid = true;
@@ -555,15 +570,18 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 					if (ChangeCityMoney(game.TicketRevenue))
 					{
 						game.TicketIncomePaid = true;
-						total += game.TicketRevenue;
+						cityTotal += game.TicketRevenue;
 					}
-				}
 			}
 		}
-		if (total > 0)
+		if (cityTotal > 0)
 		{
 			Sports.Revision++;
-			Mod.log.Info((object)("Билетные доходы: в городской бюджет зачислено " + total.ToString("N0") + "."));
+			Mod.log.Info((object)("Билетные доходы: в городской бюджет зачислено " + cityTotal.ToString("N0") + "."));
+		}
+		if (clubTotal > 0)
+		{
+			Mod.log.Info((object)("Билетные доходы: в бюджеты ИИ-клубов зачислено " + clubTotal.ToString("N0") + "."));
 		}
 	}
 
