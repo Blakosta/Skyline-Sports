@@ -52,6 +52,10 @@ namespace SkylineSportsRussianLocalization
             { "Loyalty", "Преданность" },
             { "Money", "Деньги" },
             { "Balanced", "Сбалансированный" },
+            { "Taiwan", "Тайвань" },
+            { "playoff", "плей-офф" },
+            { "rain", "дождь" },
+            { "snow", "снег" },
             { "Canada", "Канада" },
             { "Mexico", "Мексика" },
             { "Sweden", "Швеция" },
@@ -492,28 +496,26 @@ namespace SkylineSportsRussianLocalization
 
             if (__0.StartsWith("FLIP: ", StringComparison.Ordinal))
             {
-                __0 = "ПЕРЕХОД: " + __0.Substring("FLIP: ".Length)
-                    .Replace(" flips from ", " меняет команду «")
+                string text = __0.Substring("FLIP: ".Length).TrimEnd('!');
+                text = text.Replace(" flips from ", " меняет команду «")
                     .Replace(" from ", " из ")
                     .Replace(" to ", "» на команду «");
-                if (__0.EndsWith("!", StringComparison.Ordinal)) __0 += "»";
+                __0 = "ПЕРЕХОД: " + text + "»!";
             }
             else if (__0.StartsWith("COMMIT: ", StringComparison.Ordinal))
             {
-                __0 = "ПОДПИСАНИЕ: " + __0.Substring("COMMIT: ".Length)
-                    .Replace(" from ", " из ")
+                string text = __0.Substring("COMMIT: ".Length).TrimEnd('!');
+                text = text.Replace(" from ", " из ")
                     .Replace(" commits to ", " выбирает команду «");
-                if (__0.EndsWith("!", StringComparison.Ordinal)) __0 += "»";
+                __0 = "ПОДПИСАНИЕ: " + text + "»!";
             }
 
             if (__0.StartsWith("TRANSFER: The ", StringComparison.Ordinal))
             {
-                __0 = "ТРАНСФЕР: команда «" + __0.Substring("TRANSFER: The ".Length)
-                    .Replace(" sign ", "» подписывает игрока ")
-                    .Replace(" OVR) from ", " ОБЩ) из клуба «")
-                    .Replace(" from the ", " из клуба «")
-                    .Replace(" from ", " из клуба «")
-                    .Replace(" for ", "» за ");
+                string text = __0.Substring("TRANSFER: The ".Length).Replace(" sign ", "» подписывает игрока ");
+                text = Regex.Replace(text, @" OVR\) from (?:the )?", " ОБЩ) из клуба «");
+                text = text.Replace(" from ", " из клуба «").Replace(" for ", "» за ");
+                __0 = "ТРАНСФЕР: команда «" + text;
             }
 
             Match lastSeason = Regex.Match(__0, @"^\s*Last season (.+?) came (down|up)\.(.*)$");
