@@ -414,6 +414,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 		if (s != null)
 		{
 			Sports.Settings.LeagueSize = s.LeagueSize;
+			Sports.Settings.SoccerLeagueSize = s.SoccerLeagueSize;
 			Sports.Settings.SeasonLengthPercent = s.SeasonGames;
 			Sports.Settings.InjuryPercent = s.InjuryFrequency;
 			if (!string.IsNullOrEmpty(CityName))
