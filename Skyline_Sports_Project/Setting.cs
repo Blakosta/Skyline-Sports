@@ -39,6 +39,10 @@ public class Setting : ModSetting
 	public int LeagueSize { get; set; }
 
 	[SettingsUISection("Main", "Leagues")]
+	[SettingsUISlider(min = 16f, max = 20f, step = 2f, scalarMultiplier = 1f, unit = "integer")]
+	public int SoccerLeagueSize { get; set; }
+
+	[SettingsUISection("Main", "Leagues")]
 	[SettingsUISlider(min = 25f, max = 100f, step = 25f, scalarMultiplier = 1f, unit = "percentage")]
 	public int SeasonGames { get; set; }
 
@@ -109,6 +113,7 @@ public class Setting : ModSetting
 	public override void SetDefaults()
 	{
 		LeagueSize = 8;
+		SoccerLeagueSize = 18;
 		SeasonGames = 100;
 		InjuryFrequency = 100;
 		ShowLeagueButton = true;
