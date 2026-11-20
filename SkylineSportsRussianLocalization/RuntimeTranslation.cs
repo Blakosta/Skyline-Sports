@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using HarmonyLib;
 
 namespace SkylineSportsRussianLocalization
@@ -22,6 +23,17 @@ namespace SkylineSportsRussianLocalization
             { "Career", "Карьера" },
             { "Awards", "Награды" },
             { "Teams", "Команды" },
+            { "Metro", "Метро" },
+            { "District", "Округ" },
+            { "Second", "Второй" },
+            { "First", "Первый" },
+            { "Third", "Третий" },
+            { "Pens", "Пенальти" },
+            { "America", "Америка" },
+            { "Britain", "Великобритания" },
+            { "Korea", "Корея" },
+            { "Holland", "Нидерланды" },
+            { "Deutschland", "Германия" },
             { "Prospect", "Перспективный игрок" },
             { "Recruiting", "Подбор игроков" },
             { "Weight", "Вес" },
@@ -210,6 +222,18 @@ namespace SkylineSportsRussianLocalization
                      .Replace("free agency", "свободные агенты")
                      .Replace("round pick", "выбор раунда")
                      .Replace("from clubs abroad", "из зарубежных клубов");
+            __0 = Regex.Replace(__0, @"\\bJan\\b", "янв", RegexOptions.IgnoreCase);
+            __0 = Regex.Replace(__0, @"\\bFeb\\b", "фев", RegexOptions.IgnoreCase);
+            __0 = Regex.Replace(__0, @"\\bMar\\b", "мар", RegexOptions.IgnoreCase);
+            __0 = Regex.Replace(__0, @"\\bApr\\b", "апр", RegexOptions.IgnoreCase);
+            __0 = Regex.Replace(__0, @"\\bMay\\b", "май", RegexOptions.IgnoreCase);
+            __0 = Regex.Replace(__0, @"\\bJun\\b", "июн", RegexOptions.IgnoreCase);
+            __0 = Regex.Replace(__0, @"\\bJul\\b", "июл", RegexOptions.IgnoreCase);
+            __0 = Regex.Replace(__0, @"\\bAug\\b", "авг", RegexOptions.IgnoreCase);
+            __0 = Regex.Replace(__0, @"\\bSep\\b", "сен", RegexOptions.IgnoreCase);
+            __0 = Regex.Replace(__0, @"\\bOct\\b", "окт", RegexOptions.IgnoreCase);
+            __0 = Regex.Replace(__0, @"\\bNov\\b", "ноя", RegexOptions.IgnoreCase);
+            __0 = Regex.Replace(__0, @"\\bDec\\b", "дек", RegexOptions.IgnoreCase);
         }
     }
 }
