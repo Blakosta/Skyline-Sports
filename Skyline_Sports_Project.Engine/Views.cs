@@ -1781,9 +1781,9 @@ public static class Views
 			top((Player p) => true, (int[] s) => (G(s, 0) > 0) ? ((double)G(s, 1) / (double)G(s, 0)) : 0.0, (int[] s) => ((double)G(s, 1) / (double)Math.Max(1, G(s, 0))).ToString("0.0", CultureInfo.InvariantCulture) + " ОЧК/М, " + ((double)G(s, 2) / (double)Math.Max(1, G(s, 0))).ToString("0.0", CultureInfo.InvariantCulture) + " ПДБ/М", 3);
 			break;
 		case Sport.Football:
-			top((Player p) => p.Position == Position.Quarterback, (int[] s) => G(s, 3), (int[] s) => G(s, 3) + " ярдов пасом, " + G(s, 4) + " TD", 1);
-			top((Player p) => true, (int[] s) => G(s, 7), (int[] s) => G(s, 7) + " ярдов на выносе, " + G(s, 8) + " TD", 1);
-			top((Player p) => true, (int[] s) => G(s, 10), (int[] s) => G(s, 10) + " ярдов на приёме, " + G(s, 11) + " TD", 1);
+			top((Player p) => p.Position == Position.Quarterback, (int[] s) => G(s, 3), (int[] s) => G(s, 3) + " ярдов пасом, " + G(s, 4) + " тачдаунов", 1);
+			top((Player p) => true, (int[] s) => G(s, 7), (int[] s) => G(s, 7) + " ярдов на выносе, " + G(s, 8) + " тачдаунов", 1);
+			top((Player p) => true, (int[] s) => G(s, 10), (int[] s) => G(s, 10) + " ярдов на приёме, " + G(s, 11) + " тачдаунов", 1);
 			break;
 		case Sport.Baseball:
 			top((Player p) => !Rosters.IsPitcher(p.Position), (int[] s) => G(s, 5) * 10 + G(s, 6), (int[] s) => G(s, 5) + " ХР, " + G(s, 6) + " РБИ, " + ((G(s, 1) <= 0) ? ".000" : ((double)G(s, 3) / (double)G(s, 1)).ToString(".000", CultureInfo.InvariantCulture)), 3);
