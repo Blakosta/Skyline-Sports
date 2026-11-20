@@ -428,23 +428,126 @@ namespace SkylineSportsRussianLocalization
                 return;
             }
 
-            // Translate known dynamic templates without touching player or club names.
-            if (__0.StartsWith("No young prospects on the market right now. A new class arrives every ", StringComparison.Ordinal))
-                __0 = "Сейчас на рынке нет молодых перспективных игроков. Новый набор появится в " + __0.Substring("No young prospects on the market right now. A new class arrives every ".Length);
-            if (__0.StartsWith("FOLDED: The ", StringComparison.Ordinal))
-                __0 = "РАСФОРМИРОВАНИЕ: команда «" + __0.Substring("FOLDED: The ".Length).Replace(" have folded after ", "» прекратила существование после сезона ").Replace("the season", "текущего сезона").TrimEnd('.') + ".";
+            // Dynamic announcements: translate the sentence while keeping generated names intact.
+            const string prospectsPrefix = "No young prospects on the market right now. A new class arrives every ";
+            if (__0.StartsWith(prospectsPrefix, StringComparison.Ordinal))
+                __0 = "Сейчас на рынке нет молодых перспективных игроков. Новый набор появится в " + __0.Substring(prospectsPrefix.Length);
+
+            if (__0.StartsWith("We have ", StringComparison.Ordinal))
+            {
+                __0 = "Мы " + __0.Substring("We have ".Length);
+                __0 = __0.Replace(". Thank you!", ". Спасибо!");
+            }
+
+            // A player's name is kept verbatim; only the English sentence frame is localized.
+            Match freeAgent = Regex.Match(__0, @"^(.+?) was (.+?) and is now a free agent\.(.*)$");
+            if (freeAgent.Success)
+                __0 = freeAgent.Groups[1].Value + " теперь свободный агент." + freeAgent.Groups[3].Value;
+
+            Match folded = Regex.Match(__0, @"^FOLDED: The (.+?) have folded after (?:the )?(.*?) season\.(.*)$");
+            if (folded.Success)
+            {
+                string season = folded.Groups[2].Value.Trim();
+                __0 = "РАСФОРМИРОВАНИЕ: команда «" + folded.Groups[1].Value + "» прекратила существование" +
+                    (season.Length == 0 ? " после окончания сезона." : " после сезона " + season + ".") + folded.Groups[3].Value;
+            }
+
+            // International tournament post with city-country participation and local call-ups.
             if (__0.StartsWith("NATIONAL TEAMS: the ", StringComparison.Ordinal))
-                __0 = "СБОРНЫЕ: турнир «" + __0.Substring("NATIONAL TEAMS: the ".Length).Replace(" starts ", "» начинается ").Replace(" in ", " в ").TrimEnd('.') + ".";
+            {
+                string body = __0.Substring("NATIONAL TEAMS: the ".Length);
+                Match header = Regex.Match(body, @"^(.*?) starts (.*?) in (.*?)\.(.*)$");
+                if (header.Success)
+                {
+                    string result = "СБОРНЫЕ: турнир «" + header.Groups[1].Value + "» начинается " +
+                        header.Groups[2].Value + " в " + header.Groups[3].Value + ".";
+                    string tail = header.Groups[4].Value;
+                    Match home = Regex.Match(tail, @"^\s+(.+?), your city's country, (plays in the qualifiers|is in the main event)(?:, with (\d+) players? who grew up in your city)?\.");
+                    if (home.Success)
+                    {
+                        string country = home.Groups[1].Value;
+                        if (Exact.TryGetValue(country, out string translatedCountry)) country = translatedCountry;
+                        result += " Сборная " + country +
+                            (home.Groups[2].Value == "plays in the qualifiers" ? " участвует в отборочном турнире" : " участвует в основном турнире");
+                        if (home.Groups[3].Success)
+                        {
+                            int localCount;
+                            if (int.TryParse(home.Groups[3].Value, out localCount))
+                                result += ", в составе " + localCount + (localCount == 1 ? " игрок, выросший в вашем городе" : " игроков, выросших в вашем городе");
+                        }
+                        result += ".";
+                        tail = tail.Substring(home.Length);
+                    }
+                    Match calledUp = Regex.Match(tail, @"^\s+Your players called up: (.*?)(?: and (\d+) more)?\.$");
+                    if (calledUp.Success)
+                    {
+                        result += " Ваши игроки, вызванные в сборную: " + calledUp.Groups[1].Value;
+                        if (calledUp.Groups[2].Success) result += " и ещё " + calledUp.Groups[2].Value;
+                        result += ".";
+                        tail = "";
+                    }
+                    __0 = result + tail;
+                }
+            }
+
             if (__0.StartsWith("FLIP: ", StringComparison.Ordinal))
-                __0 = "ПЕРЕХОД: " + __0.Substring("FLIP: ".Length).Replace(" flips from ", " переходит из команды ").Replace(" to ", " в команду ");
-            if (__0.StartsWith("COMMIT: ", StringComparison.Ordinal))
-                __0 = "ПОДПИСАНИЕ: " + __0.Substring("COMMIT: ".Length).Replace(" commits to ", " подписывает контракт с командой ");
+            {
+                __0 = "ПЕРЕХОД: " + __0.Substring("FLIP: ".Length)
+                    .Replace(" from ", " из ")
+                    .Replace(" flips from ", " меняет команду «")
+                    .Replace(" to ", "» на команду «");
+                if (__0.EndsWith("!", StringComparison.Ordinal)) __0 += "»";
+            }
+            else if (__0.StartsWith("COMMIT: ", StringComparison.Ordinal))
+            {
+                __0 = "ПОДПИСАНИЕ: " + __0.Substring("COMMIT: ".Length)
+                    .Replace(" from ", " из ")
+                    .Replace(" commits to ", " выбирает команду «");
+                if (__0.EndsWith("!", StringComparison.Ordinal)) __0 += "»";
+            }
+
             if (__0.StartsWith("TRANSFER: The ", StringComparison.Ordinal))
-                __0 = "ТРАНСФЕР: команда «" + __0.Substring("TRANSFER: The ".Length).Replace(" sign ", "» подписывает игрока ").Replace(" from ", " из команды ").Replace(" for ", " за ");
-            if (__0.StartsWith(" Last season ", StringComparison.Ordinal))
-                __0 = " В прошлом сезоне " + __0.Substring(" Last season ".Length).Replace(" came down.", " выбыли в лигу ниже.").Replace(" came up.", " поднялись в лигу выше.");
+            {
+                __0 = "ТРАНСФЕР: команда «" + __0.Substring("TRANSFER: The ".Length)
+                    .Replace(" sign ", "» подписывает игрока ")
+                    .Replace(" from the ", " ОБЩ) из клуба «")
+                    .Replace(" OVR) from ", " ОБЩ) из клуба «")
+                    .Replace(" from ", " из клуба «")
+                    .Replace(" for ", "» за ");
+            }
+
+            Match lastSeason = Regex.Match(__0, @"^\s*Last season (.+?) came (down|up)\.(.*)$");
+            if (lastSeason.Success)
+                __0 = lastSeason.Groups[1].Value +
+                    (lastSeason.Groups[2].Value == "down" ? " в прошлом сезоне выбыла в лигу ниже." : " в прошлом сезоне поднялась в лигу выше.") +
+                    lastSeason.Groups[3].Value;
+
+            // Football drive summaries are complete values, not standalone dictionary fragments.
+            Match plays = Regex.Match(__0, @"^(\d+) plays?, (-?\d+) yds?$");
+            if (plays.Success)
+            {
+                int count;
+                int.TryParse(plays.Groups[1].Value, out count);
+                __0 = plays.Groups[1].Value + (count == 1 ? " розыгрыш, " : " розыгрышей, ") + plays.Groups[2].Value + " ярдов";
+            }
+
+            // Tournament overview and date range.
+            if (__0.StartsWith("In ", StringComparison.Ordinal))
+            {
+                __0 = Regex.Replace(__0, @"^In (.+?), ", "В городе $1, ");
+                __0 = __0.Replace(" Under 20.", " Турнир для игроков до 20 лет.")
+                    .Replace(" nations", " сборных")
+                    .Replace(" through the qualifiers", " прошли отборочный турнир")
+                    .Replace("The qualifiers decide the last spots.", "Последние места определяются по итогам отборочного турнира.")
+                    .Replace("National teams are picked from the players in your sports world by where they're from; the spots nobody fills go to players from clubs abroad.",
+                        "Составы сборных формируются по месту происхождения игроков; свободные места занимают спортсмены зарубежных клубов.");
+            }
+
             __0 = Regex.Replace(__0, @"\bGroup ([A-Z])\b", "Группа $1");
-            // Exact-value translations only: avoid changing generated player or team names.
+            if (Regex.IsMatch(__0, @"^[A-Z][a-z]{2} \d{1,2} to [A-Z][a-z]{2} \d{1,2}, \d{4}$"))
+                __0 = Regex.Replace(__0, @"\s+to\s+", " — ");
+
+            // Month abbreviations can appear inside complete date labels.
             __0 = Regex.Replace(__0, @"\bJan\b", "янв", RegexOptions.IgnoreCase);
             __0 = Regex.Replace(__0, @"\bFeb\b", "фев", RegexOptions.IgnoreCase);
             __0 = Regex.Replace(__0, @"\bMar\b", "мар", RegexOptions.IgnoreCase);
