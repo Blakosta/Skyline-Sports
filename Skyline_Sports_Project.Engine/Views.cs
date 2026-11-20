@@ -1672,7 +1672,7 @@ public static class Views
 					if (hurt.Length > 0)
 					{
 						j.BeginObject().Prop("id", p.Id).Prop("name", p.Name)
-							.Prop("pos", Rosters.PositionLabel(p.Position))
+							.Prop("pos", Rosters.PositionLabel(p.Position, p.Sport))
 							.Prop("text", hurt)
 							.EndObject();
 					}
@@ -1984,7 +1984,7 @@ public static class Views
 				{
 					Team club = world.GetTeam(p2.TeamId);
 					JsonBuilder jsonBuilder2 = j.BeginObject().Prop("id", p2.Id).Prop("name", p2.Name)
-						.Prop("pos", Rosters.PositionLabel(p2.Position))
+						.Prop("pos", Rosters.PositionLabel(p2.Position, p2.Sport))
 						.Prop("ovr", Rosters.Ovr(p2));
 					string value;
 					if (club != null)
@@ -2420,7 +2420,7 @@ public static class Views
 				Team team = world.GetTeam(p3.TeamId);
 				j.BeginObject().Prop("rank", i2 + 1).Prop("playerId", p3.Id)
 					.Prop("name", p3.Name)
-					.Prop("pos", Rosters.PositionLabel(p3.Position))
+					.Prop("pos", Rosters.PositionLabel(p3.Position, p3.Sport))
 					.Prop("age", (league.Level == Level.Pro || league.Level == Level.Junior || league.Level == Level.Minor) ? (year - p3.BirthYear).ToString() : Rosters.ClassLabel(p3.ClassYear))
 					.Prop("teamId", team?.Id ?? (-1))
 					.Prop("team", (team == null) ? "Свободный агент" : world.TeamAbbrev(team.Id))
@@ -2766,7 +2766,7 @@ public static class Views
 			int age = year - p2.BirthYear;
 			j.BeginObject().Prop("id", p2.Id).Prop("rank", i2 + 1)
 				.Prop("name", p2.Name)
-				.Prop("pos", Rosters.PositionLabel(p2.Position))
+				.Prop("pos", Rosters.PositionLabel(p2.Position, p2.Sport))
 				.Prop("age", age.ToString())
 				.Prop("ovr", Rosters.Ovr(p2))
 				.Prop("grade", Rosters.Grade(p2, age))
@@ -2811,7 +2811,7 @@ public static class Views
 		List<string> positions = new List<string>();
 		foreach (Player item in fas)
 		{
-			string pos = Rosters.PositionLabel(item.Position);
+			string pos = Rosters.PositionLabel(item.Position, item.Sport);
 			if (!positions.Contains(pos))
 			{
 				positions.Add(pos);
@@ -2821,7 +2821,7 @@ public static class Views
 		RosterSlot[] array = Rosters.Template(league.Sport, Level.Pro);
 		for (int num = 0; num < array.Length; num++)
 		{
-			string pos2 = Rosters.PositionLabel(array[num].Pos);
+			string pos2 = Rosters.PositionLabel(array[num].Pos, league.Sport);
 			if (positions.Contains(pos2))
 			{
 				j.Value(pos2);
@@ -2835,7 +2835,7 @@ public static class Views
 			int age = year - p.BirthYear;
 			int years = Economy.AskingYears(league.Sport, age, resign: false);
 			j.BeginObject().Prop("id", p.Id).Prop("name", p.Name)
-				.Prop("pos", Rosters.PositionLabel(p.Position))
+				.Prop("pos", Rosters.PositionLabel(p.Position, p.Sport))
 				.Prop("age", age.ToString())
 				.Prop("ovr", Rosters.Ovr(p))
 				.Prop("grade", Rosters.Grade(p, age))
@@ -4359,7 +4359,7 @@ public static class Views
 		{
 			if (world.IsInjured(p, today))
 			{
-				hurt.Add(Rosters.PositionLabel(p.Position) + " " + p.ShortName);
+				hurt.Add(Rosters.PositionLabel(p.Position, p.Sport) + " " + p.ShortName);
 			}
 		}
 		roster.Lines.Add("Общий рейтинг команды " + TeamOvr(t, players) + ", " + players.Count + " игроков");
@@ -4766,7 +4766,7 @@ public static class Views
 		j.Prop("id", p.Id);
 		j.Prop("name", p.Name);
 		j.Prop("number", p.Number);
-		j.Prop("pos", Rosters.PositionLabel(p.Position));
+		j.Prop("pos", Rosters.PositionLabel(p.Position, p.Sport));
 		j.Prop("position", PositionName(p.Position));
 		j.Prop("teamId", team?.Id ?? (-1));
 		j.Prop("team", (team == null) ? "" : world.TeamName(team.Id));
@@ -5093,7 +5093,7 @@ public static class Views
 				bool open = r2.CommittedTo != t.Id && r2.CommittedTo != -2;
 				int projected = ((p2.Level == Level.HighSchool) ? ((int)Math.Round(53.0 + (double)(p2.Overall - 55) * 0.7)) : p2.Overall);
 				JsonBuilder jsonBuilder = j.BeginObject().Prop("id", p2.Id).Prop("name", p2.Name)
-					.Prop("pos", Rosters.PositionLabel(p2.Position))
+					.Prop("pos", Rosters.PositionLabel(p2.Position, p2.Sport))
 					.Prop("stars", r2.Stars)
 					.Prop("ovr", Rosters.Display(Level.College, projected));
 				string value;
@@ -5555,7 +5555,7 @@ public static class Views
 		j.Prop("id", p.Id);
 		j.Prop("number", p.Number);
 		j.Prop("name", p.Name);
-		j.Prop("pos", Rosters.PositionLabel(p.Position));
+		j.Prop("pos", Rosters.PositionLabel(p.Position, p.Sport));
 		j.Prop("age", (pro || t.Level == Level.Junior) ? age.ToString() : Rosters.ClassLabel(p.ClassYear));
 		j.Prop("ovr", Rosters.Ovr(p));
 		j.Prop("pot", pro ? Rosters.Grade(p, age) : Rosters.Grade(p, 0));
@@ -6005,7 +6005,7 @@ public static class Views
 			{
 				int v = world.TradePoints(viewer, p);
 				total += v;
-				j.BeginObject().Prop("id", p.Id).Prop("label", Rosters.PositionLabel(p.Position) + " " + p.Name + ", " + Rosters.Ovr(p) + " ОБЩ, возраст " + (year - p.BirthYear) + ((p.ContractYears > 0) ? (", " + Economy.ContractText(p)) : ""))
+				j.BeginObject().Prop("id", p.Id).Prop("label", Rosters.PositionLabel(p.Position, p.Sport) + " " + p.Name + ", " + Rosters.Ovr(p) + " ОБЩ, возраст " + (year - p.BirthYear) + ((p.ContractYears > 0) ? (", " + Economy.ContractText(p)) : ""))
 					.Prop("value", v)
 					.Prop("injury", world.InjuryText(p))
 					.EndObject();
@@ -6072,7 +6072,7 @@ public static class Views
 		{
 			int age = year - p.BirthYear;
 			j.BeginObject().Prop("id", p.Id).Prop("name", p.Name)
-				.Prop("pos", Rosters.PositionLabel(p.Position))
+				.Prop("pos", Rosters.PositionLabel(p.Position, p.Sport))
 				.Prop("age", age.ToString())
 				.Prop("ovr", Rosters.Ovr(p))
 				.Prop("pot", Rosters.Grade(p, age))
@@ -6142,7 +6142,7 @@ public static class Views
 				j.BeginObject().Prop("id", p.Id).Prop("teamId", other.Id)
 					.Prop("team", world.TeamName(other.Id))
 					.Prop("name", p.Name)
-					.Prop("pos", Rosters.PositionLabel(p.Position))
+					.Prop("pos", Rosters.PositionLabel(p.Position, p.Sport))
 					.Prop("age", age.ToString())
 					.Prop("ovr", Rosters.Ovr(p))
 					.Prop("pot", Rosters.Grade(p, age))
@@ -6160,7 +6160,7 @@ public static class Views
 	{
 		int age = year - p.BirthYear;
 		j.BeginObject().Prop("id", p.Id).Prop("name", p.Name)
-			.Prop("pos", Rosters.PositionLabel(p.Position))
+			.Prop("pos", Rosters.PositionLabel(p.Position, p.Sport))
 			.Prop("age", age.ToString())
 			.Prop("ovr", Rosters.Ovr(p))
 			.Prop("pot", Rosters.Grade(p, age))
@@ -6255,7 +6255,7 @@ public static class Views
 				if (p != null)
 				{
 					j.BeginObject().Prop("id", o.Id).Prop("playerId", p.Id)
-						.Prop("player", Rosters.PositionLabel(p.Position) + " " + p.Name + ", " + Rosters.Ovr(p) + " ОБЩ, возраст " + (year - p.BirthYear))
+						.Prop("player", Rosters.PositionLabel(p.Position, p.Sport) + " " + p.Name + ", " + Rosters.Ovr(p) + " ОБЩ, возраст " + (year - p.BirthYear))
 						.Prop("buyer", (o.BuyerTeamId < 0) ? o.BuyerName : ("клуб «" + o.BuyerName + "»"))
 						.Prop("abroad", o.BuyerTeamId < 0)
 						.Prop("fee", Economy.Money(o.Fee))
@@ -6273,7 +6273,7 @@ public static class Views
 		{
 			int age = year - p2.BirthYear;
 			j.BeginObject().Prop("id", p2.Id).Prop("name", p2.Name)
-				.Prop("pos", Rosters.PositionLabel(p2.Position))
+				.Prop("pos", Rosters.PositionLabel(p2.Position, p2.Sport))
 				.Prop("age", age.ToString())
 				.Prop("ovr", Rosters.Ovr(p2))
 				.Prop("pot", Rosters.Grade(p2, age))
@@ -6320,7 +6320,7 @@ public static class Views
 				why = "Сумма превышает ваш трансферный бюджет.";
 			}
 			JsonBuilder jsonBuilder = j.BeginObject().Prop("id", p4.Id).Prop("name", p4.Name)
-				.Prop("pos", Rosters.PositionLabel(p4.Position))
+				.Prop("pos", Rosters.PositionLabel(p4.Position, p4.Sport))
 				.Prop("age", age2.ToString())
 				.Prop("ovr", Rosters.Ovr(p4))
 				.Prop("pot", Rosters.Grade(p4, age2));
