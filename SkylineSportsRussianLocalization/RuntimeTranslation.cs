@@ -22,6 +22,7 @@ namespace SkylineSportsRussianLocalization
         private static readonly Dictionary<string, string> Exact = new Dictionary<string, string>(StringComparer.Ordinal)
         {
             { "Single season", "Один сезон" },
+            { "LIVE", "ПРЯМОЙ ЭФИР" },
             { "Career", "Карьера" },
             { "Awards", "Награды" },
             { "Teams", "Команды" },
@@ -453,7 +454,25 @@ namespace SkylineSportsRussianLocalization
             // Dynamic announcements: translate the sentence while keeping generated names intact.
             const string prospectsPrefix = "No young prospects on the market right now. A new class arrives every ";
             if (__0.StartsWith(prospectsPrefix, StringComparison.Ordinal))
-                __0 = "Сейчас на рынке нет молодых перспективных игроков. Новый набор появится в " + __0.Substring(prospectsPrefix.Length);
+            {
+                string month = __0.Substring(prospectsPrefix.Length).TrimEnd('.');
+                switch (month)
+                {
+                    case "January": month = "январе"; break;
+                    case "February": month = "феврале"; break;
+                    case "March": month = "марте"; break;
+                    case "April": month = "апреле"; break;
+                    case "May": month = "мае"; break;
+                    case "June": month = "июне"; break;
+                    case "July": month = "июле"; break;
+                    case "August": month = "августе"; break;
+                    case "September": month = "сентябре"; break;
+                    case "October": month = "октябре"; break;
+                    case "November": month = "ноябре"; break;
+                    case "December": month = "декабре"; break;
+                }
+                __0 = "Сейчас на рынке нет молодых перспективных игроков. Новый набор появится в " + month + ".";
+            }
 
             if (__0.StartsWith("We have ", StringComparison.Ordinal))
             {
