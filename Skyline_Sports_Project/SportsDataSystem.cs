@@ -1554,7 +1554,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 			if (Array.IndexOf(names, n) >= 0)
 			{
 				a.GoOut = Enum.Parse(a.PurposeEnum, n);
-				a.GoOutName = (n == "Leisure") ? "досуг" : ((n == "VisitAttractions") ? "посещение достопримечательностей" : "покупки");
+				a.GoOutName = n;
 				break;
 			}
 		}
