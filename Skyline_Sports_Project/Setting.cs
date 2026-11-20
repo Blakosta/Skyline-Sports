@@ -74,7 +74,7 @@ public class Setting : ModSetting
 		{
 			//IL_0012: Unknown result type (might be due to invalid IL or missing references)
 			//IL_0018: Invalid comparison between Unknown and I4
-			if (UnityEngine.Object)GameManager.instance == UnityEngine.Object)null || (int)GameManager.instance.gameMode != 2)
+			if ((UnityEngine.Object)(object)GameManager.instance == (UnityEngine.Object)null || (int)GameManager.instance.gameMode != 2)
 			{
 				Mod.log.Info((object)"Reset ignored: no city is loaded.");
 				return;
