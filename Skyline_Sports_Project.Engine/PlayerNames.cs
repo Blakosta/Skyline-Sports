@@ -383,31 +383,12 @@ public static class PlayerNames
 
 	public static void Pick(Sport sport, Level level, Random random, Dictionary<string, int> used, out string first, out string last, Position pos)
 	{
-		double world = WorldShare(sport, level);
-		bool aussieKicker = sport == Sport.Football && (pos == Position.Punter || pos == Position.Kicker) && level != Level.HighSchool;
 		first = "";
 		last = "";
 		for (int attempt = 0; attempt < 6; attempt++)
 		{
-			NameOrigin origin = null;
-			if (aussieKicker && random.NextDouble() < ((pos == Position.Punter) ? 0.3 : 0.1))
-			{
-				origin = ByCode["au"];
-			}
-			else if (random.NextDouble() < world)
-			{
-				origin = PickOrigin(sport, random);
-			}
-			if (origin == null)
-			{
-				first = FirstUS[random.Next(FirstUS.Length)];
-				last = ((random.NextDouble() < 0.08) ? Heritage[random.Next(Heritage.Length)] : LastUS[random.Next(LastUS.Length)]);
-			}
-			else
-			{
-				first = origin.First[random.Next(origin.First.Length)];
-				last = origin.Last[random.Next(origin.Last.Length)];
-			}
+			first = FirstUS[random.Next(FirstUS.Length)];
+			last = LastUS[random.Next(LastUS.Length)];
 			if (used == null || !used.ContainsKey(first + " " + last))
 			{
 				break;
