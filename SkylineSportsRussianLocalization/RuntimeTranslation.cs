@@ -54,6 +54,13 @@ namespace SkylineSportsRussianLocalization
             { "Money", "Деньги" },
             { "Balanced", "Сбалансированный" },
             { "Taiwan", "Тайвань" },
+            { "G", "Г" },
+            { "A", "П" },
+            { "SH", "БР" },
+            { "YC", "ЖК" },
+            { "RC", "КК" },
+            { "GA", "ПГ" },
+            { "CS", "СМ" },
             { "playoff", "плей-офф" },
             { "rain", "дождь" },
             { "snow", "снег" },
@@ -606,6 +613,7 @@ namespace SkylineSportsRussianLocalization
             }
 
             __0 = Regex.Replace(__0, @"\bTD\b", "ТД");
+            __0 = Regex.Replace(__0, @"\bFG\b", "полевых голов");
             __0 = Regex.Replace(__0, @"\bGroup ([A-Z])\b", "Группа $1");
             __0 = Regex.Replace(__0, @"([A-Z][a-z]{2} \d{1,2}) to ([A-Z][a-z]{2} \d{1,2}, \d{4})", "$1 — $2");
 
