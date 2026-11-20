@@ -6228,7 +6228,7 @@ public static class Views
 				{
 					j.BeginObject().Prop("id", o.Id).Prop("playerId", p.Id)
 						.Prop("player", Rosters.PositionLabel(p.Position) + " " + p.Name + ", " + Rosters.Ovr(p) + " ОБЩ, возраст " + (year - p.BirthYear))
-						.Prop("buyer", (o.BuyerTeamId < 0) ? o.BuyerName : ("the " + o.BuyerName))
+						.Prop("buyer", (o.BuyerTeamId < 0) ? o.BuyerName : ("клуб «" + o.BuyerName + "»"))
 						.Prop("abroad", o.BuyerTeamId < 0)
 						.Prop("fee", Economy.Money(o.Fee))
 						.Prop("value", Economy.Money(world.TransferValue(p)))
