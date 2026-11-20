@@ -5357,6 +5357,11 @@ public static class Views
 			j.Prop("farmId", farm.Id).Prop("farmName", world.TeamName(farm.Id));
 		}
 		j.Prop("manual", t.Manual);
+		j.Prop("cityBalance", world.CityBalance);
+		j.Prop("cityUnlimited", world.CityUnlimited);
+		j.Prop("clubBalance", t.ClubBalance);
+		j.Prop("ticketPriceResidents", t.TicketPriceResidents);
+		j.Prop("ticketPriceVisitors", t.TicketPriceVisitors);
 		j.Prop("canManage", t.IsUser);
 		JsonBuilder jsonBuilder3 = j;
 		string value3;
