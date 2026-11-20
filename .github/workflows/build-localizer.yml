@@ -1,0 +1,55 @@
+name: Build Skyline Sports Russian Localization
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - ru-localizer
+    paths:
+      - 'SkylineSportsRussianLocalization/**'
+      - '.github/workflows/build-localizer.yml'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ru-localizer
+
+      - name: Checkout private CS2 libraries
+        uses: actions/checkout@v4
+        with:
+          repository: Blakosta/CS2-Build-Libraries
+          token: ${{ secrets.CS2_LIBRARIES_TOKEN }}
+          path: cs2-build-libraries
+
+      - name: Extract Managed libraries
+        shell: pwsh
+        run: |
+          $archive = Get-ChildItem "$env:GITHUB_WORKSPACE\cs2-build-libraries" -Filter "Managed.zip" -Recurse | Select-Object -First 1
+          if (-not $archive) { throw "Managed.zip not found in private libraries repository." }
+          $destination = "$env:GITHUB_WORKSPACE\game-managed"
+          New-Item -ItemType Directory -Force -Path $destination | Out-Null
+          Expand-Archive -LiteralPath $archive.FullName -DestinationPath $destination -Force
+          $gameDll = Get-ChildItem $destination -Filter "Game.dll" -Recurse | Select-Object -First 1
+          if (-not $gameDll) { throw "Game.dll not found in Managed.zip." }
+          "GAME_MANAGED_DIR=$($gameDll.Directory.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Build localization mod
+        shell: pwsh
+        run: |
+          dotnet restore .\SkylineSportsRussianLocalization\SkylineSportsRussianLocalization.csproj
+          msbuild .\SkylineSportsRussianLocalization\SkylineSportsRussianLocalization.csproj /m /p:Configuration=Release /p:GameManagedDir="$env:GAME_MANAGED_DIR"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Upload DLL artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Skyline-Sports-Russian-Localization
+          path: SkylineSportsRussianLocalization/bin/Release/net48/SkylineSportsRussianLocalization.dll
+          if-no-files-found: error
