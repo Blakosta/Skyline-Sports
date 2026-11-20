@@ -54,8 +54,6 @@ namespace SkylineSportsRussianLocalization
             { "Money", "Деньги" },
             { "Balanced", "Сбалансированный" },
             { "Taiwan", "Тайвань" },
-            { "G", "Г" },
-            { "A", "П" },
             { "SH", "БР" },
             { "YC", "ЖК" },
             { "RC", "КК" },
