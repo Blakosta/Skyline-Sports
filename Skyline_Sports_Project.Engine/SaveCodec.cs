@@ -2452,6 +2452,17 @@ public static class SaveCodec
 			{
 				team.LogoId = ClubBranding.NormalizeLogo(logoId);
 				team.SponsorId = ClubBranding.NormalizeSponsor(sponsorId);
+				if (team.SponsorId < 0 && team.SponsorTier > 0)
+				{
+					team.SponsorId = team.SponsorTier switch
+					{
+						1 => 0,
+						2 => 3,
+						3 => 6,
+						4 => 9,
+						_ => -1
+					};
+				}
 				team.StadiumCapacity = Math.Max(500, Math.Min(150000, capacity));
 				team.StadiumName = NameGenerator.CleanName(stadiumName, 60);
 			}
