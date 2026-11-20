@@ -14,6 +14,10 @@ public class Team
 
 	public int VenueId = -1;
 
+	public string StadiumName = "";
+
+	public int StadiumCapacity = 500;
+
 	public int Rating = 50;
 
 	public bool IsUser;
