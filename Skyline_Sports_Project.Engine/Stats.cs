@@ -2720,7 +2720,7 @@ public static class Stats
 						Position.Midfielder,
 						Position.Defender
 					},
-					Columns = new string[6] { "ИГ", "G", "A", "SH", "YC", "RC" },
+					Columns = new string[6] { "ИГ", "Г", "П", "УД", "ЖК", "КК" },
 					Cells = (int[] s) => new string[6]
 					{
 						I(Get(s, 0)),
@@ -2735,7 +2735,7 @@ public static class Stats
 				{
 					Name = "Вратари",
 					Positions = new Position[1] { Position.Goalkeeper },
-					Columns = new string[4] { "ИГ", "СЕЙВ", "GA", "CS" },
+					Columns = new string[4] { "ИГ", "СЕЙВ", "ПГ", "СМ" },
 					Cells = (int[] s) => new string[4]
 					{
 						I(Get(s, 8)),
