@@ -3086,7 +3086,7 @@ public class SportsWorld
 		StaffChanged();
 		RostersChanged();
 		string where = (SportRules.ProLike(league.Sport, league.Level) ? (" " + freeAgents + " игроков стали свободными агентами" + ((retired > 0) ? (", " + retired + " завершили карьеру") : "") + ((secondTier > 0) ? (", " + secondTier + " перешёл в " + SecondTierName(league.Sport)) : "") + ".") : "");
-		Post(league, NewsKind.General, Wire, "FOLDED: The " + TeamName(t.Id) + " have folded after " + ((league.History.Count > 0) ? ("the " + league.History[0].Season + " season") : "the season") + "." + where, isUser: false, now, 2);
+		Post(league, NewsKind.General, Wire, "РАСФОРМИРОВАНИЕ: команда «" + TeamName(t.Id) + "» прекратила существование после сезона " + ((league.History.Count > 0) ? league.History[0].Season : "текущего сезона") + "." + where, isUser: false, now, 2);
 	}
 
 	private int PickAiToReplace(League league)
@@ -3797,8 +3797,8 @@ public class SportsWorld
 		string last = "";
 		if (second.LastUp.Count > 0)
 		{
-			List<string> names = ((league.Level == Level.Pro) ? second.LastUp : second.LastDown).ConvertAll((int id) => "the " + TeamName(id));
-			last = " Last season " + JoinNames(names) + " came " + ((league.Level == Level.Pro) ? "up." : "down.");
+			List<string> names = ((league.Level == Level.Pro) ? second.LastUp : second.LastDown).ConvertAll((int id) => "команда «" + TeamName(id) + "»");
+			last = " В прошлом сезоне " + JoinNames(names) + ((league.Level == Level.Pro) ? " поднялись в лигу выше." : " выбыли в лигу ниже.");
 		}
 		if (league.Level == Level.Pro)
 		{
@@ -7625,7 +7625,7 @@ public class SportsWorld
 				}
 				else
 				{
-					move = ((i4 > slot) ? ("поднялась на " + (i4 - slot) + ((i4 - slot == 1) ? " spot" : " позиций")) : ("опустилась на " + (slot - i4) + ((slot - i4 == 1) ? " spot" : " позиций")));
+					move = ((i4 > slot) ? ("поднялась на " + (i4 - slot) + ((i4 - slot == 1) ? " позицию" : " позиций")) : ("опустилась на " + (slot - i4) + ((slot - i4 == 1) ? " позицию" : " позиций")));
 				}
 				d.Lottery.Add("№ " + (slot + 1) + ": " + TeamName(non[i4]) + " (" + Views.Ordinal(i4 + 1) + " худший результат, " + (weights[i4] * 100.0 / total).ToString("0.0", CultureInfo.InvariantCulture) + "% вероятности получить первый выбор), " + move + ".");
 			}
@@ -8431,7 +8431,7 @@ public class SportsWorld
 			ReleaseQuote q = QuoteRelease(reserves[i3], team, now, stretch: false);
 			if (team.IsUser)
 			{
-				PostAsTeam(LeagueOf(team), team, NewsKind.Release, "We have " + q.Verb + " " + Rosters.PositionLabel(reserves[i3].Position) + " " + reserves[i3].Name + ". Thank you!" + ((q.Total > 0) ? (" " + q.Short) : ""), now);
+				PostAsTeam(LeagueOf(team), team, NewsKind.Release, "Мы " + q.Verb + " игрока " + Rosters.PositionLabel(reserves[i3].Position) + " " + reserves[i3].Name + ". Спасибо за игру!" + ((q.Total > 0) ? (" " + q.Short) : ""), now);
 			}
 			ApplyRelease(reserves[i3], team, q, now);
 			changed = true;
@@ -8873,12 +8873,12 @@ public class SportsWorld
 		ReleaseQuote q = QuoteRelease(p, t, now, stretch);
 		ApplyRelease(p, t, q, now);
 		string verb = q.Verb;
-		PostAsTeam(LeagueOf(t), t, NewsKind.Release, "We have " + verb + " " + Rosters.PositionLabel(p.Position) + " " + p.Name + "." + ((q.Total > 0) ? (" " + q.Short) : ""), now);
+		PostAsTeam(LeagueOf(t), t, NewsKind.Release, "Мы " + verb + " игрока " + Rosters.PositionLabel(p.Position) + " " + p.Name + "." + ((q.Total > 0) ? (" " + q.Short) : ""), now);
 		ArrangeRoster(t, now);
 		FillHoles(t, CurrentYear(), now, p);
 		UpdateRating(t);
 		Revision++;
-		return CommandResult.Success(p.Name + " was " + verb + " and is now a free agent. " + ((q.Total > 0) ? q.Short : q.Rule));
+		return CommandResult.Success(p.Name + ": " + verb + ". Теперь игрок находится на рынке свободных агентов. " + ((q.Total > 0) ? q.Short : q.Rule));
 	}
 
 	public CommandResult SignFreeAgent(int teamId, int playerId, int now)
@@ -10222,7 +10222,7 @@ public class SportsWorld
 		{
 			Level.College => _names.CollegeName(place, new List<string>()), 
 			Level.Junior => place + " " + _names.PickMascot(sport, Level.Junior, new List<string>()), 
-			_ => place + " High", 
+			_ => place + " школа", 
 		};
 	}
 
@@ -10527,7 +10527,7 @@ public class SportsWorld
 		for (int i = 0; i < single.Length; i++)
 		{
 			Stats.Leader l = single[i];
-			RecordBoard b = Board(league, "Single season", l.Title, l.LowerIsBetter);
+			RecordBoard b = Board(league, "Один сезон", l.Title, l.LowerIsBetter);
 			RecordEntry oldTop = ((b.Entries.Count > 0) ? b.Entries[0] : null);
 			foreach (Player p3 in players)
 			{
@@ -10559,7 +10559,7 @@ public class SportsWorld
 				AddNote(league, top.Name + " установил рекорд одного сезона по показателю " + l.Title.ToLowerInvariant() + " (" + top.Text + ").");
 			}
 			Stats.Leader cl = career[i];
-			RecordBoard cb = Board(league, "Career", cl.Title, cl.LowerIsBetter);
+			RecordBoard cb = Board(league, "Карьера", cl.Title, cl.LowerIsBetter);
 			RecordEntry oldLeader = ((cb.Entries.Count > 0) ? cb.Entries[0] : null);
 			foreach (Player p4 in players)
 			{
@@ -10599,13 +10599,13 @@ public class SportsWorld
 		{
 			if (!(a.SeasonLabel != label) && a.PlayerId >= 0)
 			{
-				Count(Board(league, "Awards", a.Award, lowerIsBetter: false), a.PlayerId, a.PlayerName, a.TeamName, null);
+				Count(Board(league, "Награды", a.Award, lowerIsBetter: false), a.PlayerId, a.PlayerName, a.TeamName, null);
 				Count(Board(league, "Awards", "Все награды", lowerIsBetter: false), a.PlayerId, a.PlayerName, a.TeamName, null);
 			}
 		}
 		if (s.ChampionTeamId >= 0)
 		{
-			Count(Board(league, "Teams", "Больше всего чемпионств", lowerIsBetter: false), s.ChampionTeamId, TeamName(s.ChampionTeamId), "", null);
+			Count(Board(league, "Команды", "Больше всего чемпионств", lowerIsBetter: false), s.ChampionTeamId, TeamName(s.ChampionTeamId), "", null);
 		}
 		RecordBoard best = Board(league, "Teams", "Лучший регулярный сезон", lowerIsBetter: false);
 		foreach (StandingRow r2 in table)
@@ -10633,10 +10633,10 @@ public class SportsWorld
 	{
 		Dictionary<string, int> group = new Dictionary<string, int>
 		{
-			{ "Single season", 0 },
-			{ "Career", 1 },
-			{ "Awards", 2 },
-			{ "Teams", 3 }
+			{ "Один сезон", 0 },
+			{ "Карьера", 1 },
+			{ "Награды", 2 },
+			{ "Команды", 3 }
 		};
 		List<RecordBoard> sorted = new List<RecordBoard>(league.Records);
 		Dictionary<RecordBoard, int> original = new Dictionary<RecordBoard, int>();
@@ -11060,7 +11060,7 @@ public class SportsWorld
 		int comma = town.IndexOf(',');
 		string text = ((comma > 0) ? town.Substring(0, comma) : town);
 		string[] names = NameGenerator.HighSchoolNames;
-		string school = names[_random.Next(names.Length)] + " High";
+		string school = names[_random.Next(names.Length)] + " школа";
 		if (text.Length <= 0)
 		{
 			return school;
@@ -11371,7 +11371,7 @@ public class SportsWorld
 		r.CommittedTo = best.Id;
 		string stars = r.Stars + "-star";
 		Organization o = GetOrg(best.OrgId);
-		AddPost(league, NewsKind.Recruiting, Campus.Name, Campus.Handle, (flip ? "FLIP: " : "COMMIT: ") + stars + " " + Rosters.PositionLabel(p.Position) + " " + p.Name + ((p.From.Length > 0 && !r.National) ? (" from " + p.From) : (r.National ? (" (" + HometownOf(p) + ")") : "")) + (flip ? (" flips from " + from + " to ") : " commits to ") + ((o == null) ? TeamName(best.Id) : o.Name) + "!", isUser: true, now, (r.Stars >= 4) ? 3 : 2);
+		AddPost(league, NewsKind.Recruiting, Campus.Name, Campus.Handle, (flip ? "СМЕНА РЕШЕНИЯ: " : "ВЫБОР: ") + stars + " " + Rosters.PositionLabel(p.Position) + " " + p.Name + ((p.From.Length > 0 && !r.National) ? (" из " + p.From) : (r.National ? (" (" + HometownOf(p) + ")") : "")) + (flip ? (" меняет решение: " + from + " → ") : " выбирает команду ") + ((o == null) ? TeamName(best.Id) : o.Name) + "!", isUser: true, now, (r.Stars >= 4) ? 3 : 2);
 		Revision++;
 		return true;
 	}
@@ -14232,7 +14232,7 @@ public class SportsWorld
 		}
 		if (announce || buyer.IsUser || (seller != null && seller.IsUser))
 		{
-			Post(league, NewsKind.Signing, Insider, "TRANSFER: The " + TeamName(buyer.Id) + " sign " + Rosters.PositionLabel(p.Position) + " " + p.Name + " (" + Rosters.Ovr(p) + " OVR) from " + ((seller != null) ? ("the " + from) : from) + " for " + Economy.Money(fee) + ".", buyer.IsUser || (seller?.IsUser ?? false), now, 2);
+			Post(league, NewsKind.Signing, Insider, "ТРАНСФЕР: команда «" + TeamName(buyer.Id) + "» подписывает игрока " + Rosters.PositionLabel(p.Position) + " " + p.Name + " (" + Rosters.Ovr(p) + " ОБЩ) из клуба " + from + " за " + Economy.Money(fee) + ".", buyer.IsUser || (seller?.IsUser ?? false), now, 2);
 		}
 		if (seller != null && seller.IsUser)
 		{
