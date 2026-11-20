@@ -569,6 +569,9 @@ namespace SkylineSportsRussianLocalization
                 __0 = "Бьёт " + batHand + ", бросает " + throwHand;
             }
 
+            __0 = Regex.Replace(__0, @"\b(\d{1,2}(?::\d{2})?)\s+AM\b", "$1 утра");
+            __0 = Regex.Replace(__0, @"\b(\d{1,2}(?::\d{2})?)\s+PM\b", "$1 вечера");
+
             Match overtime = Regex.Match(__0, @"^(\d*)OT$");
             if (overtime.Success) __0 = overtime.Groups[1].Value + "ОТ";
 
