@@ -35,7 +35,7 @@ public class Setting : ModSetting
 	public const string ModVersion = "1.0.0";
 
 	[SettingsUISection("Main", "Leagues")]
-	[SettingsUISlider(min = 4f, max = 16f, step = 2f, scalarMultiplier = 1f, unit = "integer")]
+	[SettingsUISlider(min = 4f, max = 20f, step = 2f, scalarMultiplier = 1f, unit = "integer")]
 	public int LeagueSize { get; set; }
 
 	[SettingsUISection("Main", "Leagues")]
