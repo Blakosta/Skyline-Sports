@@ -754,6 +754,15 @@ namespace SkylineSportsRussianLocalization
             __0 = Regex.Replace(__0, @"^(\d+)(?:st|nd|rd|th) овертайм$", "$1-й овертайм");
             __0 = Regex.Replace(__0, @"^(Верх|Низ) (\d+)(?:st|nd|rd|th)$", "$1 $2-го");
 
+            if (__0.StartsWith("Мы ", StringComparison.Ordinal) ||
+                __0.StartsWith("ПЕРЕХОД: ", StringComparison.Ordinal) ||
+                __0.StartsWith("ПОДПИСАНИЕ: ", StringComparison.Ordinal) ||
+                __0.StartsWith("ТРАНСФЕР: ", StringComparison.Ordinal))
+            {
+                __0 = Regex.Replace(__0, @"\b(LW|RW|PG|SG|SF|PF|QB|RB|WR|TE|OL|DL|LB|CB|SP|RP|SS|LF|CF|RF|GK|DF|MF|FW)\b",
+                    match => Exact.TryGetValue(match.Value, out string position) ? position : match.Value);
+            }
+
             __0 = Regex.Replace(__0, @"\bTD\b", "ТД");
             __0 = Regex.Replace(__0, @"\bFG\b", "полевых голов");
             __0 = Regex.Replace(__0, @"\bGroup ([A-Z])\b", "Группа $1");
