@@ -1310,6 +1310,7 @@ public static class Views
 		}
 		j.Name(name).BeginObject().Prop("id", t?.Id ?? (-1))
 			.Prop("name", (t == null) ? "Не определено" : world.TeamShortName(t.Id))
+			.Prop("logoId", (t == null) ? 0 : world.TeamLogoId(t.Id))
 			.Prop("abbr", (t == null) ? "" : world.TeamAbbrev(t.Id))
 			.Prop("record", record)
 			.Prop("isUser", t?.IsUser ?? false)
@@ -2172,6 +2173,7 @@ public static class Views
 			j.Prop("rank", row2.Rank);
 			j.Prop("teamId", row2.TeamId);
 			j.Prop("name", world.TeamName(row2.TeamId));
+			j.Prop("logoId", world.TeamLogoId(row2.TeamId));
 			j.Prop("abbr", world.TeamAbbrev(row2.TeamId));
 			j.Prop("isUser", t?.IsUser ?? false);
 			j.Prop("playoffSpot", playoffTeams < table.Count && row2.Rank <= playoffTeams);
@@ -4492,7 +4494,7 @@ public static class Views
 		if (game != null)
 		{
 			j.Name("openGame").BeginObject().Prop("id", game.Id)
-				.Prop("name", world.TeamAbbrev(game.AwayTeamId) + " в " + world.TeamAbbrev(game.HomeTeamId))
+				.Prop("name", world.TeamShortName(game.AwayTeamId) + " — " + world.TeamShortName(game.HomeTeamId))
 				.Prop("leagueKey", gameLeague.Key)
 				.EndObject();
 		}
@@ -5327,6 +5329,7 @@ public static class Views
 		}
 		j.Name("teamView").BeginObject();
 		j.Prop("id", t.Id);
+		j.Prop("logoId", world.TeamLogoId(t.Id));
 		j.Prop("name", (o == null) ? "Не определено" : o.FullName);
 		j.Prop("orgCity", o?.Name ?? "");
 		j.Prop("clubName", o?.Mascot ?? "");
@@ -5446,6 +5449,18 @@ public static class Views
 			CapType.Soft => "Фонд зарплат — сумма зарплат по контрактам и текущих выплат по расторгнутым контрактам. Лига использует мягкий потолок с отдельными исключениями.",
 			_ => "Фонд зарплат — сумма зарплат по контрактам и текущих выплат по расторгнутым контрактам. Жёсткий потолок задаётся правилами лиги."
 		});
+		j.Prop("sponsorId", t.SponsorId);
+		j.Prop("sponsorName", ClubBranding.SponsorName(t.SponsorId));
+		j.Name("sponsorOptions").BeginArray();
+		for (int sponsorId = 0; sponsorId < ClubBranding.SponsorCount; sponsorId++)
+		{
+			j.BeginObject().Prop("id", sponsorId)
+				.Prop("name", ClubBranding.SponsorName(sponsorId))
+				.Prop("tier", ClubBranding.SponsorTier(sponsorId))
+				.Prop("tierLabel", SportsWorld.SponsorTierLabel(ClubBranding.SponsorTier(sponsorId)))
+				.EndObject();
+		}
+		j.EndArray();
 		j.Prop("sponsorTier", t.SponsorTier);
 		j.Prop("sponsorFrequency", t.SponsorFrequency);
 		j.Prop("sponsorTierLabel", SportsWorld.SponsorTierLabel(t.SponsorTier));
