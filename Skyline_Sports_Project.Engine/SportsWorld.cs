@@ -9201,13 +9201,7 @@ public class SportsWorld
 				team.Budget = (int)Math.Min(int.MaxValue, (long)team.Budget + budgetUnits);
 			}
 			Revision++;
-			ModSponsorLog(team, credited);
 		}
-	}
-
-	private static void ModSponsorLog(Team team, long amount)
-	{
-		Mod.log.Info((object)("Спонсоры клуба " + team.Id + ": зачислено " + amount.ToString("N0") + " ¢."));
 	}
 
 	public CommandResult SetPayrollBudget(int teamId, int budgetThousands)
