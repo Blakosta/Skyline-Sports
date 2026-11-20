@@ -26,3 +26,8 @@ The runtime translation hook is version-sensitive: it expects the original mod t
 `[Skyline Sports RU] Runtime UI text translation attached.`
 
 This is the first pass of the interface dictionary, not a claim that every dynamically composed sentence or every name is translated. Missing strings can be added to the dictionary without changing the original mod.
+
+
+## Runtime translation coverage
+
+The standalone patch translates exact UI values emitted by Skyline Sports' `JsonBuilder`, including navigation labels, tournament descriptions, standings terminology, awards, and selected dynamic announcements. It also localizes country labels and group headings where they are emitted as standalone values. It deliberately avoids blanket substitutions inside player names, club names, and arbitrary generated text. Simulation rules, player-generation probabilities, and game mechanics remain untouched.
