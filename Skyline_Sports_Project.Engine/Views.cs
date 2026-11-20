@@ -5366,9 +5366,9 @@ public static class Views
 				if (ticketMatch.HomeTeamId == t.Id) ticketRevenue += ticketMatch.TicketRevenue;
 			}
 		}
-		j.Prop("ticketRevenue", ticketRevenue);
+		j.Prop("ticketRevenue", (int)Math.Min(int.MaxValue, ticketRevenue));
 		j.Prop("manual", t.Manual);
-		j.Prop("cityBalance", world.CityBalance);
+		j.Prop("cityBalance", (int)Math.Max(int.MinValue, Math.Min(int.MaxValue, world.CityBalance)));
 		j.Prop("cityUnlimited", world.CityUnlimited);
 		j.Prop("clubBalance", t.ClubBalance);
 		j.Prop("ticketPriceResidents", t.TicketPriceResidents);
