@@ -62,7 +62,45 @@ jobs:
             exit $LASTEXITCODE
           }
 
-      - name: Upload compiled DLL
+      - name: Assemble complete Russian mod package
+        shell: pwsh
+        run: |
+          $package = Join-Path $env:GITHUB_WORKSPACE "Skyline-Sports-RU"
+          New-Item -ItemType Directory -Force -Path $package | Out-Null
+
+          Copy-Item ".\bin\Release\net48\Skyline_Sports_Project.dll" $package
+          Copy-Item ".\AdditionalSourceFiles\Skyline_Sports_Project.mjs" $package
+          Copy-Item ".\AdditionalSourceFiles\Skyline_Sports_Project.css" $package
+          Copy-Item ".\AdditionalSourceFiles\images" (Join-Path $package "images") -Recurse -Force
+
+          @'
+          Полная русская сборка мода «Спорт России».
+          
+          Установка:
+          1. Закройте Cities: Skylines II.
+          2. Откройте папку установленного мода Skyline_Sports_Project.
+          3. Скопируйте сюда ВСЕ файлы и папку images из этого архива, подтвердив замену.
+          4. Запустите игру.
+          
+          В папке мода рядом должны находиться:
+          - Skyline_Sports_Project.dll
+          - Skyline_Sports_Project.mjs
+          - Skyline_Sports_Project.css
+          - images/sports.svg
+          
+          Не устанавливайте только DLL: интерфейсный перевод находится также в MJS-файле.
+          '@ | Set-Content -LiteralPath (Join-Path $package "УСТАНОВКА.txt") -Encoding utf8
+
+          Compress-Archive -Path (Join-Path $package "*") -DestinationPath (Join-Path $env:GITHUB_WORKSPACE "Skyline-Sports-RU-Full.zip") -Force
+
+      - name: Upload complete Russian mod package
+        uses: actions/upload-artifact@v4
+        with:
+          name: Skyline-Sports-RU-Full
+          path: Skyline-Sports-RU-Full.zip
+          if-no-files-found: error
+
+      - name: Upload compiled DLL separately
         uses: actions/upload-artifact@v4
         with:
           name: Skyline-Sports-RU-DLL
