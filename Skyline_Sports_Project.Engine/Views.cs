@@ -2581,8 +2581,8 @@ public static class Views
 		{
 			userTeams.Add(world.TeamName(t.Id));
 		}
-		string[] groups = new string[4] { "Single season", "Career", "Awards", "Teams" };
-		string[] notes = new string[4] { "The best single regular seasons ever in this league. A record stays until someone beats it.", "Career totals while playing in this league (regular season). Rate stats need about four full seasons to qualify.", "Most awards won.", "Championships and the best regular season records." };
+		string[] groups = new string[4] { "Один сезон", "Career", "Awards", "Teams" };
+		string[] notes = new string[4] { "Лучшие отдельные сезоны в истории этой лиги. Рекорд сохраняется, пока его не побьют.", "Суммарная статистика за карьеру в этой лиге (регулярный сезон). Для попадания в рейтинг по средним показателям требуется около четырёх полных сезонов.", "Больше всего завоёванных наград.", "Чемпионские титулы и лучшие результаты регулярного сезона." };
 		j.Name("groups").BeginArray();
 		for (int g = 0; g < groups.Length; g++)
 		{
@@ -4245,7 +4245,7 @@ public static class Views
 				young.Sort((Player a, Player b) => b.Potential.CompareTo(a.Potential));
 				if (young.Count == 0)
 				{
-					draft.Lines.Add("No young prospects on the market right now. A new class arrives every " + Economy.Get(t.Sport).DraftDate(world.CurrentYear()).ToString("MMMM") + ".");
+					draft.Lines.Add("Сейчас на рынке нет молодых перспективных игроков. Новый набор появится в " + Economy.Get(t.Sport).DraftDate(world.CurrentYear()).ToString("MMMM") + ".");
 				}
 				else
 				{
