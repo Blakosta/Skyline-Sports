@@ -48,6 +48,14 @@ public class Match
 
 	public int Attendance;
 
+	public int TicketLocalAttendance;
+
+	public int TicketVisitorAttendance;
+
+	public int TicketRevenue;
+
+	public bool TicketIncomePaid;
+
 	public int HomeGoalieId = -1;
 
 	public int AwayGoalieId = -1;
