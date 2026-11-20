@@ -24,7 +24,7 @@ const marks=[
 "M15 20h34v24H15z M15 32h34 M32 20v24"
 ];
 const n=Math.abs(Number(id)||0)%colors.length,[main,accent]=colors[n];
-return (0,i.jsxs)("svg",{viewBox:"0 0 64 64",width:size,height:size,role:"img",children:[
+return (0,i.jsxs)("svg",{className:"clubLogo",viewBox:"0 0 64 64",width:size,height:size,role:"img",children:[
 (0,i.jsx)("path",{d:"M32 3 57 12v19c0 14-10 24-25 30C17 55 7 45 7 31V12Z",fill:main,stroke:"#edf2f8",strokeWidth:2}),
 (0,i.jsx)("path",{d:"M32 8 52 15v16c0 11-7 20-20 26-13-6-20-15-20-26V15Z",fill:"none",stroke:accent,strokeWidth:1.5,opacity:.8}),
 (0,i.jsx)("path",{d:marks[n%marks.length],fill:accent,stroke:"#ffffff",strokeWidth:1.2,strokeLinejoin:"round"}),
