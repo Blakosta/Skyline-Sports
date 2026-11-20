@@ -1611,9 +1611,10 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 			(ComponentType)readOnly.Invoke(null, new object[1] { a.HouseholdMember }),
 			(ComponentType)readOnly.Invoke(null, new object[1] { a.CurrentBuilding })
 		};
-		m_CitizenQuery = new EntityQueryBuilder(Allocator.Temp)
-			.WithAll(ref citizenTypes)
-			.Build(this);
+		m_CitizenQuery = GetEntityQuery(new EntityQueryDesc
+		{
+			All = citizenTypes
+		});
 		m_CitizenQueryMade = true;
 		m_FanApi = a;
 		Sports.FanStatus = "";
