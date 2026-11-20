@@ -120,7 +120,7 @@ public class NameGenerator
 		highSchoolSuffixes = HighSchoolNames;
 		for (int i = 0; i < highSchoolSuffixes.Length; i++)
 		{
-			string candidate2 = highSchoolSuffixes[i] + " High";
+			string candidate2 = highSchoolSuffixes[i];
 			if (!Contains(takenNames, candidate2))
 			{
 				options.Add(candidate2);
