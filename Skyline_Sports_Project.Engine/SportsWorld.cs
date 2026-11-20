@@ -5541,6 +5541,31 @@ public class SportsWorld
 		return d;
 	}
 
+	public static string TournamentStageLabel(string stage)
+	{
+		if (string.IsNullOrEmpty(stage))
+		{
+			return "";
+		}
+		if (stage == "Qualifier")
+		{
+			return "Квалификация";
+		}
+		if (stage == "Quarterfinal")
+		{
+			return "Четвертьфинал";
+		}
+		if (stage == "Semifinal")
+		{
+			return "Полуфинал";
+		}
+		if (stage.StartsWith("Group ", StringComparison.Ordinal))
+		{
+			return "Группа " + stage.Substring(6);
+		}
+		return stage;
+	}
+
 	public static string NationLabel(string nation)
 	{
 		return nation switch
