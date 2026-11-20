@@ -341,8 +341,8 @@ public static class PlayerNames
 				return 0.08;
 			}
 		}
+		*/
 	}
-
 	private static KeyValuePair<string, int>[] W(params object[] pairs)
 	{
 		KeyValuePair<string, int>[] list = new KeyValuePair<string, int>[pairs.Length / 2];
@@ -384,7 +384,7 @@ public static class PlayerNames
 	public static void Pick(Sport sport, Level level, Random random, Dictionary<string, int> used, out string first, out string last, Position pos)
 	{
 		double world = WorldShare(sport, level);
-		bool aussieKicker = sport == Sport.Football && (pos == Position.Punter || pos == Position.Kicker) && level != Level.HighSchool;
+		bool aussieKicker = false;
 		first = "";
 		last = "";
 		for (int attempt = 0; attempt < 6; attempt++)
@@ -401,7 +401,7 @@ public static class PlayerNames
 			if (origin == null)
 			{
 				first = FirstUS[random.Next(FirstUS.Length)];
-				last = ((random.NextDouble() < 0.08) ? Heritage[random.Next(Heritage.Length)] : LastUS[random.Next(LastUS.Length)]);
+				last = LastUS[random.Next(LastUS.Length)];
 			}
 			else
 			{
