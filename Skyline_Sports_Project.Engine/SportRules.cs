@@ -57,9 +57,9 @@ public static class SportRules
 	{
 		return level switch
 		{
-			Level.Junior => sport == Sport.Hockey, 
-			Level.Minor => HasMinors(sport), 
-			_ => true, 
+			Level.Junior => sport == Sport.Hockey,
+			Level.Minor => HasMinors(sport),
+			_ => true,
 		};
 	}
 
@@ -67,9 +67,9 @@ public static class SportRules
 	{
 		return level switch
 		{
-			Level.Minor => sport == Sport.Soccer, 
-			Level.Pro => true, 
-			_ => false, 
+			Level.Minor => sport == Sport.Soccer,
+			Level.Pro => true,
+			_ => false,
 		};
 	}
 
@@ -95,9 +95,9 @@ public static class SportRules
 	{
 		return level switch
 		{
-			Level.Junior => Level.College, 
-			Level.Minor => Level.Pro, 
-			_ => level, 
+			Level.Junior => Level.College,
+			Level.Minor => Level.Pro,
+			_ => level,
 		};
 	}
 
@@ -105,11 +105,11 @@ public static class SportRules
 	{
 		return level switch
 		{
-			Level.Pro => 4, 
-			Level.Minor => 3, 
-			Level.College => 2, 
-			Level.Junior => 1, 
-			_ => 0, 
+			Level.Pro => 4,
+			Level.Minor => 3,
+			Level.College => 2,
+			Level.Junior => 1,
+			_ => 0,
 		};
 	}
 
@@ -126,12 +126,12 @@ public static class SportRules
 	{
 		return type switch
 		{
-			VenueType.IndoorArena => 180, 
-			VenueType.Gym => 60, 
-			VenueType.IceRink => 100, 
-			VenueType.Stadium => 50, 
-			VenueType.Ballpark => 110, 
-			_ => 75, 
+			VenueType.IndoorArena => 180,
+			VenueType.Gym => 60,
+			VenueType.IceRink => 100,
+			VenueType.Stadium => 50,
+			VenueType.Ballpark => 110,
+			_ => 75,
 		};
 	}
 
@@ -139,12 +139,12 @@ public static class SportRules
 	{
 		return type switch
 		{
-			VenueType.IndoorArena => 5, 
-			VenueType.Gym => 4, 
-			VenueType.IceRink => 5, 
-			VenueType.Stadium => 4, 
-			VenueType.Ballpark => 3, 
-			_ => 5, 
+			VenueType.IndoorArena => 5,
+			VenueType.Gym => 4,
+			VenueType.IceRink => 5,
+			VenueType.Stadium => 4,
+			VenueType.Ballpark => 3,
+			_ => 5,
 		};
 	}
 
@@ -158,22 +158,22 @@ public static class SportRules
 				Sport.Basketball,
 				Sport.Football,
 				Sport.Soccer
-			}, 
-			VenueType.Gym => new Sport[1] { Sport.Basketball }, 
-			VenueType.IceRink => new Sport[1], 
+			},
+			VenueType.Gym => new Sport[1] { Sport.Basketball },
+			VenueType.IceRink => new Sport[1],
 			VenueType.Stadium => new Sport[2]
 			{
 				Sport.Football,
 				Sport.Soccer
-			}, 
-			VenueType.Ballpark => new Sport[1] { Sport.Baseball }, 
+			},
+			VenueType.Ballpark => new Sport[1] { Sport.Baseball },
 			VenueType.Field => new Sport[3]
 			{
 				Sport.Football,
 				Sport.Soccer,
 				Sport.Baseball
-			}, 
-			_ => new Sport[0], 
+			},
+			_ => new Sport[0],
 		};
 	}
 
@@ -213,12 +213,12 @@ public static class SportRules
 	{
 		return sport switch
 		{
-			Sport.Hockey => "Хоккей", 
-			Sport.Basketball => "Баскетбол", 
-			Sport.Football => "Американский футбол", 
-			Sport.Baseball => "Бейсбол", 
-			Sport.Soccer => "Футбол", 
-			_ => sport.ToString(), 
+			Sport.Hockey => "Хоккей",
+			Sport.Basketball => "Баскетбол",
+			Sport.Football => "Американский футбол",
+			Sport.Baseball => "Бейсбол",
+			Sport.Soccer => "Футбол",
+			_ => sport.ToString(),
 		};
 	}
 
@@ -235,12 +235,12 @@ public static class SportRules
 	{
 		return level switch
 		{
-			Level.HighSchool => "Школа", 
-			Level.College => "Студенческая лига", 
-			Level.Pro => "Профессиональная лига", 
-			Level.Junior => "Юниорская лига", 
-			Level.Minor => "Малая лига", 
-			_ => level.ToString(), 
+			Level.HighSchool => "Школа",
+			Level.College => "Студенческий",
+			Level.Pro => "Профессиональный",
+			Level.Junior => "Юниорская лига",
+			Level.Minor => "Малая лига",
+			_ => level.ToString(),
 		};
 	}
 
@@ -248,13 +248,13 @@ public static class SportRules
 	{
 		return type switch
 		{
-			VenueType.IndoorArena => "Крытая арена", 
-			VenueType.Gym => "Спортзал", 
-			VenueType.IceRink => "Ледовая арена", 
-			VenueType.Stadium => "Стадион", 
-			VenueType.Ballpark => "Бейсбольное поле", 
-			VenueType.Field => "Поле", 
-			_ => type.ToString(), 
+			VenueType.IndoorArena => "Крытая арена",
+			VenueType.Gym => "Спортзал",
+			VenueType.IceRink => "Ледовая арена",
+			VenueType.Stadium => "Стадион",
+			VenueType.Ballpark => "Бейсбольное поле",
+			VenueType.Field => "Поле",
+			_ => type.ToString(),
 		};
 	}
 
@@ -262,11 +262,11 @@ public static class SportRules
 	{
 		return result switch
 		{
-			ResultType.Overtime => "ОТ", 
-			ResultType.Shootout => "Б", 
-			ResultType.ExtraInnings => "ДИ", 
-			ResultType.Penalties => "П", 
-			_ => "", 
+			ResultType.Overtime => "ОТ",
+			ResultType.Shootout => "Б",
+			ResultType.ExtraInnings => "ДИ",
+			ResultType.Penalties => "П",
+			_ => "",
 		};
 	}
 
