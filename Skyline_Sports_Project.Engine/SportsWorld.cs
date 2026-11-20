@@ -10294,7 +10294,7 @@ public class SportsWorld
 		Season s = league.Current;
 		if (s == null)
 		{
-			return "rolling";
+			return "в отличной форме";
 		}
 		foreach (StandingRow r in Standings.Compute(league, s))
 		{
@@ -10303,7 +10303,7 @@ public class SportsWorld
 				return Standings.RecordText(t.Sport, r);
 			}
 		}
-		return "rolling";
+		return "в отличной форме";
 	}
 
 	private void EmergeStar(League league, Team t, int now, string when)
@@ -16089,7 +16089,7 @@ public class SportsWorld
 		}
 		foreach (PickAsset k in picks)
 		{
-			names.Add("a " + PickLabel(league, k));
+			names.Add("выбор на драфте " + PickLabel(league, k));
 		}
 		return JoinAnd(names);
 	}
@@ -16102,7 +16102,7 @@ public class SportsWorld
 			{
 				return names[0];
 			}
-			return "nothing";
+			return "ничего";
 		}
 		return string.Join(", ", names.GetRange(0, names.Count - 1).ToArray()) + " и " + names[names.Count - 1];
 	}
