@@ -5271,6 +5271,7 @@ public static class Views
 
 	private static void WriteTeamView(JsonBuilder j, SportsWorld world, Team t, int now, PanelView view)
 	{
+		world.EnsureTicketPrices(t);
 		League league = world.LeagueOf(t);
 		Organization o = world.GetOrg(t.OrgId);
 		List<Player> roster = world.RosterOf(t.Id);
