@@ -39,6 +39,26 @@ jobs:
           if (-not $gameDll) { throw "Game.dll not found in Managed.zip." }
           "GAME_MANAGED_DIR=$($gameDll.Directory.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Append
 
+      - name: Inspect game assembly versions
+        shell: pwsh
+        run: |
+          Get-ChildItem "$env:GAME_MANAGED_DIR" -Filter "*.dll" | Where-Object { $_.Name -match '^(Game|Unity.Entities|Unity.Mathematics|Colossal.Mathematics|Colossal.Core)\\.dll        uses: microsoft/setup-msbuild@v2
+
+      - name: Restore and build original mod with Russian UI
+        shell: pwsh
+        run: |
+          dotnet restore .\Skyline_Sports_Project.csproj
+          msbuild .\Skyline_Sports_Project.csproj /m /p:Configuration=Release /p:GameManagedDir="$env:GAME_MANAGED_DIR"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Upload Russian mod DLL
+        uses: actions/upload-artifact@v4
+        with:
+          name: Skyline-Sports-Russian-Mod
+          path: bin/Release/net48/Skyline_Sports_Project.dll
+          if-no-files-found: error
+ } | ForEach-Object { $v = [System.Reflection.AssemblyName]::GetAssemblyName($_.FullName).Version; Write-Host "$($_.Name) $v" }
+
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
@@ -53,5 +73,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Skyline-Sports-Russian-Mod
-          path: Skyline_Sports_Project/bin/Release/net48/Skyline_Sports_Project.dll
+          path: bin/Release/net48/Skyline_Sports_Project.dll
           if-no-files-found: error
