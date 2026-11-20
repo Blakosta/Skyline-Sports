@@ -31,3 +31,9 @@
 .clubFinancePanel .sponsorDot2{background-color:#e68b3d}
 .clubFinancePanel .sponsorDot3{background-color:#b7cb42}
 .clubFinancePanel .sponsorDot4{background-color:#45dc70}
+
+/* In-game editors */
+.clubEditorPanel,.playerEditorPanel,.coachEditorPanel{margin-top:10rem;padding:10rem 12rem;border-radius:6rem;background-color:rgba(255,255,255,.035);border:1rem solid rgba(150,170,195,.2)}
+.clubEditorPanel .chipRow_CUi,.playerEditorPanel .chipRow_CUi,.coachEditorPanel .chipRow_CUi{display:flex;flex-wrap:wrap;gap:5rem;margin:6rem 0}
+.clubEditorPanel button,.playerEditorPanel button,.coachEditorPanel button{flex-shrink:0}
+.playerEditorPanel .field_PzS,.coachEditorPanel .field_PzS,.clubEditorPanel .field_PzS{margin:5rem 0}
