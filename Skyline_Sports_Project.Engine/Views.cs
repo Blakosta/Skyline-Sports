@@ -5370,6 +5370,7 @@ public static class Views
 		j.Prop("manual", t.Manual);
 		j.Prop("cityBalance", (int)Math.Max(int.MinValue, Math.Min(int.MaxValue, world.CityBalance)));
 		j.Prop("cityUnlimited", world.CityUnlimited);
+		j.Prop("financeNotice", world.FinanceNotice);
 		j.Prop("clubBalance", t.ClubBalance);
 		j.Prop("ticketPriceResidents", t.TicketPriceResidents);
 		j.Prop("ticketPriceVisitors", t.TicketPriceVisitors);
