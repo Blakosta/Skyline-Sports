@@ -2235,7 +2235,7 @@ public class GameFlow
 		}
 		HomePens = hg;
 		AwayPens = ag;
-		Note = "Серия буллитов: " + Math.Max(hg, ag) + "-" + Math.Min(hg, ag);
+		Note = "Shootout " + Math.Max(hg, ag) + "-" + Math.Min(hg, ag);
 		if (hg > ag)
 		{
 			HomeScore++;
