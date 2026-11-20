@@ -705,6 +705,15 @@ namespace SkylineSportsRussianLocalization
                     (lastSeason.Groups[2].Value == "down" ? " в прошлом сезоне выбыла в лигу ниже." : " в прошлом сезоне поднялась в лигу выше.") +
                     lastSeason.Groups[3].Value;
 
+            Match medalNews = Regex.Match(__0, @"^(.+?) \((золотая|серебряная|бронзовая) with (.+?)\)$");
+            if (medalNews.Success)
+            {
+                string country = medalNews.Groups[3].Value;
+                if (Exact.TryGetValue(country, out string medalCountry)) country = medalCountry;
+                __0 = medalNews.Groups[1].Value + " (" + medalNews.Groups[2].Value + " медаль, сборная " + country + ")";
+            }
+            __0 = __0.Replace(" spot", " место");
+
             Match hand = Regex.Match(__0, @"^Bats ([LRS]), throws ([LRS])$");
             if (hand.Success)
             {
