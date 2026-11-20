@@ -3282,9 +3282,20 @@ public class SportsWorld
 			string current = TeamName(team.Id);
 			if (used.Add(current)) continue;
 			if (team.IsUser) continue;
-			List<string> taken = OrgMascots(league.Level, org.Id);
-			foreach (string name in used) taken.Add(name);
-			org.Mascot = _names.PickMascot(league.Sport, league.Level, taken, org.Name);
+			if (org.Level == Level.HighSchool)
+			{
+				org.Name = _names.HighSchoolName("", OrgNames(org.Level, org.Id));
+			}
+			else if (org.Level == Level.College)
+			{
+				org.Name = _names.CollegeName(_names.PickPlace(PlacesInUse()), OrgNames(org.Level, org.Id));
+			}
+			else
+			{
+				List<string> taken = OrgMascots(league.Level, org.Id);
+				foreach (string name in used) taken.Add(name);
+				org.Mascot = _names.PickMascot(league.Sport, league.Level, taken, org.Name);
+			}
 			used.Add(TeamName(team.Id));
 		}
 	}
