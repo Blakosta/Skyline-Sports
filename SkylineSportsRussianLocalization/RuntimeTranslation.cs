@@ -16,6 +16,8 @@ namespace SkylineSportsRussianLocalization
         private const string HarmonyId = "Blakosta.SkylineSports.RussianLocalization";
         private static Harmony _harmony;
         private static bool _installed;
+        private static string[] _russianFirstNames;
+        private static string[] _russianLastNames;
 
         private static readonly Dictionary<string, string> Exact = new Dictionary<string, string>(StringComparer.Ordinal)
         {
@@ -357,6 +359,22 @@ namespace SkylineSportsRussianLocalization
                 _harmony.Patch(worldShare, postfix: new HarmonyMethod(russianNames));
             }
 
+            if (playerNames != null)
+            {
+                FieldInfo firstField = playerNames.GetField("FirstUS", BindingFlags.NonPublic | BindingFlags.Static);
+                FieldInfo lastField = playerNames.GetField("LastUS", BindingFlags.NonPublic | BindingFlags.Static);
+                _russianFirstNames = firstField == null ? null : firstField.GetValue(null) as string[];
+                _russianLastNames = lastField == null ? null : lastField.GetValue(null) as string[];
+                MethodInfo pickNames = playerNames.GetMethods(BindingFlags.Public | BindingFlags.Static)
+                    .FirstOrDefault(m => m.Name == "Pick" && m.GetParameters().Length == 7);
+                if (pickNames != null && _russianFirstNames != null && _russianLastNames != null)
+                {
+                    MethodInfo russianPlayerName = typeof(RuntimeTranslation).GetMethod(
+                        nameof(EnsureRussianPlayerName), BindingFlags.NonPublic | BindingFlags.Static);
+                    _harmony.Patch(pickNames, postfix: new HarmonyMethod(russianPlayerName));
+                }
+            }
+
             Type nameGenerator = assembly.GetType("Skyline_Sports_Project.Engine.NameGenerator", false);
             MethodInfo schoolName = nameGenerator == null ? null : nameGenerator.GetMethods(
                 BindingFlags.Public | BindingFlags.Instance).FirstOrDefault(m =>
@@ -375,6 +393,24 @@ namespace SkylineSportsRussianLocalization
         private static void ForceRussianNameOrigin(ref double __result)
         {
             __result = 0.0;
+        }
+
+        private static void EnsureRussianPlayerName(Random __2, ref string __4, ref string __5)
+        {
+            if (__2 == null || _russianFirstNames == null || _russianLastNames == null) return;
+            if (ContainsLatinLetters(__4) || ContainsLatinLetters(__5))
+            {
+                __4 = _russianFirstNames[__2.Next(_russianFirstNames.Length)];
+                __5 = _russianLastNames[__2.Next(_russianLastNames.Length)];
+            }
+        }
+
+        private static bool ContainsLatinLetters(string value)
+        {
+            if (string.IsNullOrEmpty(value)) return false;
+            foreach (char c in value)
+                if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) return true;
+            return false;
         }
 
         private static void LocalizeSchoolName(ref string __result)
