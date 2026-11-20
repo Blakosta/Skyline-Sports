@@ -355,7 +355,7 @@ public static class Bios
 				bats = ((r < 0.9) ? "L" : "S");
 			}
 			string throws = (((p.Position == Position.FirstBase || p.Position == Position.LeftField || p.Position == Position.CenterField || p.Position == Position.RightField) && bats == "L" && random.NextDouble() < 0.5) ? "L" : "R");
-			return "Bats " + bats + ", throws " + throws;
+			return "Бьёт: " + ((bats == "R") ? "правой" : ((bats == "L") ? "левой" : "обеими")) + ", бросает: " + ((throws == "L") ? "левой" : "правой");
 		}
 		default:
 			if (!(r < 0.77))
