@@ -23,5 +23,11 @@
     <Reference Include="Colossal.Localization" />
     <Reference Include="Unity.Collections" />
     <Reference Include="Unity.Burst" />
+    <Reference Include="Unity.Mathematics">
+      <HintPath>$(GameManagedDir)\Unity.Mathematics.dll</HintPath>
+    </Reference>
+    <Reference Include="Colossal.Mathematics">
+      <HintPath>$(GameManagedDir)\Colossal.Mathematics.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>
