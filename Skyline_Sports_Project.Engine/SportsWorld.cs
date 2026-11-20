@@ -3255,6 +3255,15 @@ public class SportsWorld
 		return best;
 	}
 
+	public void NormalizeLeagueClubNames()
+	{
+		foreach (League league in Leagues)
+		{
+			EnsureUniqueLeagueMascots(league);
+		}
+		Revision++;
+	}
+
 	private void EnsureUniqueLeagueMascots(League league)
 	{
 		if (league == null) return;
