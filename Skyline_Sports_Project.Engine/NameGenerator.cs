@@ -160,7 +160,7 @@ public class NameGenerator
 
 	public static string Abbreviation(string name)
 	{
-		string[] skip = new string[9] { "high", "university", "of", "state", "college", "tech", "the", "fc", "sc" };
+		string[] skip = new string[17] { "high", "university", "of", "state", "college", "tech", "the", "fc", "sc", "школа", "университет", "государственный", "институт", "академия", "лицей", "гимназия", "имени" };
 		List<string> words = new List<string>();
 		string[] array = (name ?? "").Split(new[] { ' ' }, StringSplitOptions.None);
 		for (int i = 0; i < array.Length; i++)
