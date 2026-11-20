@@ -31,3 +31,6 @@ This is the first pass of the interface dictionary, not a claim that every dynam
 ## Runtime translation coverage
 
 The standalone patch translates exact UI values emitted by Skyline Sports' `JsonBuilder`, including navigation labels, tournament descriptions, standings terminology, awards, and selected dynamic announcements. It also localizes country labels and group headings where they are emitted as standalone values. It also handles selected transfer, roster, and promotion/relegation news templates while preserving player and club names. It deliberately avoids blanket substitutions inside player names, club names, and arbitrary generated text. Simulation rules, player-generation probabilities, and game mechanics remain untouched.
+
+
+Newly generated players are kept on the Russian name pools already present in the original project. Generated high-school team names receive a Russian school suffix. These are runtime content-localization patches; no original source files or simulation rules are modified.
