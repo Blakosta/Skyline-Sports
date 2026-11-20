@@ -186,14 +186,14 @@ public static class SaveCodec
 		}
 	}
 
-	public const int Version = 22;
+	public const int Version = 23;
 
 	private const char Sep = '\u001f';
 
 	public static string Encode(SportsWorld world)
 	{
 		TokenWriter w = new TokenWriter();
-		w.Int(21);
+		w.Int(23);
 		w.Int(world.NextId);
 		w.Int(world.LastTime);
 		w.Int(world.Orgs.Count);
@@ -1033,7 +1033,7 @@ public static class SaveCodec
 		{
 			TokenReader r = new TokenReader(blob);
 			int version = r.Int();
-			if (version < 1 || version > 21)
+			if (version < 1 || version > 23)
 			{
 				error = "Спортивные данные сохранены более новой версией мода (версия данных " + version + ").";
 				return false;
@@ -2353,7 +2353,7 @@ public static class SaveCodec
 	{
 		w.Str(world.CountryName);
 		w.Str(world.CountryAbbrev);
-		WriteV22(w, world);
+		WriteV23(w, world);
 	}
 
 	private static void WriteV22(TokenWriter w, SportsWorld world)
@@ -2372,6 +2372,20 @@ public static class SaveCodec
 			w.Int(Math.Max(0, Math.Min(4, team.SponsorTier)));
 			w.Int(Math.Max(0, Math.Min(2, team.SponsorFrequency)));
 			w.Int(team.SponsorLastPeriod);
+		}
+	}
+
+	private static void WriteV23(TokenWriter w, SportsWorld world)
+	{
+		WriteV22(w, world);
+		w.Int(world.Teams.Count);
+		foreach (Team team in world.Teams.Values)
+		{
+			w.Int(team.Id);
+			w.Int(ClubBranding.NormalizeLogo(team.LogoId));
+			w.Int(ClubBranding.NormalizeSponsor(team.SponsorId));
+			w.Int(Math.Max(500, Math.Min(150000, team.StadiumCapacity)));
+			w.Str(NameGenerator.CleanName(team.StadiumName, 60));
 		}
 	}
 
@@ -2420,6 +2434,28 @@ public static class SaveCodec
 			ReadV21(r, world);
 		if (version >= 22)
 			ReadV22(r, world);
+		if (version >= 23)
+			ReadV23(r, world);
+	}
+
+	private static void ReadV23(TokenReader r, SportsWorld world)
+	{
+		int teams = Count(r, 100000, "эмблемы и спонсоры клубов");
+		for (int i = 0; i < teams; i++)
+		{
+			int id = r.Int();
+			int logoId = r.Int();
+			int sponsorId = r.Int();
+			int capacity = r.Int();
+			string stadiumName = r.Str();
+			if (world.Teams.TryGetValue(id, out var team))
+			{
+				team.LogoId = ClubBranding.NormalizeLogo(logoId);
+				team.SponsorId = ClubBranding.NormalizeSponsor(sponsorId);
+				team.StadiumCapacity = Math.Max(500, Math.Min(150000, capacity));
+				team.StadiumName = NameGenerator.CleanName(stadiumName, 60);
+			}
+		}
 	}
 
 	private static void ReadV21(TokenReader r, SportsWorld world)
