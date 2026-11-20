@@ -3781,9 +3781,15 @@ public class SportsWorld
 			MoveDivision(d, Level.Minor);
 			MoveDivision(u, Level.Pro);
 			EnsureTransferBudget(u);
+			EnsureClubBalance(u);
+			int promotedBudget = u.TransferBudget;
 			u.TransferBudget = Math.Min(60000, u.TransferBudget + 6000);
+			u.ClubBalance = (int)Math.Max(0L, Math.Min(int.MaxValue, (long)u.ClubBalance + (long)(u.TransferBudget - promotedBudget) * 1000L));
 			EnsureTransferBudget(d);
+			EnsureClubBalance(d);
+			int relegatedBudget = d.TransferBudget;
 			d.TransferBudget = Math.Max(1500, (int)Math.Round((double)d.TransferBudget * 0.7 / 50.0) * 50) + 2000;
+			d.ClubBalance = (int)Math.Max(0L, Math.Min(int.MaxValue, (long)d.ClubBalance + (long)(d.TransferBudget - relegatedBudget) * 1000L));
 		}
 		RostersChanged();
 		StaffChanged();
