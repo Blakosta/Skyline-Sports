@@ -1,3 +1,4 @@
+
 using System;
 using Colossal.UI.Binding;
 using Game.UI;
@@ -23,7 +24,6 @@ public class SportsVenueSection : InfoSectionBase
 	protected override string group => "SportsVenueSection";
 
 	[Preserve]
-	[Preserve]
 	protected override void OnCreate()
 	{
 		((InfoSectionBase)this).OnCreate();
@@ -38,7 +38,6 @@ public class SportsVenueSection : InfoSectionBase
 		m_Json = "{}";
 	}
 
-	[Preserve]
 	[Preserve]
 	protected override void OnUpdate()
 	{
