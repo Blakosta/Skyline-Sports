@@ -2599,7 +2599,7 @@ public class SportsWorld
 		}
 		if (v.Type != type && (here.Count > SportRules.MaxTeams(type) || VenueLoad(venueId) > SportRules.HomeDateCapacity(type)))
 		{
-			return CommandResult.Fail("A " + SportRules.VenueTypeLabel(type) + " недостаточно свободных дат для этих " + here.Count + " команд (" + VenueLoad(venueId) + " домашних матчей, доступно " + SportRules.HomeDateCapacity(type) + "). Сначала переместите или удалите одну из команд.");
+			return CommandResult.Fail("Для объекта типа «" + SportRules.VenueTypeLabel(type) + "» недостаточно свободных дат для этих " + here.Count + " команд (" + VenueLoad(venueId) + " домашних матчей, доступно " + SportRules.HomeDateCapacity(type) + "). Сначала переместите или удалите одну из команд.");
 		}
 		v.Type = type;
 		Revision++;
