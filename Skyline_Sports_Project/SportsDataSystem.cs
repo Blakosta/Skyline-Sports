@@ -483,7 +483,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 	private CommandResult ApplyCityFundsTransfer(int teamId, int amount, bool toClub)
 	{
 		Team team = Sports.GetTeam(teamId);
-		if (team == null || team.Retired || !team.IsUser)
+		if (team == null || team.Retired)
 		{
 			return CommandResult.Fail("Команда больше не доступна для перевода.");
 		}
