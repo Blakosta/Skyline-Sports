@@ -536,7 +536,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 		}
 		Venue v = Sports.CreateVenue(type);
 		m_VenueEntities[v.Id] = building;
-		return CommandResult.Success("Теперь это здание — " + SportRules.VenueTypeLabel(type) + ". Pick its level, then add teams.");
+		return CommandResult.Success("Теперь это здание — " + SportRules.VenueTypeLabel(type) + ". Выберите уровень, затем добавьте команды.");
 	}
 
 	public CommandResult RemoveVenue(int venueId)
