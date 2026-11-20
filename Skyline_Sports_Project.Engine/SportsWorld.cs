@@ -11371,7 +11371,7 @@ public class SportsWorld
 		r.CommittedTo = best.Id;
 		string stars = r.Stars + "-star";
 		Organization o = GetOrg(best.OrgId);
-		AddPost(league, NewsKind.Recruiting, Campus.Name, Campus.Handle, (flip ? "СМЕНА РЕШЕНИЯ: " : "ВЫБОР: ") + stars + " " + Rosters.PositionLabel(p.Position) + " " + p.Name + ((p.From.Length > 0 && !r.National) ? (" из " + p.From) : (r.National ? (" (" + HometownOf(p) + ")") : "")) + (flip ? (" меняет решение: вместо " + from + " выбирает ") : " выбирает ") + ((o == null) ? TeamName(best.Id) : o.Name) + "!"", isUser: true, now, (r.Stars >= 4) ? 3 : 2);
+		AddPost(league, NewsKind.Recruiting, Campus.Name, Campus.Handle, (flip ? "СМЕНА РЕШЕНИЯ: " : "ВЫБОР: ") + stars + " " + Rosters.PositionLabel(p.Position) + " " + p.Name + ((p.From.Length > 0 && !r.National) ? (" из " + p.From) : (r.National ? (" (" + HometownOf(p) + ")") : "")) + (flip ? (" меняет решение: вместо " + from + " выбирает ") : " выбирает ") + ((o == null) ? TeamName(best.Id) : o.Name) + "!", isUser: true, now, (r.Stars >= 4) ? 3 : 2);
 		Revision++;
 		return true;
 	}
@@ -14232,7 +14232,7 @@ public class SportsWorld
 		}
 		if (announce || buyer.IsUser || (seller != null && seller.IsUser))
 		{
-			Post(league, NewsKind.Signing, Insider, "ТРАНСФЕР: «" + TeamName(buyer.Id) + "» подписывает " + Rosters.PositionLabel(p.Position) + " " + p.Name + " (" + Rosters.Ovr(p) + " ОБЩ) из клуба " + from + " за " + Economy.Money(fee) + "."", buyer.IsUser || (seller?.IsUser ?? false), now, 2);
+			Post(league, NewsKind.Signing, Insider, "ТРАНСФЕР: «" + TeamName(buyer.Id) + "» подписывает " + Rosters.PositionLabel(p.Position) + " " + p.Name + " (" + Rosters.Ovr(p) + " ОБЩ) из клуба " + from + " за " + Economy.Money(fee) + ".", buyer.IsUser || (seller?.IsUser ?? false), now, 2);
 		}
 		if (seller != null && seller.IsUser)
 		{
