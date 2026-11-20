@@ -9306,6 +9306,7 @@ public class SportsWorld
 			}
 			else if (Economy.Get(team.Sport).Type == CapType.Budget)
 			{
+				if (team.Budget <= 0) team.Budget = Economy.Limit(team);
 				team.Budget = (int)Math.Min(int.MaxValue, (long)team.Budget + budgetUnits);
 			}
 			Revision++;
@@ -9392,6 +9393,7 @@ public class SportsWorld
 			}
 			else if (Economy.Get(t.Sport).Type == CapType.Budget)
 			{
+				if (t.Budget <= 0) t.Budget = Economy.Limit(t);
 				t.Budget = (int)Math.Min(int.MaxValue, (long)t.Budget + budgetUnits);
 			}
 		}
@@ -9410,6 +9412,7 @@ public class SportsWorld
 			}
 			else if (Economy.Get(t.Sport).Type == CapType.Budget)
 			{
+				if (t.Budget <= 0) t.Budget = Economy.Limit(t);
 				int payrollFloor = Economy.Payroll(SignedPlayers(t.Id)) + Economy.DeadNow(t);
 				t.Budget = Math.Max(payrollFloor, t.Budget - budgetUnits);
 			}
