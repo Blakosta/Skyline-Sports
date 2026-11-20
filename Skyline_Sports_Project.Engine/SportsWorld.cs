@@ -325,13 +325,13 @@ public class SportsWorld
 
 	private const int MaxNotes = 8;
 
-	public const string GroupSeason = "Single season";
+	public const string GroupSeason = "Один сезон";
 
-	public const string GroupCareer = "Career";
+	public const string GroupCareer = "Карьера";
 
-	public const string GroupAwards = "Awards";
+	public const string GroupAwards = "Награды";
 
-	public const string GroupTeams = "Teams";
+	public const string GroupTeams = "Команды";
 
 	public List<RecruitTarget> RecruitBoard = new List<RecruitTarget>();
 
@@ -5926,7 +5926,7 @@ public class SportsWorld
 					{
 						Day = t.StartDay + round * 2 + g2 % 2,
 						Minute = times[(g2 + m) % 3],
-						Stage = "Group " + (char)(65 + g2),
+						Stage = "Группа " + (char)(65 + g2),
 						Home = members[rounds[round, m * 2]],
 						Away = members[rounds[round, m * 2 + 1]]
 					});
@@ -6352,7 +6352,7 @@ public class SportsWorld
 			}).Count;
 			homeLine = " " + h.Nation + ", your city's country, " + (h.Qualifier ? "plays in the qualifiers" : "is in the main event") + ((local > 0) ? (", with " + local + ((local == 1) ? " player who grew up in your city" : " players who grew up in your city")) : "") + ".";
 		}
-		string text = "NATIONAL TEAMS: the " + t.Label + " starts " + when + " in " + t.Host + "." + homeLine + ((mine.Count > 0) ? (" Your players called up: " + string.Join("; ", mine.GetRange(0, Math.Min(8, mine.Count)).ToArray()) + ((mine.Count > 8) ? (" and " + (mine.Count - 8) + " more") : "") + ".") : "");
+		string text = "СБОРНЫЕ: турнир «" + t.Label + "» начнётся " + when + " в городе " + t.Host + "." + homeLine + ((mine.Count > 0) ? (" Ваши игроки в составе сборных: " + string.Join("; ", mine.GetRange(0, Math.Min(8, mine.Count)).ToArray()) + ((mine.Count > 8) ? (" и ещё " + (mine.Count - 8)) : "") + ".") : "");
 		Post(league, NewsKind.General, Wire, text, mine.Count > 0 || homeLine.Length > 0, now, (mine.Count <= 0 && homeLine.Length <= 0) ? 1 : 2);
 	}
 
@@ -15585,7 +15585,7 @@ public class SportsWorld
 		{
 			round = ((a.Round == 3) ? "3rd" : (a.Round + "th"));
 		}
-		string label = DraftYearLabel(league, a.Year) + " " + round + " round pick";
+		string label = DraftYearLabel(league, a.Year) + ", выбор в " + (a.Round == 1 ? "1-м" : a.Round == 2 ? "2-м" : a.Round == 3 ? "3-м" : a.Round + "-м") + " раунде драфта";
 		if (a.OriginalTeamId != a.OwnerTeamId)
 		{
 			label = label + " (от " + TeamShortName(a.OriginalTeamId) + " )";
