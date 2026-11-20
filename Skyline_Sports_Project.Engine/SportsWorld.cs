@@ -9253,7 +9253,7 @@ public class SportsWorld
 	public static long SponsorPeriodRevenue(Team team)
 	{
 		long annual = SponsorAnnualRevenue(team);
-		if (team == null) return 0L;
+		if (team == null || annual <= 0L) return 0L;
 		return team.SponsorFrequency switch
 		{
 			1 => Math.Max(1L, annual / 52L),
