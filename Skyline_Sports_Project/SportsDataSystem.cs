@@ -155,6 +155,17 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 
 	private CitySystem m_CitySystem;
 
+	private readonly object m_TransferLock = new object();
+
+	private readonly List<PendingTransfer> m_PendingTransfers = new List<PendingTransfer>();
+
+	private sealed class PendingTransfer
+	{
+		public int TeamId;
+		public int Amount;
+		public bool ToClub;
+	}
+
 	private Type m_PlayerMoneyType;
 
 	private MemberInfo m_PlayerMoneyBalance;
@@ -275,6 +286,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 				ReadCityWeather(now);
 				Sports.VisitorAttendancePercent = ((Mod.Settings == null || Mod.Settings.VisitorFans) ? 20 : 0);
 				UpdateCityBalance();
+				ProcessPendingTransfers();
 				Sports.Advance(now);
 				SettleTicketIncome();
 				RunFans(now);
@@ -435,6 +447,49 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 		if (amount <= 0)
 		{
 			return CommandResult.Fail("Укажите положительную сумму перевода.");
+		}
+		if (toClub && !Sports.CityUnlimited && Sports.CityBalance < amount)
+		{
+			return CommandResult.Fail("В городской казне недостаточно средств.");
+		}
+		if (!toClub && team.ClubBalance < amount)
+		{
+			return CommandResult.Fail("На счёте клуба недостаточно средств.");
+		}
+		lock (m_TransferLock)
+		{
+			m_PendingTransfers.Add(new PendingTransfer { TeamId = teamId, Amount = amount, ToClub = toClub });
+		}
+		return CommandResult.Success("Перевод поставлен в очередь обработки.");
+	}
+
+	private void ProcessPendingTransfers()
+	{
+		List<PendingTransfer> pending;
+		lock (m_TransferLock)
+		{
+			if (m_PendingTransfers.Count == 0) return;
+			pending = new List<PendingTransfer>(m_PendingTransfers);
+			m_PendingTransfers.Clear();
+		}
+		foreach (PendingTransfer transfer in pending)
+		{
+			CommandResult result = ApplyCityFundsTransfer(transfer.TeamId, transfer.Amount, transfer.ToClub);
+			Sports.FinanceNotice = result.Message;
+			Sports.Revision++;
+			if (!result.Ok)
+			{
+				Mod.log.Warn((object)("Перевод между казной города и клубом отклонён: " + result.Message));
+			}
+		}
+	}
+
+	private CommandResult ApplyCityFundsTransfer(int teamId, int amount, bool toClub)
+	{
+		Team team = Sports.GetTeam(teamId);
+		if (team == null || team.Retired || !team.IsUser)
+		{
+			return CommandResult.Fail("Команда больше не доступна для перевода.");
 		}
 		if (toClub)
 		{
