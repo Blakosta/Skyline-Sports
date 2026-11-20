@@ -2356,7 +2356,9 @@ public class SportsWorld
 			Level.Junior => 5.0,
 			_ => 3.0,
 		};
-		referencePrice *= 0.75 + (double)home.Rating / 200.0;
+		List<Player> homeRoster = RosterOf(home.Id);
+		int homeOverall = (homeRoster == null || homeRoster.Count == 0) ? home.Rating : Rosters.Display(home.Level, Rosters.Strength(home.Sport, homeRoster));
+		referencePrice *= 0.75 + (double)homeOverall / 200.0;
 		Venue venue = GetVenue(g.VenueId);
 		if (venue != null)
 		{
