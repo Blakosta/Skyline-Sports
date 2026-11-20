@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>SkylineSportsRussianLocalization</AssemblyName>
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <GameManagedDir Condition="'$(GameManagedDir)' == ''">$(MSBuildThisFileDirectory)..\game-managed</GameManagedDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Game"><HintPath>$(GameManagedDir)\Game.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Colossal.Core"><HintPath>$(GameManagedDir)\Colossal.Core.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Colossal.Localization"><HintPath>$(GameManagedDir)\Colossal.Localization.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Colossal.Logging"><HintPath>$(GameManagedDir)\Colossal.Logging.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Colossal.IO.AssetDatabase"><HintPath>$(GameManagedDir)\Colossal.IO.AssetDatabase.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Unity.Entities"><HintPath>$(GameManagedDir)\Unity.Entities.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.CoreModule"><HintPath>$(GameManagedDir)\UnityEngine.CoreModule.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+</Project>
