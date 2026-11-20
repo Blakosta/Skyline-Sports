@@ -2183,57 +2183,39 @@ public class SportsWorld
 		return "D";
 	}
 
-	public int VenueCapacity(Sport sport, Level level, int venueId)
+	public int VenueCapacity(Sport sport, Level level, int venueId, int teamId = -1)
 	{
-		bool second = SportRules.IsSecondDivision(sport, level);
-		int seats = sport switch
+		if (venueId == -2)
 		{
-			Sport.Hockey => level switch
-			{
-				Level.Junior => 4500, 
-				Level.College => 6000, 
-				Level.Minor => 7500, 
-				Level.Pro => 18000, 
-				_ => 1000, 
-			}, 
-			Sport.Basketball => level switch
-			{
-				Level.College => 11000, 
-				Level.Minor => 4000, 
-				Level.Pro => 19000, 
-				_ => 1800, 
-			}, 
-			Sport.Football => level switch
-			{
-				Level.College => 55000, 
-				Level.Pro => 68000, 
-				_ => 7000, 
-			}, 
-			Sport.Baseball => level switch
-			{
-				Level.College => 3500, 
-				Level.Minor => 9000, 
-				Level.Pro => 41000, 
-				_ => 800, 
-			}, 
-			_ => second ? 9000 : (level switch
-			{
-				Level.College => 3000, 
-				Level.Pro => 22000, 
-				_ => 1200, 
-			}), 
-		};
+			return 500;
+		}
 		if (venueId >= 0)
 		{
 			Venue venue = GetVenue(venueId);
-			if (venue != null && venue.Capacity > 0)
+			if (venue != null)
 			{
-				return Math.Max(500, Math.Min(150000, venue.Capacity));
+				if (venue.Capacity < 500)
+				{
+					venue.Capacity = 500;
+				}
+				return Math.Min(150000, venue.Capacity);
 			}
-			seats = (int)Math.Round((double)seats * (0.9 + (double)(Hash((int)(venueId * 31 + sport)) % 21) / 100.0) / 10.0) * 10;
 		}
-		return seats;
+		if (teamId >= 0)
+		{
+			Team team = GetTeam(teamId);
+			if (team != null)
+			{
+				if (team.StadiumCapacity < 500)
+				{
+					team.StadiumCapacity = 500;
+				}
+				return Math.Min(150000, team.StadiumCapacity);
+			}
+		}
+		return 500;
 	}
+
 
 	private static double UsualFill(Sport sport, Level level)
 	{
@@ -2301,7 +2283,7 @@ public class SportsWorld
 			return 0;
 		}
 		EnsureTicketPrices(home);
-		int seats = VenueCapacity(league.Sport, league.Level, g.VenueId);
+		int seats = VenueCapacity(league.Sport, league.Level, g.VenueId, g.HomeTeamId);
 		Random r = new Random((int)Hash(g.Id * 7 + 3));
 		double fill = UsualFill(league.Sport, league.Level);
 		fill += (double)(home.Rating - 50) * 0.006 + (double)home.Form / 1000.0 * 0.08;
@@ -2402,7 +2384,7 @@ public class SportsWorld
 		games = 0;
 		average = 0;
 		sellouts = 0;
-		capacity = VenueCapacity(t.Sport, t.Level, t.VenueId);
+		capacity = VenueCapacity(t.Sport, t.Level, t.VenueId, t.Id);
 		long total = 0L;
 		Season[] array = new Season[2] { league.Current, league.Previous };
 		foreach (Season s in array)
@@ -2417,7 +2399,7 @@ public class SportsWorld
 				{
 					games++;
 					total += g.Attendance;
-					if (g.Attendance >= VenueCapacity(t.Sport, t.Level, g.VenueId))
+					if (g.Attendance >= VenueCapacity(t.Sport, t.Level, g.VenueId, t.Id))
 					{
 						sellouts++;
 					}
@@ -2652,7 +2634,8 @@ public class SportsWorld
 		{
 			Id = NextId++,
 			Type = type,
-			Level = SportRules.DefaultLevel(type)
+			Level = SportRules.DefaultLevel(type),
+			Capacity = 500
 		};
 		Venues[v.Id] = v;
 		Revision++;
@@ -2690,14 +2673,15 @@ public class SportsWorld
 		{
 			return CommandResult.Fail("Это здание не является спортивным объектом.");
 		}
-		if (capacity != 0 && (capacity < 500 || capacity > 150000))
+		if (capacity < 500 || capacity > 150000)
 		{
-			return CommandResult.Fail("Вместимость должна быть от 500 до 150 000 мест или 0 для автоматического расчёта.");
+			return CommandResult.Fail("Вместимость должна быть от 500 до 150 000 мест.");
 		}
-		venue.Capacity = Math.Max(0, capacity);
+		venue.Capacity = capacity;
 		Revision++;
-		return CommandResult.Success(capacity == 0 ? "Вместимость снова рассчитывается автоматически." : ("Вместимость арены установлена: " + capacity.ToString("N0") + " мест."));
+		return CommandResult.Success("Вместимость арены установлена: " + capacity.ToString("N0") + " мест.");
 	}
+
 
 	public CommandResult SetVenueLevel(int venueId, Level level)
 	{
@@ -9086,6 +9070,12 @@ public class SportsWorld
 
 	public CommandResult EditClub(int teamId, string city, string clubName, int venueId, int now)
 	{
+		Team existing = GetTeam(teamId);
+		return EditClub(teamId, city, clubName, venueId, existing?.StadiumCapacity ?? 500, existing?.StadiumName ?? "", now);
+	}
+
+	public CommandResult EditClub(int teamId, string city, string clubName, int venueId, int stadiumCapacity, string stadiumName, int now)
+	{
 		Team team = GetTeam(teamId);
 		if (team == null || team.Retired)
 		{
@@ -9097,16 +9087,30 @@ public class SportsWorld
 			return CommandResult.Fail("Организация клуба не найдена.");
 		}
 		Venue venue = GetVenue(venueId);
-		if (venue == null)
+		if (venueId >= 0 && venue == null)
 		{
 			return CommandResult.Fail("Выберите существующий спортивный объект.");
 		}
-		if (venueId != team.VenueId && !CanHost(venue, team.Sport, team.Level, team.Id, out var reason))
+		if (!team.IsUser && venueId != team.VenueId)
+		{
+			return CommandResult.Fail("Нельзя переместить ИИ-клуб на спортивный объект вашего города.");
+		}
+		if (venueId >= 0 && venueId != team.VenueId && !CanHost(venue, team.Sport, team.Level, team.Id, out var reason))
 		{
 			return CommandResult.Fail(reason);
 		}
 		CommandResult renamed = RenameOrg(team.OrgId, city, clubName);
-		if (!renamed.Ok) return renamed;
+		if (!renamed.Ok)
+		{
+			return renamed;
+		}
+		team.StadiumCapacity = Math.Max(500, Math.Min(150000, stadiumCapacity));
+		string cleanStadiumName = NameGenerator.CleanName(stadiumName, 60);
+		team.StadiumName = cleanStadiumName.Length > 0 ? cleanStadiumName : (TeamName(team.Id) + " Арена");
+		if (venue != null)
+		{
+			venue.Capacity = team.StadiumCapacity;
+		}
 		if (venueId != team.VenueId)
 		{
 			int oldVenue = team.VenueId;
@@ -9116,16 +9120,21 @@ public class SportsWorld
 			{
 				foreach (Match game in league.Current.Games)
 				{
-					if (!game.Played && game.HomeTeamId == team.Id && game.VenueId == oldVenue) game.VenueId = venueId;
+					if (!game.Played && game.HomeTeamId == team.Id && game.VenueId == oldVenue)
+					{
+						game.VenueId = venueId;
+					}
 				}
 				ReassignVenues(league);
 			}
 			Post(league, NewsKind.General, Wire, "ПЕРЕЕЗД: " + TeamName(team.Id) + " переносят домашние матчи на арену №" + venueId + ".", team.IsUser, now, 2);
 			Revision++;
-			return CommandResult.Success(renamed.Message + " Домашняя арена изменена.");
+			return CommandResult.Success(renamed.Message + " Домашняя арена изменена; название и вместимость стадиона сохранены.");
 		}
-		return renamed;
+		Revision++;
+		return CommandResult.Success(renamed.Message + " Стадион: " + team.StadiumName + ", " + team.StadiumCapacity.ToString("N0") + " мест.");
 	}
+
 
 	public CommandResult EditPlayer(int playerId, string firstName, string lastName, int number, int birthYear, int position, int overall, int potential, int height, int weight, string hometown, string hand)
 	{
@@ -9201,11 +9210,16 @@ public class SportsWorld
 		{
 			return CommandResult.Fail("Команда не найдена или расформирована.");
 		}
+		if (!t.IsUser)
+		{
+			return CommandResult.Fail("Цены билетов можно менять только у клуба вашего города.");
+		}
 		t.TicketPriceResidents = Math.Max(1, Math.Min(1500, residents));
 		t.TicketPriceVisitors = Math.Max(1, Math.Min(1500, visitors));
 		Revision++;
 		return CommandResult.Success("Цены билетов обновлены: жители — " + t.TicketPriceResidents.ToString("N0") + " ¢, туристы — " + t.TicketPriceVisitors.ToString("N0") + " ¢.");
 	}
+
 
 	public static string SponsorTierLabel(int tier)
 	{
@@ -9279,6 +9293,10 @@ public class SportsWorld
 		{
 			return CommandResult.Fail("Команда не найдена или расформирована.");
 		}
+		if (!team.IsUser)
+		{
+			return CommandResult.Fail("Настройки финансирования доступны только вашему клубу.");
+		}
 		if (tier < 0 || tier > 4 || frequency < 0 || frequency > 2)
 		{
 			return CommandResult.Fail("Недопустимый уровень спонсорской поддержки или период выплат.");
@@ -9330,6 +9348,10 @@ public class SportsWorld
 		if (team == null || team.Retired)
 		{
 			return CommandResult.Fail("Команда не найдена или расформирована.");
+		}
+		if (!team.IsUser)
+		{
+			return CommandResult.Fail("Зарплатный бюджет можно менять только у вашего клуба.");
 		}
 		if (Economy.Get(team.Sport).Type != CapType.Budget)
 		{
@@ -13703,6 +13725,7 @@ public class SportsWorld
 		int today = GameClock.MonthStartDay(now) - 1;
 		int year = GameClock.YearOfDay(today + 1);
 		int target = TargetGames(league);
+		bool firstSoccerSeason = league.Sport == Sport.Soccer && league.History.Count == 0 && league.Previous == null;
 		int chosen = int.MinValue;
 		for (int y = year - 1; y <= year + 1; y++)
 		{
@@ -13718,7 +13741,7 @@ public class SportsWorld
 					chosen = y;
 					break;
 				}
-				if (ScheduleBuilder.RemainingGames(p, y, target, today) >= MinimumPartialGames(target))
+				if (!firstSoccerSeason && ScheduleBuilder.RemainingGames(p, y, target, today) >= MinimumPartialGames(target))
 				{
 					chosen = y;
 				}
@@ -13755,6 +13778,7 @@ public class SportsWorld
 			Revision++;
 		}
 	}
+
 
 	private Season MakeSeason(SportProfile p, League league, int year, int today, int target)
 	{
