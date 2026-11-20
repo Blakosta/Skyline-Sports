@@ -182,11 +182,11 @@ public static class Standings
 			char k;
 			if (mine > theirs)
 			{
-				k = 'W';
+				k = 'В';
 			}
 			else
 			{
-				k = ((mine < theirs) ? 'L' : 'T');
+				k = ((mine < theirs) ? 'П' : 'Н');
 			}
 			if (count == 0)
 			{
