@@ -333,7 +333,7 @@ public static class Views
 		j.Prop("hour", GameClock.ClockLabel(GameClock.MinuteOfDay(g.Time)));
 		j.Prop("home", world.TeamName(g.HomeTeamId));
 		j.Prop("away", world.TeamName(g.AwayTeamId));
-		j.Prop("homeFirst", league.Sport == Sport.Soccer);
+		j.Prop("homeFirst", value: true);
 		j.Prop("homeAbbr", world.TeamAbbrev(g.HomeTeamId));
 		j.Prop("awayAbbr", world.TeamAbbrev(g.AwayTeamId));
 		j.Prop("isUser", (home != null && home.IsUser) || (away?.IsUser ?? false));
@@ -401,7 +401,7 @@ public static class Views
 		j.BeginObject();
 		j.Prop("id", t.Id);
 		j.Prop("orgId", t.OrgId);
-		j.Prop("name", (o == null) ? "Не определено" : o.FullName);
+		j.Prop("name", (o == null) ? "Не определено" : o.Name);
 		j.Prop("school", (o == null) ? "" : o.Name);
 		j.Prop("mascot", (o == null) ? "" : o.Mascot);
 		j.Prop("sport", (int)t.Sport);
@@ -1303,7 +1303,7 @@ public static class Views
 			}
 		}
 		j.Name(name).BeginObject().Prop("id", t?.Id ?? (-1))
-			.Prop("name", (t == null) ? "Не определено" : world.TeamName(t.Id))
+			.Prop("name", (t == null) ? "Не определено" : world.TeamFullName(t.Id))
 			.Prop("abbr", (t == null) ? "" : world.TeamAbbrev(t.Id))
 			.Prop("record", record)
 			.Prop("isUser", t?.IsUser ?? false)
