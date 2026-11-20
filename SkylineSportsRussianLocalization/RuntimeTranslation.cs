@@ -493,8 +493,8 @@ namespace SkylineSportsRussianLocalization
             if (__0.StartsWith("FLIP: ", StringComparison.Ordinal))
             {
                 __0 = "ПЕРЕХОД: " + __0.Substring("FLIP: ".Length)
-                    .Replace(" from ", " из ")
                     .Replace(" flips from ", " меняет команду «")
+                    .Replace(" from ", " из ")
                     .Replace(" to ", "» на команду «");
                 if (__0.EndsWith("!", StringComparison.Ordinal)) __0 += "»";
             }
@@ -510,8 +510,8 @@ namespace SkylineSportsRussianLocalization
             {
                 __0 = "ТРАНСФЕР: команда «" + __0.Substring("TRANSFER: The ".Length)
                     .Replace(" sign ", "» подписывает игрока ")
-                    .Replace(" from the ", " ОБЩ) из клуба «")
                     .Replace(" OVR) from ", " ОБЩ) из клуба «")
+                    .Replace(" from the ", " из клуба «")
                     .Replace(" from ", " из клуба «")
                     .Replace(" for ", "» за ");
             }
@@ -544,8 +544,7 @@ namespace SkylineSportsRussianLocalization
             }
 
             __0 = Regex.Replace(__0, @"\bGroup ([A-Z])\b", "Группа $1");
-            if (Regex.IsMatch(__0, @"^[A-Z][a-z]{2} \d{1,2} to [A-Z][a-z]{2} \d{1,2}, \d{4}$"))
-                __0 = Regex.Replace(__0, @"\s+to\s+", " — ");
+            __0 = Regex.Replace(__0, @"([A-Z][a-z]{2} \d{1,2}) to ([A-Z][a-z]{2} \d{1,2}, \d{4})", "$1 — $2");
 
             // Month abbreviations can appear inside complete date labels.
             __0 = Regex.Replace(__0, @"\bJan\b", "янв", RegexOptions.IgnoreCase);
