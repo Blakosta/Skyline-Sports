@@ -50,7 +50,7 @@ public class PanelView
 		{
 			return v;
 		}
-		string[] array = text.Split(';', StringSplitOptions.None);
+		string[] array = text.Split(new[] { ';' }, StringSplitOptions.None);
 		foreach (string part in array)
 		{
 			int eq = part.IndexOf('=');
@@ -132,7 +132,7 @@ public class PanelView
 		{
 			return list;
 		}
-		string[] array = csv.Split(',', StringSplitOptions.None);
+		string[] array = csv.Split(new[] { ',' }, StringSplitOptions.None);
 		for (int i = 0; i < array.Length; i++)
 		{
 			if (int.TryParse(array[i].Trim(), out var n) && !list.Contains(n))
