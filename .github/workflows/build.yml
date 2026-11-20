@@ -16,6 +16,10 @@ jobs:
       - name: Checkout mod source
         uses: actions/checkout@v4
 
+      - name: Validate UI module syntax
+        shell: pwsh
+        run: node --check .\\AdditionalSourceFiles\\Skyline_Sports_Project.mjs
+
       - name: Checkout private game libraries
         uses: actions/checkout@v4
         with:
