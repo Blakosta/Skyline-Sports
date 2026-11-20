@@ -3735,7 +3735,7 @@ public class SportsWorld
 			{
 				text2 = ((place == 1) ? " (чемпионы)" : (" (" + Views.Ordinal(place) + " )"));
 			}
-			list.Add("the " + text + text2);
+			list.Add("команда «" + text + "»" + text2);
 		}
 		string topTitle = Views.LeagueTitle(top);
 		string secondTitle = "Вторая лига";
