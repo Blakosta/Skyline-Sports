@@ -5984,7 +5984,7 @@ public class SportsWorld
 		sim.Play(m, t.Sport, Level.Pro, t.Teams[g.Home].Rating, t.Teams[g.Away].Rating);
 		g.HomeScore = m.HomeScore;
 		g.AwayScore = m.AwayScore;
-		g.Suffix = ((m.Result == ResultType.Penalties) ? "Pens" : SportRules.ResultSuffix(t.Sport, m.Result));
+		g.Suffix = ((m.Result == ResultType.Penalties) ? "П" : SportRules.ResultSuffix(t.Sport, m.Result));
 		if (m.Result == ResultType.Penalties)
 		{
 			g.TieWinner = ((m.HomePenalties > m.AwayPenalties) ? g.Home : g.Away);
@@ -9856,12 +9856,12 @@ public class SportsWorld
 	{
 		return p switch
 		{
-			PlayerPriority.Winning => "Winning", 
-			PlayerPriority.Loyalty => "Loyalty", 
-			PlayerPriority.Money => "Money", 
+			PlayerPriority.Winning => "Победы", 
+			PlayerPriority.Loyalty => "Верность", 
+			PlayerPriority.Money => "Деньги", 
 			PlayerPriority.PlayingTime => "Игровое время", 
 			PlayerPriority.Hometown => "Родной город", 
-			_ => "Balanced", 
+			_ => "Сбалансированные условия", 
 		};
 	}
 
@@ -10222,7 +10222,7 @@ public class SportsWorld
 		{
 			Level.College => _names.CollegeName(place, new List<string>()), 
 			Level.Junior => place + " " + _names.PickMascot(sport, Level.Junior, new List<string>()), 
-			_ => place + " High", 
+			_ => place + " школа", 
 		};
 	}
 
@@ -11060,7 +11060,7 @@ public class SportsWorld
 		int comma = town.IndexOf(',');
 		string text = ((comma > 0) ? town.Substring(0, comma) : town);
 		string[] names = NameGenerator.HighSchoolNames;
-		string school = names[_random.Next(names.Length)] + " High";
+		string school = names[_random.Next(names.Length)] + " школа";
 		if (text.Length <= 0)
 		{
 			return school;
