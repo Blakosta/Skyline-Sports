@@ -563,20 +563,27 @@ public static class ScheduleBuilder
 			int venue = ((home != null && home.IsUser) ? home.VenueId : (-1));
 			if (venue >= 0 && AnyConflict(occupancy, venue, series, key2, sport, outdoor))
 			{
-				int other = ((away != null && away.IsUser) ? away.VenueId : (-1));
-				if (other < 0 || !AnyConflict(occupancy, other, series, key2, sport, outdoor))
+				if (sport == Sport.Soccer)
 				{
-					foreach (Match item in series)
-					{
-						int tmp = item.HomeTeamId;
-						item.HomeTeamId = item.AwayTeamId;
-						item.AwayTeamId = tmp;
-					}
-					venue = other;
+					venue = -2;
 				}
 				else
 				{
-					venue = -2;
+					int other = ((away != null && away.IsUser) ? away.VenueId : (-1));
+					if (other < 0 || !AnyConflict(occupancy, other, series, key2, sport, outdoor))
+					{
+						foreach (Match item in series)
+						{
+							int tmp = item.HomeTeamId;
+							item.HomeTeamId = item.AwayTeamId;
+							item.AwayTeamId = tmp;
+						}
+						venue = other;
+					}
+					else
+					{
+						venue = -2;
+					}
 				}
 			}
 			foreach (Match g3 in series)
