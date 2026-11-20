@@ -1487,7 +1487,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 	private void StopFans(string why)
 	{
 		m_FansBroken = true;
-		Sports.FanStatus = "Система болельщиков временно отключена: " + why + ". Подробности — в журнале Skyline_Sports_Project.log.";
+		Sports.FanStatus = "Система болельщиков временно отключена: " + why + ". Подробности — в журнале мода «Спорт России».";
 		Mod.log.Info((object)("Система болельщиков отключена: " + why));
 		Sports.Revision++;
 	}
