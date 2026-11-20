@@ -1635,7 +1635,7 @@ public static class Views
 		{
 			if (x.Played && x != g && x.Involves(g.HomeTeamId) && x.Involves(g.AwayTeamId))
 			{
-				j.BeginObject().Prop("id", x.Id).Prop("text", GameClock.ShortDayLabel(GameClock.DayOf(x.Time)) + ": " + world.TeamAbbrev(x.AwayTeamId) + " " + x.AwayScore + ", " + world.TeamAbbrev(x.HomeTeamId) + " " + x.HomeScore + ((SportRules.ResultSuffix(sport, x.Result).Length > 0) ? (" (" + SportRules.ResultSuffix(sport, x.Result) + ")") : ""))
+				j.BeginObject().Prop("id", x.Id).Prop("text", GameClock.ShortDayLabel(GameClock.DayOf(x.Time)) + ": " + world.TeamAbbrev(x.HomeTeamId) + " " + x.HomeScore + ", " + world.TeamAbbrev(x.AwayTeamId) + " " + x.AwayScore + ((SportRules.ResultSuffix(sport, x.Result).Length > 0) ? (" (" + SportRules.ResultSuffix(sport, x.Result) + ")") : ""))
 					.EndObject();
 			}
 		}
@@ -1648,7 +1648,7 @@ public static class Views
 			j.Prop("rivalry", SportsWorld.RivalryLabel(rv) + " за всё время " + world.TeamShortName(g.HomeTeamId) + " " + homeWins + ", " + world.TeamShortName(g.AwayTeamId) + " " + awayWins + ((rv.Ties > 0) ? (", " + rv.Ties + " ничьих") : ""));
 		}
 		j.Name("teams").BeginArray();
-		Team[] array = new Team[2] { away, home };
+		Team[] array = new Team[2] { home, away };
 		foreach (Team t in array)
 		{
 			j.BeginObject();
