@@ -341,6 +341,7 @@ public static class Views
 		j.Prop("away", world.TeamName(g.AwayTeamId));
 		j.Prop("homeLogoId", world.TeamLogoId(g.HomeTeamId));
 		j.Prop("awayLogoId", world.TeamLogoId(g.AwayTeamId));
+		j.Prop("hasRplLogo", league.Sport == Sport.Soccer && league.Level == Level.Pro);
 		j.Prop("homeFirst", value: true);
 		j.Prop("homeAbbr", world.TeamAbbrev(g.HomeTeamId));
 		j.Prop("awayAbbr", world.TeamAbbrev(g.AwayTeamId));
@@ -756,19 +757,12 @@ public static class Views
 	public static List<KeyValuePair<int, List<Match>>> RecentDays(League league, int dayCount)
 	{
 		List<Match> played = new List<Match>();
-		Season[] array = new Season[2] { league.Current, league.Previous };
-		foreach (Season s in array)
+		Season selected = (league.Current != null && league.Current.Games.Exists((Match match) => match.Played)) ? league.Current : league.Previous;
+		if (selected != null)
 		{
-			if (s == null)
+			foreach (Match g in selected.Games)
 			{
-				continue;
-			}
-			foreach (Match g in s.Games)
-			{
-				if (g.Played && g.AwayTeamId >= 0 && g.HomeTeamId >= 0)
-				{
-					played.Add(g);
-				}
+				if (g.Played && g.AwayTeamId >= 0 && g.HomeTeamId >= 0) played.Add(g);
 			}
 		}
 		played.Sort((Match a, Match b) => (b.Time == a.Time) ? a.Id.CompareTo(b.Id) : b.Time.CompareTo(a.Time));
@@ -2357,7 +2351,7 @@ public static class Views
 		}
 		j.EndArray();
 		j.Name("recent").BeginArray();
-		foreach (KeyValuePair<int, List<Match>> day in RecentDays(league, 4))
+		foreach (KeyValuePair<int, List<Match>> day in RecentDays(league, Math.Max(1, (league.Current?.Games.Count ?? 0) + (league.Previous?.Games.Count ?? 0))))
 		{
 			WriteDay(j, world, league, day);
 		}
@@ -6352,7 +6346,7 @@ public static class Views
 		results.Sort((Match a, Match b) => b.Time.CompareTo(a.Time));
 		coming.Sort((Match a, Match b) => a.Time.CompareTo(b.Time));
 		j.Name("results").BeginArray();
-		for (int i = 0; i < results.Count && i < 12; i++)
+		for (int i = 0; i < results.Count; i++)
 		{
 			Match g2 = results[i];
 			j.BeginObject().Prop("id", g2.Id).Prop("date", GameClock.ShortDayLabel(GameClock.DayOf(g2.Time)))
