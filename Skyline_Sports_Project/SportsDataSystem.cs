@@ -444,13 +444,10 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 		{
 			return CommandResult.Fail("Переводы доступны только для вашей команды.");
 		}
+		Sports.EnsureClubBalance(team);
 		if (amount <= 0)
 		{
 			return CommandResult.Fail("Укажите положительную сумму перевода.");
-		}
-		if (toClub && !Sports.CityUnlimited && Sports.CityBalance < amount)
-		{
-			return CommandResult.Fail("В городской казне недостаточно средств.");
 		}
 		if (!toClub && team.ClubBalance < amount)
 		{
