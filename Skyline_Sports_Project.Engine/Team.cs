@@ -56,7 +56,7 @@ public class Team
 
 	public int TransferBudget = -1;
 
-	public int ClubBalance;
+	public int ClubBalance = -1;
 
 	public int TicketPriceResidents;
 
