@@ -566,9 +566,9 @@ public static class Economy
 	{
 		if (thousands >= 1000)
 		{
-			return "$" + ((double)thousands / 1000.0).ToString((thousands >= 10000) ? "0.0" : "0.00", CultureInfo.InvariantCulture) + "M";
+			return "$" + ((double)thousands / 1000.0).ToString((thousands >= 10000) ? "0.0" : "0.00", CultureInfo.InvariantCulture) + " млн";
 		}
-		return "$" + thousands + "K";
+		return "$" + thousands + " тыс.";
 	}
 
 	public static string ContractText(Player p)
