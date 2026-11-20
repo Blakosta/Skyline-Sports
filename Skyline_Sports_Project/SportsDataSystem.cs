@@ -443,6 +443,10 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 		{
 			return CommandResult.Fail("Команда не найдена или расформирована.");
 		}
+		if (!team.IsUser)
+		{
+			return CommandResult.Fail("Переводы между городской казной и клубом доступны только для вашей команды.");
+		}
 		Sports.EnsureClubBalance(team);
 		if (amount <= 0)
 		{
