@@ -12755,11 +12755,22 @@ public class SportsWorld
 		g.HomePenalties = live.HomePenalties;
 		g.AwayPenalties = live.AwayPenalties;
 		g.Played = true;
-		int visitorCount = (int)Math.Round((double)g.Attendance * Math.Max(0.0, Math.Min(1.0, (double)VisitorAttendancePercent / 100.0)));
-		g.TicketVisitorAttendance = Math.Max(0, Math.Min(g.Attendance, visitorCount));
-		g.TicketLocalAttendance = Math.Max(0, g.Attendance - g.TicketVisitorAttendance);
-		g.TicketRevenue = (home == null) ? 0 : (g.TicketLocalAttendance * home.TicketPriceResidents + g.TicketVisitorAttendance * home.TicketPriceVisitors);
-		g.TicketIncomePaid = g.TicketRevenue <= 0;
+		if (home == null || !Venues.ContainsKey(g.VenueId))
+		{
+			g.TicketLocalAttendance = 0;
+			g.TicketVisitorAttendance = 0;
+			g.TicketRevenue = 0;
+			g.TicketIncomePaid = true;
+		}
+		else
+		{
+			EnsureTicketPrices(home);
+			int visitorCount = (int)Math.Round((double)g.Attendance * Math.Max(0.0, Math.Min(1.0, (double)VisitorAttendancePercent / 100.0)));
+			g.TicketVisitorAttendance = Math.Max(0, Math.Min(g.Attendance, visitorCount));
+			g.TicketLocalAttendance = Math.Max(0, g.Attendance - g.TicketVisitorAttendance);
+			g.TicketRevenue = g.TicketLocalAttendance * home.TicketPriceResidents + g.TicketVisitorAttendance * home.TicketPriceVisitors;
+			g.TicketIncomePaid = g.TicketRevenue <= 0;
+		}
 		g.Live = null;
 		Momentum.UpdateForm(home, away, g, live.HomeChance);
 		RecordCoachResult(g);
