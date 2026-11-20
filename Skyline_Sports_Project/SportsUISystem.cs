@@ -1,3 +1,4 @@
+
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -17,32 +18,19 @@ namespace Skyline_Sports_Project;
 public class SportsUISystem : UISystemBase
 {
 	private SportsDataSystem m_Data;
-
 	private SelectedInfoUISystem m_SelectedInfo;
-
 	private ValueBinding<string> m_PanelData;
-
 	private ValueBinding<bool> m_ShowButton;
-
 	private int m_LastRevision = int.MinValue;
-
 	private int m_LastDay = int.MinValue;
-
 	private int m_LastLiveTick = int.MinValue;
-
 	private float m_Timer;
-
 	private bool m_PanelOpen;
-
 	private PanelView m_View = new PanelView();
-
 	private bool m_UnitsUnreadable;
-
 	private PropertyInfo m_UiSettingsProp;
-
 	private MemberInfo m_UnitMember;
 
-	[Preserve]
 	[Preserve]
 	protected override void OnCreate()
 	{
@@ -57,7 +45,6 @@ public class SportsUISystem : UISystemBase
 		((UISystemBase)this).AddBinding((IBinding)(object)new TriggerBinding<string>("SkylineSports", "PanelCommand", (Action<string>)OnPanelCommand, (IReader<string>)null));
 	}
 
-	[Preserve]
 	[Preserve]
 	protected override void OnUpdate()
 	{
@@ -233,30 +220,30 @@ public class SportsUISystem : UISystemBase
 			SportsWorld w = m_Data.Sports;
 			CommandResult r = a[0] switch
 			{
-				"manage" => w.SetManaged(Int(a, 1), Int(a, 2) == 1, now), 
-				"resign" => w.Resign(Int(a, 1), now), 
-				"release" => w.Release(Int(a, 1), now, a.Length > 2 && a[2] == "stretch"), 
-				"sign" => w.SignFreeAgent(Int(a, 1), Int(a, 2), now), 
-				"trade" => w.ProposeTrade(Int(a, 1), Int(a, 2), Ids(a, 3), Ids(a, 4), Ids(a, 5), Ids(a, 6), now), 
-				"fireCoach" => w.FireCoach(Int(a, 1), now), 
-				"hireCoach" => w.HireCoach(Int(a, 1), Int(a, 2), Int(a, 3), now), 
-				"draft" => w.DraftPlayer(Int(a, 1), Int(a, 2), now), 
-				"autopick" => w.AutoPick(Int(a, 1), now), 
-				"offer" => w.OfferContract(Int(a, 1), Int(a, 2), Int(a, 3), Int(a, 4), now), 
-				"acceptAsk" => w.AcceptAsk(Int(a, 1), Int(a, 2), now), 
-				"block" => w.ToggleBlock(Int(a, 1), now), 
-				"acceptOffer" => w.AcceptOffer(Int(a, 1), now), 
-				"declineOffer" => w.DeclineOffer(Int(a, 1)), 
-				"recruit" => w.Recruit(Int(a, 1), Int(a, 2), (a.Length > 3) ? a[3] : "", now), 
-				"callUp" => w.CallUp(Int(a, 1), Int(a, 2), now), 
-				"watchFirst" => w.ToggleWatchFirst(Int(a, 1), now), 
-				"farmPref" => w.SetFarmPref(Int(a, 1), Int(a, 2), now), 
-				"sendDown" => w.SendDown(Int(a, 1), Int(a, 2), now), 
-				"bid" => w.BidForPlayer(Int(a, 1), Int(a, 2), Int(a, 3), now), 
-				"acceptTransfer" => w.AcceptTransferOffer(Int(a, 1), now), 
-				"declineTransfer" => w.DeclineTransferOffer(Int(a, 1)), 
-				"country" => w.SetCountry((a.Length > 1) ? a[1] : "", (a.Length > 2) ? a[2] : "", now), 
-				_ => CommandResult.Fail("Неизвестная команда."), 
+				"manage" => w.SetManaged(Int(a, 1), Int(a, 2) == 1, now),
+				"resign" => w.Resign(Int(a, 1), now),
+				"release" => w.Release(Int(a, 1), now, a.Length > 2 && a[2] == "stretch"),
+				"sign" => w.SignFreeAgent(Int(a, 1), Int(a, 2), now),
+				"trade" => w.ProposeTrade(Int(a, 1), Int(a, 2), Ids(a, 3), Ids(a, 4), Ids(a, 5), Ids(a, 6), now),
+				"fireCoach" => w.FireCoach(Int(a, 1), now),
+				"hireCoach" => w.HireCoach(Int(a, 1), Int(a, 2), Int(a, 3), now),
+				"draft" => w.DraftPlayer(Int(a, 1), Int(a, 2), now),
+				"autopick" => w.AutoPick(Int(a, 1), now),
+				"offer" => w.OfferContract(Int(a, 1), Int(a, 2), Int(a, 3), Int(a, 4), now),
+				"acceptAsk" => w.AcceptAsk(Int(a, 1), Int(a, 2), now),
+				"block" => w.ToggleBlock(Int(a, 1), now),
+				"acceptOffer" => w.AcceptOffer(Int(a, 1), now),
+				"declineOffer" => w.DeclineOffer(Int(a, 1)),
+				"recruit" => w.Recruit(Int(a, 1), Int(a, 2), (a.Length > 3) ? a[3] : "", now),
+				"callUp" => w.CallUp(Int(a, 1), Int(a, 2), now),
+				"watchFirst" => w.ToggleWatchFirst(Int(a, 1), now),
+				"farmPref" => w.SetFarmPref(Int(a, 1), Int(a, 2), now),
+				"sendDown" => w.SendDown(Int(a, 1), Int(a, 2), now),
+				"bid" => w.BidForPlayer(Int(a, 1), Int(a, 2), Int(a, 3), now),
+				"acceptTransfer" => w.AcceptTransferOffer(Int(a, 1), now),
+				"declineTransfer" => w.DeclineTransferOffer(Int(a, 1)),
+				"country" => w.SetCountry((a.Length > 1) ? a[1] : "", (a.Length > 2) ? a[2] : "", now),
+				_ => CommandResult.Fail("Неизвестная команда."),
 			};
 			m_View.Notice = r.Message;
 			m_View.NoticeOk = r.Ok;
