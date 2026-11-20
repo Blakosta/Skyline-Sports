@@ -2225,6 +2225,11 @@ public class SportsWorld
 		};
 		if (venueId >= 0)
 		{
+			Venue venue = GetVenue(venueId);
+			if (venue != null && venue.Capacity > 0)
+			{
+				return Math.Max(500, Math.Min(150000, venue.Capacity));
+			}
 			seats = (int)Math.Round((double)seats * (0.9 + (double)(Hash((int)(venueId * 31 + sport)) % 21) / 100.0) / 10.0) * 10;
 		}
 		return seats;
@@ -2674,6 +2679,22 @@ public class SportsWorld
 		v.Type = type;
 		Revision++;
 		return CommandResult.Success("Тип спортивного объекта изменён на " + SportRules.VenueTypeLabel(type) + ".");
+	}
+
+	public CommandResult SetVenueCapacity(int venueId, int capacity)
+	{
+		Venue venue = GetVenue(venueId);
+		if (venue == null)
+		{
+			return CommandResult.Fail("Это здание не является спортивным объектом.");
+		}
+		if (capacity != 0 && (capacity < 500 || capacity > 150000))
+		{
+			return CommandResult.Fail("Вместимость должна быть от 500 до 150 000 мест или 0 для автоматического расчёта.");
+		}
+		venue.Capacity = Math.Max(0, capacity);
+		Revision++;
+		return CommandResult.Success(capacity == 0 ? "Вместимость снова рассчитывается автоматически." : ("Вместимость арены установлена: " + capacity.ToString("N0") + " мест."));
 	}
 
 	public CommandResult SetVenueLevel(int venueId, Level level)
@@ -9074,6 +9095,155 @@ public class SportsWorld
 		return CommandResult.Success("Цены билетов обновлены: жители — " + t.TicketPriceResidents.ToString("N0") + " ¢, туристы — " + t.TicketPriceVisitors.ToString("N0") + " ¢.");
 	}
 
+	public static string SponsorTierLabel(int tier)
+	{
+		return tier switch
+		{
+			1 => "Мелкие спонсоры",
+			2 => "Средние спонсоры",
+			3 => "Топ-спонсоры",
+			4 => "Топ-спонсор и инвесторы",
+			_ => "Без дополнительного финансирования"
+		};
+	}
+
+	public static string SponsorFrequencyLabel(int frequency)
+	{
+		return frequency switch
+		{
+			1 => "Еженедельно",
+			2 => "Ежегодно",
+			_ => "Ежемесячно"
+		};
+	}
+
+	public static long SponsorAnnualRevenue(Team team)
+	{
+		if (team == null || team.SponsorTier <= 0) return 0L;
+		double share = team.SponsorTier switch
+		{
+			1 => 0.02,
+			2 => 0.05,
+			3 => 0.12,
+			4 => 0.25,
+			_ => 0.0
+		};
+		return (long)Math.Round((double)Economy.Cap(team.Sport) * 1000.0 * share);
+	}
+
+	public static long SponsorPeriodRevenue(Team team)
+	{
+		long annual = SponsorAnnualRevenue(team);
+		if (team == null) return 0L;
+		return team.SponsorFrequency switch
+		{
+			1 => Math.Max(1L, annual / 52L),
+			2 => annual,
+			_ => Math.Max(1L, annual / 12L)
+		};
+	}
+
+	private static int SponsorPeriodIndex(Team team, int now)
+	{
+		return team.SponsorFrequency switch
+		{
+			1 => GameClock.DayOf(now) / 7,
+			2 => GameClock.YearOfDay(GameClock.DayOf(now)),
+			_ => GameClock.MonthIndex(now)
+		};
+	}
+
+	public CommandResult SetSponsorSettings(int teamId, int tier, int frequency, int now)
+	{
+		Team team = GetTeam(teamId);
+		if (team == null || team.Retired || !team.IsUser)
+		{
+			return CommandResult.Fail("Настраивать спонсоров можно только у вашей команды.");
+		}
+		if (tier < 0 || tier > 4 || frequency < 0 || frequency > 2)
+		{
+			return CommandResult.Fail("Недопустимый уровень спонсорской поддержки или период выплат.");
+		}
+		team.SponsorTier = tier;
+		team.SponsorFrequency = frequency;
+		team.SponsorLastPeriod = SponsorPeriodIndex(team, now);
+		Revision++;
+		return CommandResult.Success("Спонсорская поддержка: " + SponsorTierLabel(tier) + ". Выплаты: " + SponsorFrequencyLabel(frequency).ToLowerInvariant() + "; ожидаемое поступление — " + SponsorPeriodRevenue(team).ToString("N0") + " ¢ за период.");
+	}
+
+	private void PaySponsors(int now)
+	{
+		foreach (Team team in Teams.Values)
+		{
+			if (!team.IsUser || team.Retired || team.SponsorTier <= 0) continue;
+			EnsureClubBalance(team);
+			int period = SponsorPeriodIndex(team, now);
+			if (team.SponsorLastPeriod == int.MinValue)
+			{
+				team.SponsorLastPeriod = period;
+				continue;
+			}
+			if (period <= team.SponsorLastPeriod) continue;
+			long payment = SponsorPeriodRevenue(team) * (long)(period - team.SponsorLastPeriod);
+			team.SponsorLastPeriod = period;
+			if (payment <= 0L) continue;
+			long credited = Math.Min(payment, (long)int.MaxValue - team.ClubBalance);
+			if (credited <= 0L) continue;
+			team.ClubBalance += (int)credited;
+			int budgetUnits = (int)Math.Min(int.MaxValue, credited / 1000L);
+			if (team.Sport == Sport.Soccer && SportRules.ProLike(team.Sport, team.Level))
+			{
+				EnsureTransferBudget(team);
+				team.TransferBudget = Math.Min(60000, team.TransferBudget + budgetUnits);
+			}
+			else if (Economy.Get(team.Sport).Type == CapType.Budget)
+			{
+				team.Budget = (int)Math.Min(int.MaxValue, (long)team.Budget + budgetUnits);
+			}
+			Revision++;
+			ModSponsorLog(team, credited);
+		}
+	}
+
+	private static void ModSponsorLog(Team team, long amount)
+	{
+		Mod.log.Info((object)("Спонсоры клуба " + team.Id + ": зачислено " + amount.ToString("N0") + " ¢."));
+	}
+
+	public CommandResult SetPayrollBudget(int teamId, int budgetThousands)
+	{
+		Team team = GetTeam(teamId);
+		if (team == null || team.Retired || !team.IsUser)
+		{
+			return CommandResult.Fail("Изменять зарплатный бюджет можно только у вашей команды.");
+		}
+		if (Economy.Get(team.Sport).Type != CapType.Budget)
+		{
+			return CommandResult.Fail("В этой лиге зарплатный лимит установлен правилами соревнования и не редактируется вручную.");
+		}
+		EnsureClubBalance(team);
+		int payroll = Economy.Payroll(SignedPlayers(team.Id)) + Economy.DeadNow(team);
+		int current = Economy.Limit(team);
+		int desired = Math.Max(payroll, Math.Max(1, Math.Min(1000000, budgetThousands)));
+		long difference = (long)desired - current;
+		long cost = Math.Abs(difference) * 1000L;
+		if (difference > 0L && team.ClubBalance < cost)
+		{
+			return CommandResult.Fail("В клубной казне недостаточно средств для увеличения зарплатного бюджета на " + Economy.Money((int)Math.Min(int.MaxValue, difference)) + ".");
+		}
+		if (difference > 0L)
+		{
+			team.ClubBalance -= (int)cost;
+		}
+		else if (difference < 0L)
+		{
+			team.ClubBalance = (int)Math.Min(int.MaxValue, (long)team.ClubBalance + cost);
+		}
+		team.Budget = desired;
+		Revision++;
+		return CommandResult.Success("Зарплатный бюджет установлен: " + Economy.Money(desired) + ". Фонд зарплат с обязательствами: " + Economy.Money(payroll) + ".");
+	}
+
 	public void EnsureClubBalance(Team team)
 	{
 		if (team == null || team.ClubBalance >= 0)
@@ -12464,6 +12634,7 @@ public class SportsWorld
 	{
 		int before = Revision;
 		_clockHint = now;
+		PaySponsors(now);
 		PruneTransferOffers();
 		EnsureFarmLeagues(now);
 		EnsureSecondDivision(now);
