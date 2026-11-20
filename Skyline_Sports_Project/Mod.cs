@@ -45,7 +45,7 @@ public class Mod : IMod
 		}
 		Settings = new Setting((IMod)(object)this);
 		((ModSetting)Settings).RegisterInOptionsUI();
-		GameManager.instance.localizationManager.AddSource("en-US", (IDictionarySource)(object)new LocaleEN(Settings));
+		GameManager.instance.localizationManager.AddSource("ru-RU", (IDictionarySource)(object)new LocaleEN(Settings));
 		AssetDatabase.global.LoadSettings("Skyline_Sports_Project", (object)Settings, (object)new Setting((IMod)(object)this), false);
 		updateSystem.UpdateAt<SportsDataSystem>((SystemUpdatePhase)12);
 		updateSystem.UpdateAt<SportsUISystem>((SystemUpdatePhase)22);
