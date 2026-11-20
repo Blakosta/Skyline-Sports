@@ -63,8 +63,12 @@ public static class Views
 			j.Prop("typeLabel", SportRules.VenueTypeLabel(v.Type));
 			j.Prop("level", (int)v.Level);
 			j.Prop("levelLabel", SportRules.LevelLabel(v.Level));
+			if (v.Capacity < 500)
+			{
+				v.Capacity = 500;
+			}
 			j.Prop("capacity", v.Capacity);
-			j.Prop("capacityLabel", v.Capacity > 0 ? ("Вместимость: " + v.Capacity.ToString("N0") + " мест") : "Вместимость рассчитывается автоматически по виду спорта и уровню.");
+			j.Prop("seatingLabel", "Вместимость стадиона: " + v.Capacity.ToString("N0") + " мест.");
 			j.Prop("canChangeLevel", value: true);
 			j.Name("types").BeginArray();
 			VenueType[] allVenueTypes = SportRules.AllVenueTypes;
@@ -5299,7 +5303,7 @@ public static class Views
 		{
 			tabs.Add(new KeyValuePair<string, string>("contracts", "Контракты"));
 		}
-		tabs.Add(new KeyValuePair<string, string>("finance", "Финансы и редактор"));
+		tabs.Add(new KeyValuePair<string, string>("finance", t.IsUser ? "Финансы и редактор" : "Редактор клуба"));
 		tabs.Add(new KeyValuePair<string, string>("staff", "Тренеры"));
 		tabs.Add(new KeyValuePair<string, string>("schedule", "Расписание"));
 		tabs.Add(new KeyValuePair<string, string>("history", "История"));
@@ -5327,14 +5331,20 @@ public static class Views
 		j.Prop("orgCity", o?.Name ?? "");
 		j.Prop("clubName", o?.Mascot ?? "");
 		j.Prop("venueId", t.VenueId);
+		string stadiumName = string.IsNullOrWhiteSpace(t.StadiumName) ? (world.TeamName(t.Id) + " Арена") : t.StadiumName;
+		j.Prop("stadiumName", stadiumName);
+		j.Prop("stadiumCapacity", world.VenueCapacity(t.Sport, t.Level, t.VenueId, t.Id));
 		j.Name("venues").BeginArray();
-		foreach (Venue venueOption in world.Venues.Values)
+		if (t.IsUser)
 		{
-			if (world.CanHost(venueOption, t.Sport, t.Level, t.Id, out var _))
+			foreach (Venue venueOption in world.Venues.Values)
 			{
-				j.BeginObject().Prop("id", venueOption.Id)
-					.Prop("label", "Арена №" + venueOption.Id + " · " + SportRules.VenueTypeLabel(venueOption.Type) + " · " + SportRules.LevelLabel(venueOption.Level))
-					.EndObject();
+				if (world.CanHost(venueOption, t.Sport, t.Level, t.Id, out var _))
+				{
+					j.BeginObject().Prop("id", venueOption.Id)
+						.Prop("label", "Арена №" + venueOption.Id + " · " + SportRules.VenueTypeLabel(venueOption.Type) + " · " + SportRules.LevelLabel(venueOption.Level))
+						.EndObject();
+				}
 			}
 		}
 		j.EndArray();
