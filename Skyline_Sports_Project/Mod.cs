@@ -35,7 +35,7 @@ public class Mod : IMod
 		}
 	}
 
-	public void Загрузка мода(UpdateSystem updateSystem)
+	public void OnLoad(UpdateSystem updateSystem)
 	{
 		log.Info((object)"Загрузка мода");
 		ExecutableAsset asset = default;
@@ -53,7 +53,7 @@ public class Mod : IMod
 		AddVenueSection();
 	}
 
-	public void Отключение мода()
+	public void OnDispose()
 	{
 		log.Info((object)"Отключение мода");
 		if (Settings != null)
