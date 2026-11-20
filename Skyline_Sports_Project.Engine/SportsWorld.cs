@@ -5650,7 +5650,7 @@ public class SportsWorld
 		CountryName = known ?? clean;
 		CountryAbbrev = ((known != null && code == Codes[known]) ? "" : code);
 		Revision++;
-		string home = HomeCountry;
+		string home = NationLabel(HomeCountry);
 		return CommandResult.Success("Теперь ваш город находится в стране " + home + " (" + HomeAbbrev + "). Игроки, выросшие в вашем городе, выступают за " + home + " в следующих международных турнирах, а " + home + " всегда получает хотя бы одно место в квалификации.");
 	}
 
@@ -6432,7 +6432,7 @@ public class SportsWorld
 				Player player = GetPlayer(id2);
 				return player != null && (player.Hometown ?? "").StartsWith("*");
 			}).Count;
-			homeLine = " Сборная " + h.Nation + (h.Qualifier ? " участвует в квалификации" : " вышла в основную часть турнира") + ((local > 0) ? (", в её составе " + local + (local == 1 ? " игрок, выросший в вашем городе" : " игрока, выросших в вашем городе")) : "") + ".";
+			homeLine = " Сборная " + NationLabel(h.Nation) + (h.Qualifier ? " участвует в квалификации" : " вышла в основную часть турнира") + ((local > 0) ? (", в её составе " + local + (local == 1 ? " игрок, выросший в вашем городе" : " игрока, выросших в вашем городе")) : "") + ".";
 		}
 		string text = "СБОРНЫЕ: турнир «" + t.Label + "» начнётся " + when + " в городе " + t.Host + "." + homeLine + ((mine.Count > 0) ? (" Ваши игроки в составе сборных: " + string.Join("; ", mine.GetRange(0, Math.Min(8, mine.Count)).ToArray()) + ((mine.Count > 8) ? (" и ещё " + (mine.Count - 8)) : "") + ".") : "");
 		Post(league, NewsKind.General, Wire, text, mine.Count > 0 || homeLine.Length > 0, now, (mine.Count <= 0 && homeLine.Length <= 0) ? 1 : 2);
@@ -6455,11 +6455,11 @@ public class SportsWorld
 				Player p = GetPlayer(id);
 				if (p != null)
 				{
-					AddHonor(p, p.Level, t.Year.ToString(CultureInfo.InvariantCulture), medal[k], t.Name + " (" + t.Teams[who[k]].Nation + ")");
+					AddHonor(p, p.Level, t.Year.ToString(CultureInfo.InvariantCulture), medal[k], t.Name + " (" + NationLabel(t.Teams[who[k]].Nation) + ")");
 					Team club = GetTeam(p.TeamId);
 					if (club != null && club.IsUser)
 					{
-						mine.Add(p.Name + " (" + medal[k].Split(new[] { ' ' }, StringSplitOptions.None)[0].ToLowerInvariant() + " медаль, сборная " + t.Teams[who[k]].Nation + ")");
+						mine.Add(p.Name + " (" + medal[k].Split(new[] { ' ' }, StringSplitOptions.None)[0].ToLowerInvariant() + " медаль, сборная " + NationLabel(t.Teams[who[k]].Nation) + ")");
 					}
 				}
 			}
