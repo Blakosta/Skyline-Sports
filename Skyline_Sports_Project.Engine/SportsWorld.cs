@@ -8368,7 +8368,7 @@ public class SportsWorld
 			List<string> top = new List<string>();
 			for (int i = 0; i < market.Count && i < 3; i++)
 			{
-				top.Add(market[i].Name + " (" + Rosters.PositionLabel(market[i].Position) + ", " + Rosters.Ovr(market[i]) + ")");
+				top.Add(market[i].Name + " (" + Rosters.NewsPositionLabel(market[i].Position, market[i].Sport) + ", " + Rosters.Ovr(market[i]) + ")");
 			}
 			Post(league, NewsKind.Signing, Insider, "Рынок свободных агентов открыт: " + market.Count + " игроков доступны для подписания. Лучшие варианты: " + string.Join(", ", top.ToArray()) + ".", isUser: false, now, 2);
 		}
@@ -8712,7 +8712,7 @@ public class SportsWorld
 			ReleaseQuote q = QuoteRelease(reserves[i3], team, now, stretch: false);
 			if (team.IsUser)
 			{
-				PostAsTeam(LeagueOf(team), team, NewsKind.Release, "Мы " + q.Verb + " игрока " + Rosters.PositionLabel(reserves[i3].Position) + " " + reserves[i3].Name + ". Спасибо за его вклад!" + ((q.Total > 0) ? (" " + q.Short) : ""), now);
+				PostAsTeam(LeagueOf(team), team, NewsKind.Release, "Мы " + q.Verb + " игрока " + Rosters.NewsPositionLabel(reserves[i3].Position, reserves[i3].Sport) + " " + reserves[i3].Name + ". Спасибо за его вклад!" + ((q.Total > 0) ? (" " + q.Short) : ""), now);
 			}
 			ApplyRelease(reserves[i3], team, q, now);
 			changed = true;
@@ -17351,7 +17351,7 @@ public class SportsWorld
 		List<string> top = new List<string>();
 		for (int i2 = 0; i2 < pool.Count && i2 < 3; i2++)
 		{
-			top.Add(Rosters.PositionLabel(pool[i2].Position) + " " + pool[i2].Name + " (" + AgeOf(pool[i2]) + ", " + pool[i2].From + ")");
+			top.Add(Rosters.NewsPositionLabel(pool[i2].Position, pool[i2].Sport) + " " + pool[i2].Name + " (" + AgeOf(pool[i2]) + ", " + pool[i2].From + ")");
 		}
 		Post(league, NewsKind.Draft, DraftRoom, "МОЛОДЫЕ ПЕРСПЕКТИВНЫЕ ИГРОКИ: " + pool.Count + " молодых игроков вышли на рынок, клубы ведут за ними наблюдение. Самые востребованные: " + string.Join("; ", top.ToArray()) + ". Подпишите их на вкладке «Свободные агенты», пока это не сделали другие клубы.", isUser: false, now, 2);
 		Revision++;
