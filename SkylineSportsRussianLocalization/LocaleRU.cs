@@ -1,19 +1,39 @@
+using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Colossal;
+using Game.Modding;
 
 namespace SkylineSportsRussianLocalization
 {
     internal sealed class LocaleRU : IDictionarySource
     {
-        private readonly Skyline_Sports_Project.Setting setting;
+        // Use the REAL settings instance created by Skyline Sports. ModSetting locale IDs
+        // are tied to the owning IMod; creating a mirror with this localizer's IMod
+        // generates keys for the wrong mod.
+        private static ModSetting FindOriginalSettings()
+        {
+            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                Type modType = assembly.GetType("Skyline_Sports_Project.Mod", false);
+                if (modType == null) continue;
 
-        public LocaleRU(Skyline_Sports_Project.Setting value) { setting = value; }
+                PropertyInfo property = modType.GetProperty(
+                    "Settings", BindingFlags.Public | BindingFlags.Static);
+                ModSetting settings = property?.GetValue(null, null) as ModSetting;
+                if (settings != null) return settings;
+            }
+            return null;
+        }
 
         public IEnumerable<KeyValuePair<string, string>> ReadEntries(
             IList<IDictionaryEntryError> errors, Dictionary<string, int> indexCounts)
         {
-            var s = (Game.Modding.ModSetting)setting;
-            return new Dictionary<string, string>
+            ModSetting s = FindOriginalSettings();
+            if (s == null)
+                return new Dictionary<string, string>();
+
+            var entries = new Dictionary<string, string>
             {
                 { s.GetSettingsLocaleID(), "Спорт России" },
                 { s.GetOptionTabLocaleID("Main"), "Основное" },
@@ -42,15 +62,45 @@ namespace SkylineSportsRussianLocalization
                 { s.GetOptionDescLocaleID("ShowLeagueButton"), "Показывать кнопку для открытия календарей, результатов и турнирных таблиц." },
                 { s.GetOptionLabelLocaleID("Temperature"), "Температура" },
                 { s.GetOptionDescLocaleID("Temperature"), "Единицы измерения температуры в дни матчей." },
-                { s.GetEnumValueLocaleID<Skyline_Sports_Project.Setting.TemperatureUnit>(Skyline_Sports_Project.Setting.TemperatureUnit.SameAsGame), "Как в игре" },
-                { s.GetEnumValueLocaleID<Skyline_Sports_Project.Setting.TemperatureUnit>(Skyline_Sports_Project.Setting.TemperatureUnit.Celsius), "Цельсий (°C)" },
-                { s.GetEnumValueLocaleID<Skyline_Sports_Project.Setting.TemperatureUnit>(Skyline_Sports_Project.Setting.TemperatureUnit.Fahrenheit), "Фаренгейт (°F)" },
                 { s.GetOptionLabelLocaleID("ResetAllData"), "Сбросить спортивные данные" },
                 { s.GetOptionDescLocaleID("ResetAllData"), "Удаляет все спортивные объекты, команды, расписания и результаты в текущем городе." },
                 { s.GetOptionWarningLocaleID("ResetAllData"), "Удалить все спортивные данные этого города? Отменить действие нельзя, кроме как загрузив более раннее сохранение." },
                 { s.GetOptionLabelLocaleID("Version"), "Версия" },
                 { s.GetOptionDescLocaleID("Version"), "Версия мода «Спорт России»." }
             };
+
+            AddEnumEntries(entries, s);
+            return entries;
+        }
+
+        private static void AddEnumEntries(Dictionary<string, string> entries, ModSetting setting)
+        {
+            Type modType = null;
+            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                modType = assembly.GetType("Skyline_Sports_Project.Setting", false);
+                if (modType != null) break;
+            }
+            if (modType == null) return;
+
+            Type enumType = modType.GetNestedType("TemperatureUnit", BindingFlags.Public);
+            if (enumType == null || !enumType.IsEnum) return;
+
+            MethodInfo method = typeof(ModSetting).GetMethod("GetEnumValueLocaleID");
+            if (method == null || !method.IsGenericMethodDefinition) return;
+            MethodInfo generic = method.MakeGenericMethod(enumType);
+
+            AddEnum(entries, generic, setting, enumType, "SameAsGame", "Как в игре");
+            AddEnum(entries, generic, setting, enumType, "Celsius", "Цельсий (°C)");
+            AddEnum(entries, generic, setting, enumType, "Fahrenheit", "Фаренгейт (°F)");
+        }
+
+        private static void AddEnum(Dictionary<string, string> entries, MethodInfo method,
+            ModSetting setting, Type enumType, string valueName, string translation)
+        {
+            object value = Enum.Parse(enumType, valueName);
+            string key = (string)method.Invoke(setting, new object[] { value });
+            entries[key] = translation;
         }
 
         public void Unload() { }
