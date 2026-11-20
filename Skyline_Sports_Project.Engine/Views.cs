@@ -1419,6 +1419,33 @@ public static class Views
 		return label + world.TeamShortName((high > low) ? ps.HighTeamId : ps.LowTeamId) + " ведут " + Math.Max(high, low) + "-" + Math.Min(high, low);
 	}
 
+	private static string EventTextLabel(string text)
+	{
+		if (string.IsNullOrEmpty(text))
+		{
+			return text ?? "";
+		}
+		if (text.StartsWith("Yellow", StringComparison.Ordinal))
+		{
+			string rest = text.Substring(6);
+			if (rest.StartsWith(" card", StringComparison.OrdinalIgnoreCase))
+			{
+				rest = rest.Substring(5);
+			}
+			return "Жёлтая карточка" + rest;
+		}
+		if (text.StartsWith("Red", StringComparison.Ordinal))
+		{
+			string rest = text.Substring(3);
+			if (rest.StartsWith(" card", StringComparison.OrdinalIgnoreCase))
+			{
+				rest = rest.Substring(5);
+			}
+			return "Красная карточка" + rest;
+		}
+		return text;
+	}
+
 	private static void WriteBox(JsonBuilder j, SportsWorld world, League league, GameBox b, int homeScore, int awayScore, int winnerId, Match g, Team home, Team away)
 	{
 		Sport sport = league.Sport;
@@ -1482,7 +1509,7 @@ public static class Views
 			}
 			JsonBuilder jsonBuilder2 = j.BeginObject().Prop("clock", e.Clock).Prop("team", e.Home ? homeAbbr : awayAbbr)
 				.Prop("home", e.Home)
-				.Prop("text", e.Text);
+				.Prop("text", EventTextLabel(e.Text));
 			string value2;
 			if (e.Kind != 0)
 			{
