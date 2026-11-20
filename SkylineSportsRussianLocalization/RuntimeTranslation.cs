@@ -597,6 +597,14 @@ namespace SkylineSportsRussianLocalization
                 return;
             }
 
+            // Prospect histories can build school names directly as "<Russian city> High",
+            // bypassing NameGenerator.HighSchoolName; localize this suffix at the UI boundary too.
+            if (__0.EndsWith(" High", StringComparison.Ordinal))
+            {
+                __0 = __0.Substring(0, __0.Length - " High".Length) + " школа";
+                return;
+            }
+
             // Hometown labels are generated data: localize both city and region without touching player/team names.
             string hometown = LocalizeHometown(__0);
             if (!string.Equals(hometown, __0, StringComparison.Ordinal))
