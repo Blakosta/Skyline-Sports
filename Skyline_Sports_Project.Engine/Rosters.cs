@@ -225,6 +225,64 @@ public static class Rosters
 		return PositionLabel(p);
 	}
 
+	public static string NewsPositionLabel(Position p, Sport sport)
+	{
+		if (sport == Sport.Hockey)
+		{
+			return p switch
+			{
+				Position.Center => "ЦН",
+				Position.LeftWing => "ЛН",
+				Position.RightWing => "ПН",
+				Position.Defense => "З",
+				Position.Goalie => "ВР",
+				_ => PositionLabel(p)
+			};
+		}
+		if (sport == Sport.Soccer)
+		{
+			return p switch
+			{
+				Position.Goalkeeper => "ВР",
+				Position.Defender => "ЦЗ",
+				Position.Midfielder => "ЦП",
+				Position.Forward => "НП",
+				_ => PositionLabel(p)
+			};
+		}
+		if (sport == Sport.Football)
+		{
+			return p switch
+			{
+				Position.Quarterback => "КБ",
+				Position.RunningBack => "РБ",
+				Position.WideReceiver => "ВР",
+				Position.TightEnd => "ТЭ",
+				Position.OffensiveLine => "ОЛ",
+				Position.DefensiveLine => "ДЛ",
+				Position.Linebacker => "ЛБ",
+				Position.Cornerback => "КБ",
+				Position.Safety => "ДБ",
+				Position.Kicker => "К",
+				Position.Punter => "П",
+				_ => PositionLabel(p)
+			};
+		}
+		if (sport == Sport.Basketball)
+		{
+			return p switch
+			{
+				Position.PointGuard => "РЗ",
+				Position.ShootingGuard => "АЗ",
+				Position.SmallForward => "ЛФ",
+				Position.PowerForward => "ТФ",
+				Position.BigMan => "Ц",
+				_ => PositionLabel(p)
+			};
+		}
+		return PositionLabel(p);
+	}
+
 	public static string PositionLabel(Position p)
 	{
 		return p switch
