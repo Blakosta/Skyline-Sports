@@ -63,7 +63,7 @@ public class SportsVenueSection : InfoSectionBase
 		}
 		catch (Exception ex)
 		{
-			Mod.Error("Sports section failed", ex);
+			Mod.Error("Не удалось обновить спортивный раздел", ex);
 			m_Json = "{}";
 		}
 	}
@@ -149,16 +149,16 @@ public class SportsVenueSection : InfoSectionBase
 				result = m_Data.RemoveVenue(venueId);
 				break;
 			default:
-				Mod.log.Warn((object)("Unknown venue command: " + name));
+				Mod.log.Warn((object)("Неизвестная команда спортивного объекта: " + name));
 				return;
 			}
-			Mod.log.Info((object)("Venue command '" + name + "': " + (result.Ok ? "ok" : "refused") + ". " + result.Message));
+			Mod.log.Info((object)("Команда спортивного объекта '" + name + "': " + (result.Ok ? "ok" : "refused") + ". " + result.Message));
 			m_Message = result.Message;
 			m_MessageFor = building;
 		}
 		catch (Exception ex)
 		{
-			Mod.Error("Venue command failed (" + command + ")", ex);
+			Mod.Error("Не удалось выполнить команду спортивного объекта (" + command + ")", ex);
 			m_Message = "Произошла ошибка. Подробности записаны в журнал Skyline Sports Project.";
 			m_MessageFor = selectedEntity;
 		}
