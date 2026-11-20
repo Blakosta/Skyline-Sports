@@ -2361,6 +2361,7 @@ public static class SaveCodec
 		w.Int(world.Teams.Count);
 		foreach (Team t in world.Teams.Values)
 		{
+			world.EnsureTicketPrices(t);
 			w.Int(t.Id);
 			w.Int(Math.Max(0, t.ClubBalance));
 			w.Int(Math.Max(1, Math.Min(1500, t.TicketPriceResidents)));
