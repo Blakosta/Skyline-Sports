@@ -715,6 +715,17 @@ namespace SkylineSportsRussianLocalization
                 return;
             }
 
+            // Venue validation messages contain an English article before otherwise Russian text.
+            Match venueCapacity = Regex.Match(__0, @"^A (.+?) недостаточно свободных дат для этих (\d+) команд \((\d+) домашних матчей, доступно (\d+)\)\. Сначала переместите или удалите одну из команд\.$");
+            if (venueCapacity.Success)
+                __0 = "Для объекта типа «" + venueCapacity.Groups[1].Value + "» недостаточно свободных дат для размещения " +
+                    venueCapacity.Groups[2].Value + " команд (" + venueCapacity.Groups[3].Value + " домашних матчей занято, доступно " +
+                    venueCapacity.Groups[4].Value + "). Сначала переместите одну из команд или удалите её.";
+            Match venueSport = Regex.Match(__0, @"^A (.+?) не может принимать (.+?)\.$");
+            if (venueSport.Success)
+                __0 = "Объект типа «" + venueSport.Groups[1].Value + "» не предназначен для проведения соревнований по виду спорта «" +
+                    venueSport.Groups[2].Value + "».";
+
             // Dynamic announcements: translate the sentence while keeping generated names intact.
             const string prospectsPrefix = "No young prospects on the market right now. A new class arrives every ";
             if (__0.StartsWith(prospectsPrefix, StringComparison.Ordinal))
