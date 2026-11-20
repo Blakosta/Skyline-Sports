@@ -33,7 +33,7 @@ e.financeNotice&&(0,i.jsx)("div",{className:ks,children:e.financeNotice}),
 (0,i.jsx)("div",{className:ks,children:"Уровень поддержки определяет общий объём денег за год. Выбранная периодичность меняет размер каждого платежа, но не годовую сумму."}),
 (0,i.jsx)(X,{children:tierLabels.map((t,q)=>(0,i.jsx)(Z,{selected:tier===q,onClick:()=>saveSponsor(q,freq),children:(0,i.jsxs)("span",{className:"sponsorChoice",children:[(0,i.jsx)("span",{className:"sponsorDot sponsorDot"+q}),t]})},q))}),
 (0,i.jsx)(X,{children:freqLabels.map((t,q)=>(0,i.jsx)(Z,{selected:freq===q,onClick:()=>saveSponsor(tier,q),children:t},q))}),
-(0,i.jsx)("div",{className:"financeSponsorAmount",children:"Поступление за период: "+fmt(e.sponsorPeriodRevenue)+" · За год: "+fmt(e.sponsorAnnualRevenue)}),
+(0,i.jsx)("div",{className:"financeSponsorAmount",children:"Поступление за период: "+fmt(e.sponsorPeriodRevenue)+" · За год: "+fmt(e.sponsorAnnualRevenue)}),e.payrollExplanation&&(0,i.jsx)("div",{className:ks,children:e.payrollExplanation}),
 e.payrollBudgetEditable&&(0,i.jsxs)("div",{className:"financePayroll",children:[
 (0,i.jsx)(In,{title:"ЗАРПЛАТНЫЙ БЮДЖЕТ"}),
 (0,i.jsx)("div",{className:ks,children:"В фонде учитываются зарплаты игроков по контрактам и выплаты по расторгнутым контрактам. Увеличение лимита резервирует деньги из казны клуба; уменьшение возвращает разницу в казну. Суммы вводятся в тысячах долларов."}),
