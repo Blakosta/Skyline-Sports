@@ -35,7 +35,7 @@ return(0,i.jsxs)("svg",{className:"clubLogo",viewBox:"0 0 64 64",width:size,heig
 (0,i.jsx)("path",{d:marks[n%marks.length],fill:accent,stroke:"#ffffff",strokeWidth:1.2,strokeLinejoin:"round"}),
 (0,i.jsx)("path",{d:"M17 51 32 57 47 51",fill:"none",stroke:accent,strokeWidth:1.5,opacity:.65})
 ]})
-},RplLeagueLogo=({size=24})=>(0,i.jsx)("img",{className:"rplLeagueLogo",src:a.p+"RPL/RPL.cc.svg",width:size,height:size,alt:"РПЛ"}),,SkylineClubFinancePanel=({view:e})=>{
+},RplLeagueLogo=({size=24})=>(0,i.jsx)("img",{className:"rplLeagueLogo",src:a.p+"RPL/RPL.cc.svg",width:size,height:size,alt:"РПЛ"}),SkylineClubFinancePanel=({view:e})=>{
 const[s,a]=(0,n.useState)(String(e.ticketPriceResidents||20)),[l,c]=(0,n.useState)(String(e.ticketPriceVisitors||35)),[d,r]=(0,n.useState)("10000"),[b,h]=(0,n.useState)(String(e.payrollBudget||0)),[tier,g]=(0,n.useState)(e.sponsorTier||0),[freq,f]=(0,n.useState)(e.sponsorFrequency||0);
 n.useEffect(()=>{a(String(e.ticketPriceResidents||20)),c(String(e.ticketPriceVisitors||35)),h(String(e.payrollBudget||0)),g(e.sponsorTier||0),f(e.sponsorFrequency||0)},[e.id,e.ticketPriceResidents,e.ticketPriceVisitors,e.payrollBudget,e.sponsorTier,e.sponsorFrequency]);
 if(!e.canManage&&!e.canManageSponsors)return null;
