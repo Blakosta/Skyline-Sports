@@ -1600,7 +1600,7 @@ public static class Views
 					int[] st2 = Stats.Fit(kv.Key.Stats, sport);
 					Player p2 = kv.Value;
 					j.BeginObject().Prop("id", p2?.Id ?? (-1)).Prop("name", (p2 == null) ? "Бывший игрок" : p2.Name)
-						.Prop("pos", (p2 == null) ? "" : Rosters.PositionLabel(p2.Position));
+						.Prop("pos", (p2 == null) ? "" : Rosters.PositionLabel(p2.Position, sport));
 					j.Name("cells").BeginArray();
 					columns = grp.Columns;
 					foreach (BoxColumn c2 in columns)
