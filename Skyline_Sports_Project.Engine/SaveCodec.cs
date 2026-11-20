@@ -105,7 +105,7 @@ public static class SaveCodec
 		{
 			if (_pos >= _tokens.Length)
 			{
-				throw new FormatException("unexpected end of data");
+				throw new FormatException("неожиданный конец данных");
 			}
 			return _tokens[_pos++];
 		}
@@ -140,7 +140,7 @@ public static class SaveCodec
 			int n = Int();
 			if (n < 0 || n > 10000)
 			{
-				throw new FormatException("bad text list");
+				throw new FormatException("некорректный список текстовых значений");
 			}
 			List<string> list = new List<string>(n);
 			for (int i = 0; i < n; i++)
@@ -160,7 +160,7 @@ public static class SaveCodec
 			string[] parts = t.Split(new[] { ',' }, StringSplitOptions.None);
 			if (parts.Length > 200)
 			{
-				throw new FormatException("bad stat line");
+				throw new FormatException("некорректная строка статистики");
 			}
 			int[] values = new int[parts.Length];
 			for (int i = 0; i < parts.Length; i++)
@@ -175,7 +175,7 @@ public static class SaveCodec
 			int n = Int();
 			if (n < 0 || n > 100000)
 			{
-				throw new FormatException("bad list size");
+				throw new FormatException("неверный размер списка");
 			}
 			List<int> list = new List<int>(n);
 			for (int i = 0; i < n; i++)
@@ -720,7 +720,7 @@ public static class SaveCodec
 
 	private static void ReadV12(TokenReader r, SportsWorld world, int version)
 	{
-		int farms = Count(r, 100000, "farm teams");
+		int farms = Count(r, 100000, "фарм-команды");
 		for (int k = 0; k < farms; k++)
 		{
 			int id = r.Int();
@@ -735,7 +735,7 @@ public static class SaveCodec
 	private static GameBox ReadGameBox(TokenReader r)
 	{
 		GameBox b = new GameBox();
-		int lines = Count(r, 1000, "box lines");
+		int lines = Count(r, 1000, "строки протокола матча");
 		for (int m = 0; m < lines; m++)
 		{
 			b.Lines.Add(new BoxLine
@@ -745,7 +745,7 @@ public static class SaveCodec
 				Stats = r.Ints()
 			});
 		}
-		int events = Count(r, 1000, "box events");
+		int events = Count(r, 1000, "события матча");
 		for (int i = 0; i < events; i++)
 		{
 			b.Events.Add(new BoxEvent
@@ -872,7 +872,7 @@ public static class SaveCodec
 			p.Titles = r.Int();
 			p.PeakOvr = r.Int();
 			p.Honors = r.Strs();
-			int lines = Count(r, 1000, "player history");
+			int lines = Count(r, 1000, "история игрока");
 			for (int k = 0; k < lines; k++)
 			{
 				p.History.Add(new SeasonLine
@@ -915,7 +915,7 @@ public static class SaveCodec
 
 	private static List<HallEntry> ReadHall(TokenReader r)
 	{
-		int n = Count(r, 100000, "hall of fame");
+		int n = Count(r, 100000, "зал славы");
 		List<HallEntry> list = new List<HallEntry>(n);
 		for (int i = 0; i < n; i++)
 		{
@@ -990,7 +990,7 @@ public static class SaveCodec
 		int lines = r.Int();
 		if (lines < 0 || lines > 1000)
 		{
-			throw new FormatException("bad lottery");
+			throw new FormatException("некорректная жеребьёвка");
 		}
 		for (int i = 0; i < lines; i++)
 		{
@@ -1000,7 +1000,7 @@ public static class SaveCodec
 		int picks = r.Int();
 		if (picks < 0 || picks > 10000)
 		{
-			throw new FormatException("bad draft");
+			throw new FormatException("некорректный драфт");
 		}
 		for (int j = 0; j < picks; j++)
 		{
@@ -1035,7 +1035,7 @@ public static class SaveCodec
 			int version = r.Int();
 			if (version < 1 || version > 20)
 			{
-				error = "Sports data was saved by a newer version of the mod (data version " + version + ").";
+				error = "Спортивные данные сохранены более новой версией мода (версия данных " + version + ").";
 				return false;
 			}
 			world.NextId = r.Int();
@@ -1089,7 +1089,7 @@ public static class SaveCodec
 				}
 				if (version >= 8)
 				{
-					int retired = Count(r, 1000, "retired numbers");
+					int retired = Count(r, 1000, "выведенные из обращения номера");
 					for (int k = 0; k < retired; k++)
 					{
 						t.RetiredNumbers.Add(new RetiredNumber
@@ -1147,7 +1147,7 @@ public static class SaveCodec
 					int awardCount = r.Int();
 					if (awardCount < 0 || awardCount > 100000)
 					{
-						throw new FormatException("bad award count");
+						throw new FormatException("некорректное число наград");
 					}
 					for (int a = 0; a < awardCount; a++)
 					{
@@ -1196,7 +1196,7 @@ public static class SaveCodec
 							Title = r.Str(),
 							LowerIsBetter = r.Bool()
 						};
-						int entries = Count(r, 1000, "record entries");
+						int entries = Count(r, 1000, "записи рекордов");
 						for (int e = 0; e < entries; e++)
 						{
 							board.Entries.Add(new RecordEntry
@@ -1264,7 +1264,7 @@ public static class SaveCodec
 				int playerCount = r.Int();
 				if (playerCount < 0 || playerCount > 1000000)
 				{
-					throw new FormatException("bad player count");
+					throw new FormatException("некорректное число игроков");
 				}
 				for (int num3 = 0; num3 < playerCount; num3++)
 				{
@@ -1277,7 +1277,7 @@ public static class SaveCodec
 				int postCount = r.Int();
 				if (postCount < 0 || postCount > 100000)
 				{
-					throw new FormatException("bad feed");
+					throw new FormatException("некорректная лента новостей");
 				}
 				for (int num4 = 0; num4 < postCount; num4++)
 				{
@@ -1388,7 +1388,7 @@ public static class SaveCodec
 					n2 = blocks[num8 + 1];
 					if (n2 < 0 || num8 + 2 + n2 > blocks.Count)
 					{
-						throw new FormatException("bad trade block");
+						throw new FormatException("некорректный список обмена");
 					}
 					t2?.Block.AddRange(blocks.GetRange(num8 + 2, n2));
 				}
@@ -1431,7 +1431,7 @@ public static class SaveCodec
 						National = r.Bool()
 					});
 				}
-				int efforts = Count(r, 1000000, "recruiting efforts");
+				int efforts = Count(r, 1000000, "действия по набору игроков");
 				for (int num12 = 0; num12 < efforts; num12++)
 				{
 					world.RecruitEfforts.Add(new RecruitEffort
@@ -1447,12 +1447,12 @@ public static class SaveCodec
 						Month = r.Int()
 					});
 				}
-				int money = Count(r, 1000000, "dead money teams");
+				int money = Count(r, 1000000, "команды с выплатами по расторгнутым контрактам");
 				for (int num13 = 0; num13 < money; num13++)
 				{
 					world.Teams.TryGetValue(r.Int(), out var t4);
 					int buyouts = r.Int();
-					int charges = Count(r, 100000, "dead money");
+					int charges = Count(r, 100000, "выплаты по расторгнутым контрактам");
 					if (t4 != null)
 					{
 						t4.Buyouts = Math.Max(0, buyouts);
@@ -1479,7 +1479,7 @@ public static class SaveCodec
 			}
 			if (version >= 11)
 			{
-				int retired2 = Count(r, 1000000, "retired players");
+				int retired2 = Count(r, 1000000, "завершившие карьеру игроки");
 				for (int num15 = 0; num15 < retired2; num15++)
 				{
 					Player p3 = ReadPlayer(r, version);
@@ -1488,7 +1488,7 @@ public static class SaveCodec
 					p3.TeamId = -1;
 					world.Retired[p3.Id] = p3;
 				}
-				int coaches2 = Count(r, 1000000, "coach details");
+				int coaches2 = Count(r, 1000000, "данные тренеров");
 				for (int num16 = 0; num16 < coaches2; num16++)
 				{
 					int id = r.Int();
@@ -1518,12 +1518,12 @@ public static class SaveCodec
 						}
 					}
 				}
-				int boxes = Count(r, 1000000, "box scores");
+				int boxes = Count(r, 1000000, "итоговые протоколы матчей");
 				for (int num18 = 0; num18 < boxes; num18++)
 				{
 					int id2 = r.Int();
 					GameBox b2 = new GameBox();
-					int lines = Count(r, 1000, "box lines");
+					int lines = Count(r, 1000, "строки протокола матча");
 					for (int num19 = 0; num19 < lines; num19++)
 					{
 						b2.Lines.Add(new BoxLine
@@ -1533,7 +1533,7 @@ public static class SaveCodec
 							Stats = r.Ints()
 						});
 					}
-					int events = Count(r, 1000, "box events");
+					int events = Count(r, 1000, "события матча");
 					for (int num20 = 0; num20 < events; num20++)
 					{
 						b2.Events.Add(new BoxEvent
@@ -1557,11 +1557,11 @@ public static class SaveCodec
 				}
 				if (version >= 12)
 				{
-					int withPlayers = Count(r, 1000000, "box players");
+					int withPlayers = Count(r, 1000000, "игроки в протоколе матча");
 					for (int num21 = 0; num21 < withPlayers; num21++)
 					{
 						int id3 = r.Int();
-						int events2 = Count(r, 1000, "box events");
+						int events2 = Count(r, 1000, "события матча");
 						games.TryGetValue(id3, out var game2);
 						for (int num22 = 0; num22 < events2; num22++)
 						{
@@ -1572,7 +1572,7 @@ public static class SaveCodec
 							}
 						}
 					}
-					int live = Count(r, 10000, "live games");
+					int live = Count(r, 10000, "матчи в прямом эфире");
 					for (int num23 = 0; num23 < live; num23++)
 					{
 						int id4 = r.Int();
@@ -1604,7 +1604,7 @@ public static class SaveCodec
 				}
 				if (version >= 13)
 				{
-					int users = Count(r, 100000, "live game turns");
+					int users = Count(r, 100000, "этапы матчей в прямом эфире");
 					for (int num24 = 0; num24 < users; num24++)
 					{
 						int id5 = r.Int();
@@ -1647,7 +1647,7 @@ public static class SaveCodec
 		}
 		catch (Exception ex)
 		{
-			error = "Sports data could not be read: " + ex.Message;
+			error = "Не удалось прочитать спортивные данные: " + ex.Message;
 			world.Clear();
 			return false;
 		}
@@ -1658,7 +1658,7 @@ public static class SaveCodec
 		int n = r.Int();
 		if (n < 0 || n > max)
 		{
-			throw new FormatException("bad " + what);
+			throw new FormatException("Некорректные данные: " + what);
 		}
 		return n;
 	}
@@ -1772,7 +1772,7 @@ public static class SaveCodec
 		int count = r.Int();
 		if (count < 0 || count > 1000000)
 		{
-			throw new FormatException("bad game count");
+			throw new FormatException("некорректное число матчей");
 		}
 		for (int i = 0; i < count; i++)
 		{
@@ -1811,7 +1811,7 @@ public static class SaveCodec
 			int series = r.Int();
 			if (series < 0 || series > 10000)
 			{
-				throw new FormatException("bad bracket size");
+				throw new FormatException("неверный размер турнирной сетки");
 			}
 			for (int j = 0; j < series; j++)
 			{
@@ -2032,7 +2032,7 @@ public static class SaveCodec
 
 	private static void ReadV14More(TokenReader r, SportsWorld world, int version)
 	{
-		int folded = Count(r, 1000000, "folded teams");
+		int folded = Count(r, 1000000, "объединённые команды");
 		for (int k = 0; k < folded; k++)
 		{
 			int id = r.Int();
@@ -2073,13 +2073,13 @@ public static class SaveCodec
 
 	private static void ReadV14Rest(TokenReader r, SportsWorld world, int version)
 	{
-		int leagues = Count(r, 1000, "All-Star leagues");
+		int leagues = Count(r, 1000, "лиги Матча всех звёзд");
 		for (int i = 0; i < leagues; i++)
 		{
 			string key = r.Str();
 			int star = r.Int();
 			int all = r.Int();
-			int n = Count(r, 100000, "All-Star picks");
+			int n = Count(r, 100000, "выборы на Матч всех звёзд");
 			List<AllStarPick> picks = new List<AllStarPick>();
 			for (int k = 0; k < n; k++)
 			{
@@ -2129,7 +2129,7 @@ public static class SaveCodec
 
 	private static void ReadV14Farms(TokenReader r, SportsWorld world, int version)
 	{
-		int n = Count(r, 100000, "farm choices");
+		int n = Count(r, 100000, "выборы фарм-команд");
 		for (int k = 0; k < n; k++)
 		{
 			int id = r.Int();
@@ -2394,7 +2394,7 @@ public static class SaveCodec
 					Unnamed = r.Int()
 				});
 			}
-			int games = Count(r, 1000, "tournament games");
+			int games = Count(r, 1000, "игры турнира");
 			for (int j = 0; j < games; j++)
 			{
 				TourGame g = new TourGame
@@ -2473,7 +2473,7 @@ public static class SaveCodec
 				}
 			}
 		}
-		int n = Count(r, 1000000, "game weather");
+		int n = Count(r, 1000000, "погода во время матча");
 		for (int j = 0; j < n; j++)
 		{
 			int id = r.Int();
@@ -2493,7 +2493,7 @@ public static class SaveCodec
 		world.CityCloud = r.Dbl();
 		world.CityRaining = r.Bool();
 		world.CitySnowing = r.Bool();
-		int months = Count(r, 100, "city weather months");
+		int months = Count(r, 100, "месяцы погоды города");
 		world.CityWeather.Clear();
 		for (int k = 0; k < months; k++)
 		{
@@ -2515,7 +2515,7 @@ public static class SaveCodec
 
 	private static void ReadV16(TokenReader r, SportsWorld world, int version)
 	{
-		int n = Count(r, 1000, "promotion records");
+		int n = Count(r, 1000, "записи о повышении в лиге");
 		for (int i = 0; i < n; i++)
 		{
 			string key = r.Str();
@@ -2556,7 +2556,7 @@ public static class SaveCodec
 				}
 			}
 		}
-		int n = Count(r, 1000000, "game flows");
+		int n = Count(r, 1000000, "сценарии матчей");
 		for (int k = 0; k < n; k++)
 		{
 			int id = r.Int();
@@ -2587,7 +2587,7 @@ public static class SaveCodec
 
 	private static void ReadV14Soccer(TokenReader r, SportsWorld world, int version)
 	{
-		int budgets = Count(r, 1000000, "transfer budgets");
+		int budgets = Count(r, 1000000, "трансферные бюджеты");
 		for (int k = 0; k < budgets; k++)
 		{
 			int id = r.Int();
@@ -2597,7 +2597,7 @@ public static class SaveCodec
 				t.TransferBudget = Math.Max(0, money);
 			}
 		}
-		int offers = Count(r, 100000, "transfer offers");
+		int offers = Count(r, 100000, "трансферные предложения");
 		world.TransferOffers.Clear();
 		for (int i = 0; i < offers; i++)
 		{
@@ -2616,7 +2616,7 @@ public static class SaveCodec
 				world.TransferOffers.Add(o);
 			}
 		}
-		int leagues = Count(r, 1000, "transfer leagues");
+		int leagues = Count(r, 1000, "трансферные лиги");
 		for (int j = 0; j < leagues; j++)
 		{
 			string key = r.Str();
