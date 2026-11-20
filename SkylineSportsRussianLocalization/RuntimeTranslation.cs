@@ -142,7 +142,147 @@ namespace SkylineSportsRussianLocalization
             { "Dominican Republic", "Доминиканская Республика" },
             { "United States of America", "Соединённые Штаты Америки" },
             { "Czech Republic", "Чехия" },
-            { "American Samoa", "Американское Самоа" }
+            { "American Samoa", "Американское Самоа" },
+            { "Today", "Сегодня" },
+            { "Tomorrow", "Завтра" },
+            { "Yesterday", "Вчера" },
+            { "Home", "Дома" },
+            { "Away", "В гостях" },
+            { "Schedule", "Расписание" },
+            { "Results", "Результаты" },
+            { "Standings", "Турнирная таблица" },
+            { "Statistics", "Статистика" },
+            { "Stats", "Статистика" },
+            { "Players", "Игроки" },
+            { "Player", "Игрок" },
+            { "Team", "Команда" },
+            { "Roster", "Состав" },
+            { "Lineup", "Стартовый состав" },
+            { "Coaches", "Тренеры" },
+            { "Coach", "Тренер" },
+            { "League", "Лига" },
+            { "Leagues", "Лиги" },
+            { "Season", "Сезон" },
+            { "Seasons", "Сезоны" },
+            { "Playoffs", "Плей-офф" },
+            { "Championship", "Чемпионат" },
+            { "Tournament", "Турнир" },
+            { "Tournaments", "Турниры" },
+            { "National teams", "Сборные" },
+            { "National team", "Сборная" },
+            { "Country", "Страна" },
+            { "Nation", "Сборная" },
+            { "Venue", "Арена" },
+            { "Venues", "Арены" },
+            { "Stadium", "Стадион" },
+            { "Arena", "Арена" },
+            { "Games", "Матчи" },
+            { "Game", "Матч" },
+            { "Match", "Матч" },
+            { "Matches", "Матчи" },
+            { "News", "Новости" },
+            { "Award", "Награда" },
+            { "Records", "Рекорды" },
+            { "Record", "Рекорд" },
+            { "History", "История" },
+            { "All time", "За всё время" },
+            { "Free agents", "Свободные агенты" },
+            { "Free agency", "Свободные агенты" },
+            { "Transfers", "Трансферы" },
+            { "Transfer", "Трансфер" },
+            { "Trades", "Обмены" },
+            { "Trade", "Обмен" },
+            { "Contracts", "Контракты" },
+            { "Contract", "Контракт" },
+            { "Salary", "Зарплата" },
+            { "Budget", "Бюджет" },
+            { "Injuries", "Травмы" },
+            { "Injury", "Травма" },
+            { "Healthy", "Здоров" },
+            { "Injured", "Травмирован" },
+            { "Retired", "Завершил карьеру" },
+            { "Retirement", "Завершение карьеры" },
+            { "Draft", "Драфт" },
+            { "Draft picks", "Выборы на драфте" },
+            { "All Stars", "Все звёзды" },
+            { "Champions", "Чемпионы" },
+            { "Final", "Финал" },
+            { "Finals", "Финал" },
+            { "Fourth", "Четвёртый" },
+            { "Wins", "Победы" },
+            { "Losses", "Поражения" },
+            { "Draws", "Ничьи" },
+            { "Points", "Очки" },
+            { "Goals", "Голы" },
+            { "Goals for", "Забитые голы" },
+            { "Goals against", "Пропущенные голы" },
+            { "Win percentage", "Процент побед" },
+            { "Rank", "Место" },
+            { "Ranking", "Рейтинг" },
+            { "Overall", "Общий рейтинг" },
+            { "Rating", "Рейтинг" },
+            { "Age", "Возраст" },
+            { "Height", "Рост" },
+            { "Position", "Позиция" },
+            { "Status", "Статус" },
+            { "Name", "Имя" },
+            { "Names", "Имена" },
+            { "Date", "Дата" },
+            { "Time", "Время" },
+            { "Location", "Место проведения" },
+            { "Details", "Подробности" },
+            { "Overview", "Обзор" },
+            { "Summary", "Сводка" },
+            { "Back", "Назад" },
+            { "Next", "Далее" },
+            { "Previous", "Назад" },
+            { "Close", "Закрыть" },
+            { "Cancel", "Отмена" },
+            { "Save", "Сохранить" },
+            { "Reset", "Сбросить" },
+            { "Apply", "Применить" },
+            { "Settings", "Настройки" },
+            { "Options", "Параметры" },
+            { "About", "О моде" },
+            { "Enabled", "Включено" },
+            { "Disabled", "Отключено" },
+            { "Yes", "Да" },
+            { "No", "Нет" },
+            { "None", "Нет" },
+            { "Unknown", "Неизвестно" },
+            { "Pending", "Ожидается" },
+            { "Complete", "Завершено" },
+            { "Completed", "Завершено" },
+            { "Upcoming", "Предстоящие" },
+            { "Current", "Текущий" },
+            { "Previous season", "Прошлый сезон" },
+            { "Next season", "Следующий сезон" },
+            { "Regular season", "Регулярный сезон" },
+            { "Postseason", "Плей-офф" },
+            { "Playoff", "Плей-офф" },
+            { "Home game", "Домашний матч" },
+            { "Away game", "Выездной матч" },
+            { "Attendance", "Посещаемость" },
+            { "Fans", "Болельщики" },
+            { "Supporters", "Болельщики" },
+            { "Capacity", "Вместимость" },
+            { "Weather", "Погода" },
+            { "Temperature", "Температура" },
+            { "Rain", "Дождь" },
+            { "Snow", "Снег" },
+            { "Wind", "Ветер" },
+            { "Offense", "Нападение" },
+            { "Defense", "Защита" },
+            { "Offensive", "Атакующий" },
+            { "Defensive", "Защитный" },
+            { "Top scorer", "Лучший бомбардир" },
+            { "Top players", "Лучшие игроки" },
+            { "League leaders", "Лидеры лиги" },
+            { "Team leaders", "Лидеры команды" },
+            { "Player stats", "Статистика игрока" },
+            { "Team stats", "Статистика команды" },
+            { "Season stats", "Статистика сезона" },
+            { "Career stats", "Статистика за карьеру" }
         };
 
         public static void Install()
@@ -207,39 +347,8 @@ namespace SkylineSportsRussianLocalization
                 return;
             }
 
-            // Translate dynamic announcements while leaving player and team names intact.
-            __0 = __0.Replace("FOLDED: The ", "РАСПУСК: ")
-                     .Replace(" have folded after ", " завершили выступления после сезона ")
-                     .Replace("NATIONAL TEAMS: the ", "СБОРНЫЕ: ")
-                     .Replace(" starts ", " начинают выступление ")
-                     .Replace(" Your players called up: ", " Ваши игроки вызваны в сборную: ")
-                     .Replace(" and ", " и ")
-                     .Replace(" more", " ещё")
-                     .Replace("FLIP: ", "ПЕРЕМАНИЛИ: ")
-                     .Replace("COMMIT: ", "ПОДПИСАНИЕ: ")
-                     .Replace(" flips from ", " переходит из ")
-                     .Replace(" commits to ", " выбирает команду ")
-                     .Replace("TRANSFER: The ", "ТРАНСФЕР: ")
-                     .Replace(" sign ", " подписывает ")
-                     .Replace(" from the ", " из команды ")
-                     .Replace("Bats ", "Бьёт: ")
-                     .Replace(", throws ", ", бросает: ")
-                     .Replace("The qualifiers decide the last spots.", "Последние места определяются по итогам отборочного турнира.")
-                     .Replace("through the qualifiers)", "по итогам отборочного турнира)")
-                     .Replace("player who grew up in your city", "игрок, выросший в вашем городе")
-                     .Replace("players who grew up in your city", "игроки, выросшие в вашем городе")
-                     .Replace("Your players called up:", "Ваши игроки вызваны в сборную:")
-                     .Replace("free agency", "свободные агенты")
-                     .Replace("round pick", "выбор раунда")
-                     .Replace("from clubs abroad", "из зарубежных клубов")
-                     .Replace(" plays in the qualifiers", " участвует в отборочном турнире")
-                     .Replace(" is in the main event", " участвует в основном турнире")
-                     .Replace(" nations", " сборных")
-                     .Replace("We have ", "У нас ")
-                     .Replace(". Thank you!", ". Спасибо!")
-                     .Replace(" Last season ", " В прошлом сезоне ");
-
-            __0 = Regex.Replace(__0, @"\bJan\b", "янв", RegexOptions.IgnoreCase);
+            // Exact-value translations only: avoid changing generated player or team names.
+                        __0 = Regex.Replace(__0, @"\bJan\b", "янв", RegexOptions.IgnoreCase);
             __0 = Regex.Replace(__0, @"\bFeb\b", "фев", RegexOptions.IgnoreCase);
             __0 = Regex.Replace(__0, @"\bMar\b", "мар", RegexOptions.IgnoreCase);
             __0 = Regex.Replace(__0, @"\bApr\b", "апр", RegexOptions.IgnoreCase);
