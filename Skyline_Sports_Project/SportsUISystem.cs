@@ -227,6 +227,8 @@ public class SportsUISystem : UISystemBase
 				"ticketPrices" => w.SetTicketPrices(Int(a, 1), Int(a, 2), Int(a, 3)),
 				"payrollBudget" => w.SetPayrollBudget(Int(a, 1), Int(a, 2)),
 				"sponsor" => w.SetSponsorSettings(Int(a, 1), Int(a, 2), Int(a, 3), now),
+				"clubSponsor" => w.SetClubSponsor(Int(a, 1), Int(a, 2), Int(a, 3), now),
+				"clubLogo" => w.SetTeamLogo(Int(a, 1), Int(a, 2)),
 				"transferFunds" => m_Data.TransferCityFunds(Int(a, 1), Int(a, 2), a.Length > 3 && a[3] == "club"),
 				"resign" => w.Resign(Int(a, 1), now),
 				"release" => w.Release(Int(a, 1), now, a.Length > 2 && a[2] == "stretch"),
