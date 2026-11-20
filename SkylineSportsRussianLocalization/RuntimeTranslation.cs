@@ -80,7 +80,7 @@ namespace SkylineSportsRussianLocalization
             { "Mississauga", "Миссиссога" }, { "Sault Ste. Marie", "Су-Сент-Мари" }, { "St. John's", "Сент-Джонс" },
             { "New York", "Нью-Йорк" }, { "Salt Lake City", "Солт-Лейк-Сити" }, { "Washington", "Вашингтон" },
             { "Houston", "Хьюстон" }, { "Dallas", "Даллас" }, { "Atlanta", "Атланта" },
-            { "Baltimore", "Балтимор" }, { "Newark", "Ньюарк" }, { "Charlotte", "Шарлотт" }, { "Columbus", "Колумбус" }
+            { "Baltimore", "Балтимор" }, { "Newark", "Ньюарк" }, { "Charlotte", "Шарлотт" }, { "Columbus", "Колумбус" },
             { "Oakville", "Оквилл" }, { "Sudbury", "Садбери" }, { "Kingston", "Кингстон" },
             { "Thunder Bay", "Тандер-Бей" }, { "Red Deer", "Ред-Дир" }, { "Regina", "Реджайна" }, { "Saskatoon", "Саскатун" },
             { "Brandon", "Брандон" }, { "Kelowna", "Келоуна" }, { "Burnaby", "Бёрнаби" }, { "Halifax", "Галифакс" },
