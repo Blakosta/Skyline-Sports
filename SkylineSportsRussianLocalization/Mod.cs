@@ -8,9 +8,8 @@ namespace SkylineSportsRussianLocalization
     {
         public void OnLoad(UpdateSystem updateSystem)
         {
-            // This helper Setting type reproduces the original mod's locale-key identity.
-            var identity = new Skyline_Sports_Project.Setting(this);
-            GameManager.instance.localizationManager.AddSource("ru-RU", new LocaleRU(identity));
+            // LocaleRU resolves the original mod's live Setting instance at dictionary-read time.
+            GameManager.instance.localizationManager.AddSource("ru-RU", new LocaleRU());
         }
 
         public void OnDispose()
