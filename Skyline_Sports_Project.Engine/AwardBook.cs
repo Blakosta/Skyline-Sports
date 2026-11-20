@@ -657,6 +657,11 @@ public static class AwardBook
 				list.Add(Freshman(sport, "Лучший молодой игрок", "Лучший молодой игрок Лиги ВТБ"));
 				list.Add(PlayoffMvp(sport, "Самый ценный игрок плей-офф", "MVP плей-офф Лиги ВТБ"));
 				break;
+			case Sport.Soccer:
+				list.Add(Mvp(sport, "Лучший игрок сезона ФНЛ", "Лучший игрок сезона ФНЛ"));
+				list.Add(Freshman(sport, "Лучший молодой игрок", "Лучший молодой игрок ФНЛ"));
+				list.Add(PlayoffMvp(sport, "Самый ценный игрок плей-офф", "MVP плей-офф Кубка ФНЛ"));
+				break;
 			default:
 				list.Add(Mvp(sport, "Самый ценный игрок", "Лучший игрок сезона"));
 				list.Add(Freshman(sport, "Новичок года", "Лучший новичок сезона"));
@@ -685,7 +690,7 @@ public static class AwardBook
 			switch (sport)
 			{
 			case Sport.Hockey:
-				list.Add(Mvp(sport, "Самый ценный игрок", "Мемориальный кубок «Харроу»"));
+				list.Add(Mvp(sport, "Самый ценный игрок регулярного чемпионата", "Золотая клюшка"));
 				list.Add(new AwardDef
 				{
 					Award = "Лучший вратарь",
