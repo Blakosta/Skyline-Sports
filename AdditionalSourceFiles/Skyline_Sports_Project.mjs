@@ -110,7 +110,7 @@ logoPickerOpen&&(0,i.jsx)("div",{className:"clubLogoModalOverlay",onClick:()=>se
 (0,i.jsx)("div",{className:"clubLogoGrid",children:Array.from({length:24},(item,q)=>(0,i.jsx)("div",{className:t("clubLogoChoice",logoId===41+q&&"clubLogoSelected"),onClick:()=>chooseLogo(41+q),children:(0,i.jsx)(ClubLogo,{id:41+q,size:38})},q))}),
 (0,i.jsx)("div",{className:"clubLogoChoice clubLogoNoChoice",onClick:()=>chooseLogo(40),children:"Без логотипа"})
 ]})
-]})})]})}),
+]})})]}) ,
 e.isUser&&(0,i.jsxs)("div",{children:[(0,i.jsx)("div",{className:ks,children:"Домашний стадион или арена"}),(0,i.jsx)(X,{children:(e.venues||[]).map(e=>(0,i.jsx)(Z,{selected:String(e.id)===u,onClick:()=>h(String(e.id)),children:e.label},e.id))})]}),
 (0,i.jsx)(X,{children:[(0,i.jsx)(Z,{selected:!0,onClick:save,children:"Сохранить изменения"}),(0,i.jsx)(Z,{onClick:()=>a(!1),children:"Отмена"})]})
 ]})]})
