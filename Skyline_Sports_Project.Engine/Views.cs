@@ -175,7 +175,7 @@ public static class Views
 				string value;
 				if (live != null)
 				{
-					value = "В ЭФИРЕ: " + world.TeamAbbrev(g.AwayTeamId) + " " + live.AwayScore + ", " + world.TeamAbbrev(g.HomeTeamId) + " " + live.HomeScore + " (" + live.Status + ")";
+					value = (home != null && home.Sport == Sport.Soccer) ? ("В ЭФИРЕ: " + world.TeamAbbrev(g.HomeTeamId) + " " + live.HomeScore + ", " + world.TeamAbbrev(g.AwayTeamId) + " " + live.AwayScore + " (" + live.Status + ")") : ("В ЭФИРЕ: " + world.TeamAbbrev(g.AwayTeamId) + " " + live.AwayScore + ", " + world.TeamAbbrev(g.HomeTeamId) + " " + live.HomeScore + " (" + live.Status + ")");
 				}
 				else
 				{
@@ -183,7 +183,7 @@ public static class Views
 				}
 				jsonBuilder.Prop("time", value).Prop("live", live != null).Prop("featured", tonight)
 					.Prop("sport", (home == null) ? "" : SportRules.SportLabel(home.Sport))
-					.Prop("label", world.TeamShortName(g.AwayTeamId) + " в " + world.TeamShortName(g.HomeTeamId))
+					.Prop("label", (home != null && home.Sport == Sport.Soccer) ? (world.TeamShortName(g.HomeTeamId) + " — " + world.TeamShortName(g.AwayTeamId)) : (world.TeamShortName(g.AwayTeamId) + " в " + world.TeamShortName(g.HomeTeamId)))
 					.Prop("stage", (league == null) ? "" : world.StageLabel(league, g))
 					.EndObject();
 			}
