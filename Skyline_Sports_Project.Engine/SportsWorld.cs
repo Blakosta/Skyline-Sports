@@ -3294,7 +3294,8 @@ public class SportsWorld
 			{
 				List<string> taken = OrgMascots(league.Level, org.Id);
 				foreach (string name in used) taken.Add(name);
-				org.Mascot = _names.PickMascot(league.Sport, league.Level, taken, org.Name);
+				Level nameLevel = (league.Sport == Sport.Soccer && (league.Level == Level.Pro || league.Level == Level.Minor)) ? Level.Pro : league.Level;
+				org.Mascot = _names.PickMascot(league.Sport, nameLevel, taken, org.Name);
 			}
 			used.Add(TeamName(team.Id));
 		}
