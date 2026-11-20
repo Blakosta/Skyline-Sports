@@ -197,6 +197,34 @@ public static class Rosters
 		};
 	}
 
+	public static string PositionLabel(Position p, Sport sport)
+	{
+		if (sport == Sport.Hockey)
+		{
+			return p switch
+			{
+				Position.Center => "Ц",
+				Position.LeftWing => "ЛК",
+				Position.RightWing => "ПК",
+				Position.Defense => "З",
+				Position.Goalie => "В",
+				_ => PositionLabel(p),
+			};
+		}
+		if (sport == Sport.Soccer)
+		{
+			return p switch
+			{
+				Position.Goalkeeper => "ВР",
+				Position.Defender => "ЗЩ",
+				Position.Midfielder => "ПЗ",
+				Position.Forward => "НП",
+				_ => PositionLabel(p),
+			};
+		}
+		return PositionLabel(p);
+	}
+
 	public static string PositionLabel(Position p)
 	{
 		return p switch
