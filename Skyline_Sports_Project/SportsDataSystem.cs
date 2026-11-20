@@ -284,7 +284,6 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 				}
 				ScanDistricts(now);
 				ReadCityWeather(now);
-				Sports.VisitorAttendancePercent = ((Mod.Settings == null || Mod.Settings.VisitorFans) ? 20 : 0);
 				UpdateCityBalance();
 				ProcessPendingTransfers();
 				Sports.Advance(now);
