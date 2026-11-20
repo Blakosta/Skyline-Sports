@@ -1660,7 +1660,7 @@ public static class Views
 				foreach (KeyValuePair<Player, string> kv in TeamLeaders(world, t))
 				{
 					j.BeginObject().Prop("id", kv.Key.Id).Prop("name", kv.Key.Name)
-						.Prop("pos", Rosters.PositionLabel(kv.Key.Position))
+						.Prop("pos", Rosters.PositionLabel(kv.Key.Position, kv.Key.Sport))
 						.Prop("text", kv.Value)
 						.EndObject();
 				}
@@ -4204,7 +4204,7 @@ public static class Views
 				List<string> top = new List<string>();
 				for (int i = 0; i < fas.Count && i < 3; i++)
 				{
-					top.Add(Rosters.PositionLabel(fas[i].Position) + " " + fas[i].Name + " (" + Rosters.Ovr(fas[i]) + ")");
+					top.Add(Rosters.PositionLabel(fas[i].Position, fas[i].Sport) + " " + fas[i].Name + " (" + Rosters.Ovr(fas[i]) + ")");
 				}
 				market.Lines.Add(fas.Count + " на рынке. Лучший вариант: " + string.Join(", ", top.ToArray()));
 			}
@@ -4263,7 +4263,7 @@ public static class Views
 					List<string> best = new List<string>();
 					for (int i2 = 0; i2 < young.Count && i2 < 3; i2++)
 					{
-						best.Add(Rosters.PositionLabel(young[i2].Position) + " " + young[i2].Name + " (" + world.AgeOf(young[i2]) + "; потенциал " + Rosters.Grade(young[i2], world.AgeOf(young[i2])) + ")");
+						best.Add(Rosters.PositionLabel(young[i2].Position, young[i2].Sport) + " " + young[i2].Name + " (" + world.AgeOf(young[i2]) + "; потенциал " + Rosters.Grade(young[i2], world.AgeOf(young[i2])) + ")");
 					}
 					draft.Lines.Add(young.Count + " на рынке. Лучший вариант: " + string.Join(", ", best.ToArray()));
 				}
@@ -4328,7 +4328,7 @@ public static class Views
 				f.Lines.Add(world.TeamName(farmTeam.Id) + (farmTeam.IsUser ? " (ваша команда)" : ""));
 				if (farmers.Count > 0)
 				{
-					f.Lines.Add("Лучший игрок: " + Rosters.PositionLabel(farmers[0].Position) + " " + farmers[0].Name + " (" + Rosters.Ovr(farmers[0]) + " ОБЩ, " + world.AgeOf(farmers[0]) + ")");
+					f.Lines.Add("Лучший игрок: " + Rosters.PositionLabel(farmers[0].Position, farmers[0].Sport) + " " + farmers[0].Name + " (" + Rosters.Ovr(farmers[0]) + " ОБЩ, " + world.AgeOf(farmers[0]) + ")");
 				}
 				int ready = farmers.FindAll((Player x) => world.CallUpBlock(t, x) == null && x.Overall >= Rosters.Base(Level.Pro) - 2).Count;
 				f.Lines.Add((ready == 0) ? "Пока нет игроков, готовых к вызову." : (ready + ((ready == 1) ? " игрок готов к вызову" : " игроков готовы к вызову") + " к вызову."));
