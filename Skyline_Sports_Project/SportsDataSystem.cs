@@ -266,6 +266,139 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 		}
 	}
 
+
+	private bool TryGetCityMoney(out Entity city, out PlayerMoney money)
+	{
+		city = Entity.Null;
+		money = default(PlayerMoney);
+		if (m_CitySystem == null)
+		{
+			m_CitySystem = ((ComponentSystemBase)this).World.GetExistingSystemManaged<CitySystem>();
+		}
+		if (m_CitySystem == null)
+		{
+			return false;
+		}
+		city = m_CitySystem.City;
+		EntityManager em = ((ComponentSystemBase)this).EntityManager;
+		if (city == Entity.Null || !em.Exists(city) || !em.HasComponent<PlayerMoney>(city))
+		{
+			return false;
+		}
+		money = em.GetComponentData<PlayerMoney>(city);
+		return true;
+	}
+
+	private void UpdateCityBalance()
+	{
+		if (TryGetCityMoney(out var city, out var money))
+		{
+			Sports.CityBalance = money.money;
+			Sports.CityUnlimited = money.m_Unlimited;
+		}
+	}
+
+	private bool ChangeCityMoney(int amount)
+	{
+		if (!TryGetCityMoney(out var city, out var money))
+		{
+			return false;
+		}
+		Sports.CityUnlimited = money.m_Unlimited;
+		if (money.m_Unlimited)
+		{
+			Sports.CityBalance = money.money;
+			return true;
+		}
+		if (amount < 0 && (long)money.money < -(long)amount)
+		{
+			return false;
+		}
+		long before = money.money;
+		money.Add(amount);
+		((ComponentSystemBase)this).EntityManager.SetComponentData(city, money);
+		Sports.CityBalance = money.money;
+		return money.money - before == amount;
+	}
+
+	public CommandResult TransferCityFunds(int teamId, int amount, bool toClub)
+	{
+		Team team = Sports.GetTeam(teamId);
+		if (team == null || team.Retired || !team.IsUser)
+		{
+			return CommandResult.Fail("Переводы доступны только для вашей команды.");
+		}
+		if (amount <= 0)
+		{
+			return CommandResult.Fail("Укажите положительную сумму перевода.");
+		}
+		if (toClub)
+		{
+			if (!TryGetCityMoney(out var city, out var money))
+			{
+				return CommandResult.Fail("Не удалось получить доступ к казне города.");
+			}
+			if (!money.m_Unlimited && money.money < amount)
+			{
+				return CommandResult.Fail("В городской казне недостаточно средств.");
+			}
+			if (!ChangeCityMoney(-amount))
+			{
+				return CommandResult.Fail("Не удалось списать средства из городской казны.");
+			}
+			CommandResult result = Sports.TransferClubFunds(teamId, amount, toClub: true);
+			if (!result.Ok)
+			{
+				ChangeCityMoney(amount);
+				return result;
+			}
+			return result;
+		}
+		CommandResult withdrawal = Sports.TransferClubFunds(teamId, amount, toClub: false);
+		if (!withdrawal.Ok)
+		{
+			return withdrawal;
+		}
+		if (!ChangeCityMoney(amount))
+		{
+			Sports.TransferClubFunds(teamId, amount, toClub: true);
+			return CommandResult.Fail("Не удалось зачислить средства в городскую казну; перевод отменён.");
+		}
+		return withdrawal;
+	}
+
+	private void SettleTicketIncome()
+	{
+		long total = 0L;
+		foreach (League league in Sports.Leagues)
+		{
+			Season[] seasons = new Season[2] { league.Current, league.Previous };
+			foreach (Season season in seasons)
+			{
+				if (season == null) continue;
+				foreach (Match game in season.Games)
+				{
+					if (!game.Played || game.TicketIncomePaid) continue;
+					if (game.TicketRevenue <= 0)
+					{
+						game.TicketIncomePaid = true;
+						continue;
+					}
+					if (ChangeCityMoney(game.TicketRevenue))
+					{
+						game.TicketIncomePaid = true;
+						total += game.TicketRevenue;
+					}
+				}
+			}
+		}
+		if (total > 0)
+		{
+			Sports.Revision++;
+			Mod.log.Info((object)("Билетные доходы: в городской бюджет зачислено " + total.ToString("N0") + "."));
+		}
+	}
+
 	private void ReadCityWeather(int now)
 	{
 		if (m_ClimateGaveUp)
