@@ -592,30 +592,45 @@ public static class AwardBook
 
 	public static string ChampionTrophy(Sport sport, Level level)
 	{
+		if (sport == Sport.Hockey)
+		{
+			return level switch
+			{
+				Level.Pro => "Кубок Гагарина",
+				Level.Minor => "Кубок Петрова",
+				Level.Junior => "Кубок Харламова",
+				Level.College => "Кубок студенческой хоккейной лиги",
+				_ => "Кубок чемпионов региона",
+			};
+		}
+		if (sport == Sport.Basketball && level == Level.Pro)
+		{
+			return "Кубок Белова";
+		}
+		if (sport == Sport.Soccer)
+		{
+			return level switch
+			{
+				Level.Pro => "Кубок чемпиона России",
+				Level.Minor => "Кубок ФНЛ",
+				Level.Junior => "Кубок молодёжной лиги",
+				Level.College => "Кубок студенческой футбольной лиги",
+				_ => "Кубок чемпионов региона",
+			};
+		}
 		return level switch
 		{
-			Level.HighSchool => "Кубок чемпионов региона", 
-			Level.Junior => "Кубок «Доминион»", 
-			Level.Minor => sport switch
-			{
-				Sport.Hockey => "Кубок «Риджуэй»", 
-				Sport.Basketball => "Кубок «Литейщик»", 
-				_ => "Кубок «Гавань»", 
-			}, 
-			Level.College => sport switch
-			{
-				Sport.Football => "Кубок «Основателей»", 
-				Sport.Basketball => "Кубок «Холлис»", 
-				_ => "Кубок национального чемпионата", 
-			}, 
+			Level.HighSchool => "Кубок чемпионов региона",
+			Level.Junior => "Кубок юниорского чемпионата",
+			Level.Minor => sport == Sport.Basketball ? "Кубок чемпионов малой лиги" : "Кубок Федерации",
+			Level.College => "Кубок студенческого чемпионата",
 			_ => sport switch
 			{
-				Sport.Hockey => "Кубок «Кингсли»", 
-				Sport.Basketball => "Кубок «Хэллоран»", 
-				Sport.Football => "Кубок «Грейнджер»", 
-				Sport.Baseball => "Вымпел «Основателей»", 
-				_ => "Щит «Меридиан»", 
-			}, 
+				Sport.Basketball => "Кубок Единой лиги ВТБ",
+				Sport.Football => "Кубок чемпиона России по американскому футболу",
+				Sport.Baseball => "Кубок чемпиона России по бейсболу",
+				_ => "Кубок чемпиона России",
+			},
 		};
 	}
 
@@ -633,37 +648,37 @@ public static class AwardBook
 			switch (sport)
 			{
 			case Sport.Hockey:
-				list.Add(Mvp(sport, "Самый ценный игрок", "Кубок «Гаррисон»"));
-				list.Add(Freshman(sport, "Новичок года", "Премия «Пелл»"));
-				list.Add(PlayoffMvp(sport, "Самый ценный игрок плей-офф", "Приз лучшему игроку кубка «Риджуэй»"));
+				list.Add(Mvp(sport, "Самый ценный игрок", "Золотая клюшка"));
+				list.Add(Freshman(sport, "Новичок года", "Приз имени Алексея Черепанова"));
+				list.Add(PlayoffMvp(sport, "Самый ценный игрок плей-офф", "Самый ценный игрок плей-офф Кубка Петрова"));
 				break;
 			case Sport.Basketball:
-				list.Add(Mvp(sport, "Самый ценный игрок", "Премия «Корвин»"));
-				list.Add(Freshman(sport, "Новичок года", "Премия «Стартовый бросок»"));
-				list.Add(PlayoffMvp(sport, "Самый ценный игрок финала", "Приз лучшему игроку финала «Литейщик»"));
+				list.Add(Mvp(sport, "Самый ценный игрок", "MVP регулярного сезона Лиги ВТБ"));
+				list.Add(Freshman(sport, "Лучший молодой игрок", "Лучший молодой игрок Лиги ВТБ"));
+				list.Add(PlayoffMvp(sport, "Самый ценный игрок плей-офф", "MVP плей-офф Лиги ВТБ"));
 				break;
 			default:
-				list.Add(Mvp(sport, "Самый ценный игрок", "Премия «Липа»"));
-				list.Add(Freshman(sport, "Новичок года", "Премия «Песчаная площадка»"));
-				list.Add(PlayoffMvp(sport, "Самый ценный игрок чемпионата", "Приз лучшему игроку кубка «Маяк»"));
+				list.Add(Mvp(sport, "Самый ценный игрок", "Лучший игрок сезона"));
+				list.Add(Freshman(sport, "Новичок года", "Лучший новичок сезона"));
+				list.Add(PlayoffMvp(sport, "Самый ценный игрок чемпионата", "MVP финала чемпионата"));
 				break;
 			}
 			return list;
 		case Level.Junior:
-			list.Add(Mvp(sport, "Игрок года", "Кубок «Чистая вода»"));
-			list.Add(Freshman(sport, "Новичок года", "Премия «Кэллоуэй»"));
-			list.Add(PlayoffMvp(sport, "Самый ценный игрок плей-офф", "Приз лучшему игроку кубка «Доминион»"));
+			list.Add(Mvp(sport, "Игрок года", sport == Sport.Hockey ? "Лучший игрок МХЛ" : "Лучший игрок юниорского чемпионата"));
+			list.Add(Freshman(sport, "Новичок года", sport == Sport.Hockey ? "Приз имени Алексея Черепанова" : "Лучший новичок юниорского чемпионата"));
+			list.Add(PlayoffMvp(sport, "Самый ценный игрок плей-офф", sport == Sport.Hockey ? "MVP плей-офф Кубка Харламова" : "MVP плей-офф юниорского чемпионата"));
 			return list;
 		case Level.College:
 			list.Add(Mvp(sport, "Игрок года страны", sport switch
 			{
-				Sport.Hockey => "Кубок «Крестовый»", 
-				Sport.Basketball => "Премия «Холлис»", 
-				Sport.Football => "Кубок «Стэнтон»", 
-				Sport.Baseball => "Премия «Бриллиантовый шип»", 
-				_ => "Кубок «Гэллоуэй»", 
+				Sport.Hockey => "Кубок студенческого хоккейного чемпионата", 
+				Sport.Basketball => "Лучший игрок студенческого чемпионата по баскетболу", 
+				Sport.Football => "Кубок студенческого чемпионата по американскому футболу", 
+				Sport.Baseball => "Лучший игрок студенческого чемпионата по бейсболу", 
+				_ => "Лучший игрок студенческого чемпионата", 
 			}));
-			list.Add(Freshman(sport, "Первокурсник года", "Премия «Большое будущее»"));
+			list.Add(Freshman(sport, "Первокурсник года", "Лучший первокурсник сезона"));
 			list.Add(PlayoffMvp(sport, "Лучший игрок турнира", "Лучший игрок турнира"));
 			return list;
 		default:
@@ -674,7 +689,7 @@ public static class AwardBook
 				list.Add(new AwardDef
 				{
 					Award = "Лучший вратарь",
-					Trophy = "Кубок Васильева",
+					Trophy = "Лучший вратарь сезона",
 					Eligible = (AwardContext c, Player p, int[] s) => !Skater(p) && HockeyQualifies(c, p, s),
 					Score = (AwardContext c, Player p, int[] s) => GoalieValue(c, s),
 					Detail = (AwardContext c, Player p, int[] s) => GoalieLine(s)
@@ -682,16 +697,16 @@ public static class AwardBook
 				list.Add(new AwardDef
 				{
 					Award = "Лучший защитник",
-					Trophy = "Кубок «Делакруа»",
+					Trophy = "Лучший защитник сезона",
 					Eligible = (AwardContext c, Player p, int[] s) => p.Position == Position.Defense && HockeyQualifies(c, p, s),
 					Score = (AwardContext c, Player p, int[] s) => SkaterValue(s) + (double)p.Overall * 0.8,
 					Detail = (AwardContext c, Player p, int[] s) => SkaterLine(s)
 				});
-				list.Add(Freshman(sport, "Новичок года", "Кубок «Уитфилд»"));
+				list.Add(Freshman(sport, "Новичок года", "Приз имени Алексея Черепанова"));
 				list.Add(new AwardDef
 				{
 					Award = "Лучший бомбардир",
-					Trophy = "Кубок «Эшворт»",
+					Trophy = "Приз имени Бориса Михайлова",
 					Eligible = (AwardContext c, Player p, int[] s) => Skater(p),
 					Score = (AwardContext c, Player p, int[] s) => (double)(G(s, 1) + G(s, 2)) + (double)G(s, 1) * 0.01,
 					Detail = (AwardContext c, Player p, int[] s) => SkaterLine(s)
@@ -699,28 +714,28 @@ public static class AwardBook
 				list.Add(new AwardDef
 				{
 					Award = "Лучший снайпер",
-					Trophy = "Кубок «Ламонт»",
+					Trophy = "Приз имени Сергея Макарова",
 					Eligible = (AwardContext c, Player p, int[] s) => Skater(p),
 					Score = (AwardContext c, Player p, int[] s) => (double)G(s, 1) + (double)G(s, 2) * 0.01,
 					Detail = (AwardContext c, Player p, int[] s) => I(G(s, 1)) + " голов"
 				});
-				list.Add(PlayoffMvp(sport, "Самый ценный игрок плей-офф", "Кубок «Корбо»"));
+				list.Add(PlayoffMvp(sport, "Самый ценный игрок плей-офф", "Самый ценный игрок плей-офф Кубка Гагарина"));
 				break;
 			case Sport.Basketball:
-				list.Add(Mvp(sport, "Самый ценный игрок", "Кубок Максвелла Прескотта"));
+				list.Add(Mvp(sport, "Самый ценный игрок", "MVP регулярного сезона Лиги ВТБ"));
 				list.Add(new AwardDef
 				{
 					Award = "Лучший игрок обороны года",
-					Trophy = "Кубок «Торнбери»",
+					Trophy = "Лучший защитник сезона",
 					Eligible = (AwardContext c, Player p, int[] s) => HoopQualifies(c, s),
 					Score = (AwardContext c, Player p, int[] s) => 3.0 * PerGame(s, 4) + 3.0 * PerGame(s, 5) + 0.5 * PerGame(s, 2) + (double)(p.Overall - 74) * 0.2,
 					Detail = (AwardContext c, Player p, int[] s) => D1(PerGame(s, 4)) + " перехватов, " + D1(PerGame(s, 5)) + " блок-шотов, " + D1(PerGame(s, 2)) + " подборов за матч"
 				});
-				list.Add(Freshman(sport, "Новичок года", "Кубок «Эйнсли»"));
+				list.Add(Freshman(sport, "Лучший молодой игрок", "Лучший молодой игрок Лиги ВТБ"));
 				list.Add(new AwardDef
 				{
 					Award = "Лучший запасной игрок года",
-					Trophy = "Премия «Кэррэуэй»",
+					Trophy = "Лучший шестой игрок сезона",
 					Eligible = (AwardContext c, Player p, int[] s) => HoopQualifies(c, s) && G(s, 12) * 2 < G(s, 0),
 					Score = (AwardContext c, Player p, int[] s) => HoopValue(s),
 					Detail = (AwardContext c, Player p, int[] s) => HoopLine(s) + " выходя со скамейки запасных"
@@ -728,7 +743,7 @@ public static class AwardBook
 				list.Add(new AwardDef
 				{
 					Award = "Самый прогрессирующий игрок",
-					Trophy = "Премия «Прилив»",
+					Trophy = "Самый прогрессирующий игрок сезона",
 					Eligible = (AwardContext c, Player p, int[] s) => HoopQualifies(c, s) && p.Overall - p.PrevOverall >= 3,
 					Score = (AwardContext c, Player p, int[] s) => (double)((p.Overall - p.PrevOverall) * 3) + HoopValue(s) * 0.3,
 					Detail = (AwardContext c, Player p, int[] s) => HoopLine(s) + ", рост рейтинга: " + I(p.Overall - p.PrevOverall)
@@ -736,19 +751,19 @@ public static class AwardBook
 				list.Add(new AwardDef
 				{
 					Award = "Лучший бомбардир",
-					Trophy = "Кубок «Фэрбанкс»",
+					Trophy = "Лучший бомбардир сезона",
 					Eligible = (AwardContext c, Player p, int[] s) => HoopQualifies(c, s),
 					Score = (AwardContext c, Player p, int[] s) => PerGame(s, 1),
 					Detail = (AwardContext c, Player p, int[] s) => D1(PerGame(s, 1)) + " очков за матч"
 				});
-				list.Add(PlayoffMvp(sport, "Самый ценный игрок финала", "Кубок «Уитлок»"));
+				list.Add(PlayoffMvp(sport, "Самый ценный игрок финала", "MVP финала Лиги ВТБ"));
 				break;
 			case Sport.Football:
-				list.Add(Mvp(sport, "Самый ценный игрок", "Кубок «Холкомб»"));
+				list.Add(Mvp(sport, "Самый ценный игрок", "Лучший игрок сезона по американскому футболу"));
 				list.Add(new AwardDef
 				{
 					Award = "Лучший игрок нападения года",
-					Trophy = "Премия «Бреннан»",
+					Trophy = "Лучший игрок нападения сезона",
 					Eligible = (AwardContext c, Player p, int[] s) => Offense(p.Position),
 					Score = (AwardContext c, Player p, int[] s) => (p.Position != Position.Quarterback) ? (SkillValue(s) * 1.3) : QbValue(s),
 					Detail = (AwardContext c, Player p, int[] s) => OffenseLine(p, s)
@@ -756,7 +771,7 @@ public static class AwardBook
 				list.Add(new AwardDef
 				{
 					Award = "Лучший игрок обороны года",
-					Trophy = "Премия «Айронсайд»",
+					Trophy = "Лучший игрок защиты сезона",
 					Eligible = (AwardContext c, Player p, int[] s) => IsDefense(p.Position),
 					Score = (AwardContext c, Player p, int[] s) => DefenseValue(s),
 					Detail = (AwardContext c, Player p, int[] s) => DefenseLine(s)
@@ -764,7 +779,7 @@ public static class AwardBook
 				list.Add(new AwardDef
 				{
 					Award = "Лучший новичок нападения",
-					Trophy = "Премия «Кинкейд»",
+					Trophy = "Лучший новичок нападения сезона",
 					Eligible = (AwardContext c, Player p, int[] s) => Offense(p.Position) && Rookie(c, p),
 					Score = (AwardContext c, Player p, int[] s) => OffenseValue(p, s),
 					Detail = (AwardContext c, Player p, int[] s) => OffenseLine(p, s)
@@ -772,7 +787,7 @@ public static class AwardBook
 				list.Add(new AwardDef
 				{
 					Award = "Лучший новичок обороны",
-					Trophy = "Премия «Мерсер»",
+					Trophy = "Лучший новичок защиты сезона",
 					Eligible = (AwardContext c, Player p, int[] s) => IsDefense(p.Position) && Rookie(c, p),
 					Score = (AwardContext c, Player p, int[] s) => DefenseValue(s),
 					Detail = (AwardContext c, Player p, int[] s) => DefenseLine(s)
@@ -780,7 +795,7 @@ public static class AwardBook
 				list.Add(new AwardDef
 				{
 					Award = "Лучший линейный игрок года",
-					Trophy = "Щит «Слепая зона»",
+					Trophy = "Приз лучшему линейному игроку сезона",
 					Eligible = (AwardContext c, Player p, int[] s) => p.Position == Position.OffensiveLine && G(s, 0) >= c.Half,
 					Score = (AwardContext c, Player p, int[] s) =>
 					{
@@ -789,23 +804,23 @@ public static class AwardBook
 					},
 					Detail = (AwardContext c, Player p, int[] s) => I(G(s, 0)) + " матчей, общий рейтинг " + I(Rosters.Ovr(p))
 				});
-				list.Add(PlayoffMvp(sport, "Самый ценный игрок главного матча", "Кубок «Марлоу»"));
+				list.Add(PlayoffMvp(sport, "Самый ценный игрок главного матча", "MVP финала чемпионата по американскому футболу"));
 				break;
 			case Sport.Baseball:
-				list.Add(Mvp(sport, "Самый ценный игрок", "Кубок «Уитакер»"));
+				list.Add(Mvp(sport, "Самый ценный игрок", "Лучший игрок сезона по бейсболу"));
 				list.Add(new AwardDef
 				{
 					Award = "Лучший питчер",
-					Trophy = "Премия «Холлистер»",
+					Trophy = "Лучший питчер сезона",
 					Eligible = StarterQualifies,
 					Score = (AwardContext c, Player p, int[] s) => PitcherValue(s) + (double)G(s, 16) * 0.5,
 					Detail = (AwardContext c, Player p, int[] s) => PitcherLine(s)
 				});
-				list.Add(Freshman(sport, "Новичок года", "Премия «Пембертон»"));
+				list.Add(Freshman(sport, "Новичок года", "Лучший новичок сезона по бейсболу"));
 				list.Add(new AwardDef
 				{
 					Award = "Реливер года",
-					Trophy = "Премия «Пожарный»",
+					Trophy = "Лучший реливер сезона",
 					Eligible = (AwardContext c, Player p, int[] s) => p.Position == Position.ReliefPitcher && G(s, 9) >= Math.Max(1, c.TeamGames / 4),
 					Score = (AwardContext c, Player p, int[] s) => RelieverValue(s),
 					Detail = (AwardContext c, Player p, int[] s) => I(G(s, 18)) + " сейвов, " + D2(Era(s)) + " пропущенных ранов за 9 иннингов"
@@ -818,14 +833,14 @@ public static class AwardBook
 					Score = (AwardContext c, Player p, int[] s) => HitterValue(s),
 					Detail = (AwardContext c, Player p, int[] s) => HitterLine(s)
 				});
-				list.Add(PlayoffMvp(sport, "Самый ценный игрок серии", "Корона октября"));
+				list.Add(PlayoffMvp(sport, "Самый ценный игрок серии", "MVP финальной серии чемпионата"));
 				break;
 			default:
-				list.Add(Mvp(sport, "Самый ценный игрок", "Кубок «Кастельяно»"));
+				list.Add(Mvp(sport, "Самый ценный игрок", "Футболист года в России"));
 				list.Add(new AwardDef
 				{
 					Award = "Золотая бутса",
-					Trophy = "Бутса «Феррейра»",
+					Trophy = "Лучший бомбардир РПЛ",
 					Eligible = (AwardContext c, Player p, int[] s) => !Keeper(p),
 					Score = (AwardContext c, Player p, int[] s) => (double)G(s, 1) + (double)G(s, 2) * 0.01,
 					Detail = (AwardContext c, Player p, int[] s) => FieldLine(s)
@@ -833,7 +848,7 @@ public static class AwardBook
 				list.Add(new AwardDef
 				{
 					Award = "Вратарь года",
-					Trophy = "Золотая перчатка",
+					Trophy = "Приз имени Льва Яшина",
 					Eligible = (AwardContext c, Player p, int[] s) => Keeper(p) && G(s, 8) >= c.Half,
 					Score = (AwardContext c, Player p, int[] s) => KeeperValue(s),
 					Detail = (AwardContext c, Player p, int[] s) => KeeperLine(s)
@@ -841,7 +856,7 @@ public static class AwardBook
 				list.Add(new AwardDef
 				{
 					Award = "Защитник года",
-					Trophy = "Премия «Роша»",
+					Trophy = "Лучший защитник сезона",
 					Eligible = (AwardContext c, Player p, int[] s) => p.Position == Position.Defender && G(s, 0) >= c.Half,
 					Score = (AwardContext c, Player p, int[] s) => (double)((p.Overall - 70) * 2 + G(s, 1) * 3 + G(s, 2) * 2) + c.TeamWinPct(p) * 10.0,
 					Detail = (AwardContext c, Player p, int[] s) => I(G(s, 0)) + " матчей, " + FieldLine(s)
@@ -849,13 +864,13 @@ public static class AwardBook
 				list.Add(new AwardDef
 				{
 					Award = "Молодой игрок года",
-					Trophy = "Премия «Аврора»",
+					Trophy = "Лучший молодой игрок РПЛ",
 					Eligible = (AwardContext c, Player p, int[] s) => c.Year - p.BirthYear <= 22 && SportQualifies(Sport.Soccer, c, p, s),
 					Score = (AwardContext c, Player p, int[] s) => SoccerValue(p, s),
 					Detail = (AwardContext c, Player p, int[] s) => SoccerLine(p, s)
 				});
-				list.Add(Freshman(sport, "Лучший дебютант года", "Премия «Гавань»"));
-				list.Add(PlayoffMvp(sport, "Самый ценный игрок финала кубка", "Приз лучшему игроку финала «Меридиан»"));
+				list.Add(Freshman(sport, "Лучший дебютант года", "Лучший дебютант сезона"));
+				list.Add(PlayoffMvp(sport, "Самый ценный игрок финала Кубка России", "MVP финала Кубка России"));
 				break;
 			}
 			return list;
