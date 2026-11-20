@@ -2570,7 +2570,8 @@ public class SportsWorld
 		Organization o = ((t == null) ? null : GetOrg(t.OrgId));
 		if (o != null)
 		{
-			return o.Name;
+			if (o.Level == Level.HighSchool || o.Level == Level.College || string.IsNullOrEmpty(o.Mascot)) return o.Name;
+			return o.Mascot;
 		}
 		return "Не определено";
 	}
@@ -2590,7 +2591,8 @@ public class SportsWorld
 		{
 			return "Не определено";
 		}
-		return o.Name;
+		if (o.Level == Level.HighSchool || o.Level == Level.College || string.IsNullOrEmpty(o.Mascot)) return o.Name;
+		return o.Mascot;
 	}
 
 	public string TeamAbbrev(int teamId)
