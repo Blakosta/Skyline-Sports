@@ -1,16 +1,28 @@
 # Skyline Sports — Russian localization add-on
 
-This is a separate Cities: Skylines II mod assembly. It does not compile, replace, or patch the original Skyline Sports assembly.
+This is a separate Cities: Skylines II mod assembly. It does not rebuild, replace, or modify the original Skyline Sports DLL.
 
-## Current scope
+## What it translates
 
-- Registers a `ru-RU` localization dictionary.
-- Resolves the original Skyline Sports settings object at runtime and uses its actual localization IDs.
-- Translates the original mod's settings screen.
-- Does not alter game simulation, schedules, teams, player generation, saves, or the original mod files.
+- The original Skyline Sports settings screen.
+- Text values sent by the sports UI through the original mod's JSON builder, using a runtime Harmony prefix.
+- A growing Russian dictionary for sports tabs, records, player bios, international competitions, news and dates.
 
-## Known limitation
+The patch is attached only to `Skyline_Sports_Project.Engine.JsonBuilder.Value(string)`. It does not patch simulation, scheduling, player/team generation, saves, or game logic.
 
-The original mod builds much of its in-game interface from literal strings in its C# UI data (for example, the Views layer). Those strings are not automatically translated by adding an `IDictionarySource`. This add-on therefore does **not** claim that the entire in-game sports interface is translated yet. A separate, verified runtime interception mechanism would be needed for those strings; it must be tested against the exact game and mod versions before being added.
+## Install
 
-Install alongside the original Skyline Sports mod. Do not replace its DLL.
+1. Keep the original Skyline Sports mod installed.
+2. Install this add-on as a separate mod.
+3. Copy both `SkylineSportsRussianLocalization.dll` and `0Harmony.dll` from the build artifact into the add-on's mod folder.
+4. Enable both Skyline Sports and Skyline Sports Russian Localization, then select Russian in the game language settings.
+
+Never replace the original `Skyline_Sports_Project.dll`.
+
+## Compatibility and current scope
+
+The runtime translation hook is version-sensitive: it expects the original mod to expose `Skyline_Sports_Project.Engine.JsonBuilder.Value(string)`. If the original mod changes that API, the patch may not attach. Check the game log for:
+
+`[Skyline Sports RU] Runtime UI text translation attached.`
+
+This is the first pass of the interface dictionary, not a claim that every dynamically composed sentence or every name is translated. Missing strings can be added to the dictionary without changing the original mod.
