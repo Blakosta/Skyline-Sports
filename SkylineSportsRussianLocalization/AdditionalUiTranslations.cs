@@ -89,7 +89,7 @@ namespace SkylineSportsRussianLocalization
             s = s.Replace("Football · OVR ", "Американский футбол · ОБЩ ");
             s = s.Replace("Hockey · OVR ", "Хоккей · ОБЩ ");
             s = s.Replace(" more games this month.", " матчей осталось в этом месяце.");
-            s = s.Replace("The ", "");
+            if (s.StartsWith("The ", StringComparison.Ordinal)) s = s.Substring(4);
             s = s.Replace(" season starts ", " сезон начинается ");
             s = Regex.Replace(s, @"\b(Sun|Sunday)\b", "воскресенье", RegexOptions.IgnoreCase);
             s = Regex.Replace(s, @"\b(Mon|Monday)\b", "понедельник", RegexOptions.IgnoreCase);
