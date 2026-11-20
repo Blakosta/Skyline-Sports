@@ -8,43 +8,43 @@ public static class AwardBook
 {
 	public static readonly Dictionary<string, string> OldTrophyNames = new Dictionary<string, string>
 	{
-		{ "Frozen Star Award", "Премия «Крестовуд»" },
-		{ "Golden Hoop Award", "Премия «Холлис»" },
-		{ "Golden Helmet Trophy", "Кубок «Стэнтон»" },
-		{ "Golden Cleat Award", "Кубок «Гэллоуэй»" },
-		{ "First Season Award", "Премия «Светлое будущее»" },
-		{ "Summit Trophy", "Мемориальный кубок «Харроу»" },
-		{ "Iron Mask Trophy", "Кубок Васильева" },
-		{ "Blue Line Trophy", "Кубок «Делакруа»" },
-		{ "First Frost Trophy", "Кубок «Уитфилд»" },
-		{ "Silver Stick", "Кубок «Эшворт»" },
-		{ "Lamplighter Trophy", "Кубок «Ламонт»" },
-		{ "Final Horn Trophy", "Кубок «Корбо»" },
-		{ "Hardwood Crown", "Кубок Максвелла Прескотта" },
-		{ "Lockdown Trophy", "Кубок «Торнбери»" },
-		{ "Rising Star Trophy", "Кубок «Эйнсли»" },
-		{ "Spark Plug Award", "Премия «Кэррэуэй»" },
-		{ "Leap Award", "Премия «Прилив»" },
-		{ "Golden Net", "Кубок «Фэрбанкс»" },
-		{ "Finals Hero Trophy", "Кубок «Уитлок»" },
-		{ "Gridiron Crown", "Кубок «Холкомб»" },
-		{ "Field General Award", "Премия «Бреннан»" },
-		{ "Iron Curtain Award", "Премия «Айронсайд»" },
-		{ "First Down Award", "Премия «Кинкейд»" },
-		{ "Fresh Steel Award", "Премия «Мерсер»" },
-		{ "Big Game Hero Trophy", "Кубок «Марлоу»" },
-		{ "Diamond Crown", "Кубок «Уитакер»" },
-		{ "Golden Arm Award", "Премия «Холлистер»" },
-		{ "First Pitch Award", "Премия «Пембертон»" },
-		{ "Last Out Award", "Премия «Пожарный»" },
-		{ "October Hero Trophy", "Корона октября" },
-		{ "Pitch Crown", "Кубок «Кастельяно»" },
-		{ "Top Boot", "Бутса «Феррейра»" },
-		{ "Safe Hands Award", "Золотая перчатка" },
-		{ "Back Line Award", "Премия «Роша»" },
-		{ "Next Wave Award", "Премия «Аврора»" },
-		{ "New Arrival Award", "Премия «Гавань»" },
-		{ "Cup Final Hero", "Самый ценный игрок финала «Меридиан»" }
+		{ "Frozen Star Award", "Лучший игрок сезона" },
+		{ "Golden Hoop Award", "Самый ценный игрок сезона" },
+		{ "Golden Helmet Trophy", "Кубок чемпиона" },
+		{ "Golden Cleat Award", "Лучший игрок сезона" },
+		{ "First Season Award", "Лучший новичок сезона" },
+		{ "Summit Trophy", "Кубок чемпионов" },
+		{ "Iron Mask Trophy", "Лучший вратарь сезона" },
+		{ "Blue Line Trophy", "Лучший защитник сезона" },
+		{ "First Frost Trophy", "Лучший новичок сезона" },
+		{ "Silver Stick", "Лучший бомбардир сезона" },
+		{ "Lamplighter Trophy", "Лучший снайпер сезона" },
+		{ "Final Horn Trophy", "Самый ценный игрок плей-офф" },
+		{ "Hardwood Crown", "Кубок чемпиона по баскетболу" },
+		{ "Lockdown Trophy", "Лучший игрок обороны сезона" },
+		{ "Rising Star Trophy", "Лучший молодой игрок сезона" },
+		{ "Spark Plug Award", "Лучший запасной игрок сезона" },
+		{ "Leap Award", "Самый прогрессирующий игрок сезона" },
+		{ "Golden Net", "Лучший бомбардир сезона" },
+		{ "Finals Hero Trophy", "Самый ценный игрок финала" },
+		{ "Gridiron Crown", "Кубок чемпиона по американскому футболу" },
+		{ "Field General Award", "Лучший игрок нападения сезона" },
+		{ "Iron Curtain Award", "Лучший игрок защиты сезона" },
+		{ "First Down Award", "Лучший новичок нападения" },
+		{ "Fresh Steel Award", "Лучший новичок защиты" },
+		{ "Big Game Hero Trophy", "Самый ценный игрок финала" },
+		{ "Diamond Crown", "Кубок чемпиона по бейсболу" },
+		{ "Golden Arm Award", "Лучший питчер сезона" },
+		{ "First Pitch Award", "Лучший новичок сезона" },
+		{ "Last Out Award", "Лучший реливер сезона" },
+		{ "October Hero Trophy", "Самый ценный игрок финальной серии" },
+		{ "Pitch Crown", "Кубок чемпиона по футболу" },
+		{ "Top Boot", "Лучший бомбардир сезона" },
+		{ "Safe Hands Award", "Лучший вратарь сезона" },
+		{ "Back Line Award", "Лучший защитник сезона" },
+		{ "Next Wave Award", "Лучший молодой игрок сезона" },
+		{ "New Arrival Award", "Лучший дебютант сезона" },
+		{ "Cup Final Hero", "Самый ценный игрок финала кубка" }
 	};
 
 	private static string I(int v)
@@ -653,9 +653,9 @@ public static class AwardBook
 				list.Add(PlayoffMvp(sport, "Самый ценный игрок плей-офф", "Самый ценный игрок плей-офф Кубка Петрова"));
 				break;
 			case Sport.Basketball:
-				list.Add(Mvp(sport, "Самый ценный игрок", "MVP регулярного сезона Лиги ВТБ"));
+				list.Add(Mvp(sport, "Самый ценный игрок", "Самый ценный игрок регулярного сезона Единой лиги ВТБ"));
 				list.Add(Freshman(sport, "Лучший молодой игрок", "Лучший молодой игрок Лиги ВТБ"));
-				list.Add(PlayoffMvp(sport, "Самый ценный игрок плей-офф", "MVP плей-офф Лиги ВТБ"));
+				list.Add(PlayoffMvp(sport, "Самый ценный игрок плей-офф", "Самый ценный игрок плей-офф Единой лиги ВТБ"));
 				break;
 			case Sport.Soccer:
 				list.Add(Mvp(sport, "Лучший игрок сезона ФНЛ", "Лучший игрок сезона ФНЛ"));
@@ -665,14 +665,14 @@ public static class AwardBook
 			default:
 				list.Add(Mvp(sport, "Самый ценный игрок", "Лучший игрок сезона"));
 				list.Add(Freshman(sport, "Новичок года", "Лучший новичок сезона"));
-				list.Add(PlayoffMvp(sport, "Самый ценный игрок чемпионата", "MVP финала чемпионата"));
+				list.Add(PlayoffMvp(sport, "Самый ценный игрок чемпионата", "Самый ценный игрок финала чемпионата"));
 				break;
 			}
 			return list;
 		case Level.Junior:
 			list.Add(Mvp(sport, "Игрок года", sport == Sport.Hockey ? "Лучший игрок МХЛ" : "Лучший игрок юниорского чемпионата"));
 			list.Add(Freshman(sport, "Новичок года", sport == Sport.Hockey ? "Приз имени Алексея Черепанова" : "Лучший новичок юниорского чемпионата"));
-			list.Add(PlayoffMvp(sport, "Самый ценный игрок плей-офф", sport == Sport.Hockey ? "MVP плей-офф Кубка Харламова" : "MVP плей-офф юниорского чемпионата"));
+			list.Add(PlayoffMvp(sport, "Самый ценный игрок плей-офф", sport == Sport.Hockey ? "Самый ценный игрок плей-офф Кубка Харламова" : "MVP плей-офф юниорского чемпионата"));
 			return list;
 		case Level.College:
 			list.Add(Mvp(sport, "Игрок года страны", sport switch
@@ -727,7 +727,7 @@ public static class AwardBook
 				list.Add(PlayoffMvp(sport, "Самый ценный игрок плей-офф", "Самый ценный игрок плей-офф Кубка Гагарина"));
 				break;
 			case Sport.Basketball:
-				list.Add(Mvp(sport, "Самый ценный игрок", "MVP регулярного сезона Лиги ВТБ"));
+				list.Add(Mvp(sport, "Самый ценный игрок", "Самый ценный игрок регулярного сезона Единой лиги ВТБ"));
 				list.Add(new AwardDef
 				{
 					Award = "Лучший игрок обороны года",
@@ -761,7 +761,7 @@ public static class AwardBook
 					Score = (AwardContext c, Player p, int[] s) => PerGame(s, 1),
 					Detail = (AwardContext c, Player p, int[] s) => D1(PerGame(s, 1)) + " очков за матч"
 				});
-				list.Add(PlayoffMvp(sport, "Самый ценный игрок финала", "MVP финала Лиги ВТБ"));
+				list.Add(PlayoffMvp(sport, "Самый ценный игрок финала", "Самый ценный игрок финала Единой лиги ВТБ"));
 				break;
 			case Sport.Football:
 				list.Add(Mvp(sport, "Самый ценный игрок", "Лучший игрок сезона по американскому футболу"));
@@ -809,7 +809,7 @@ public static class AwardBook
 					},
 					Detail = (AwardContext c, Player p, int[] s) => I(G(s, 0)) + " матчей, общий рейтинг " + I(Rosters.Ovr(p))
 				});
-				list.Add(PlayoffMvp(sport, "Самый ценный игрок главного матча", "MVP финала чемпионата по американскому футболу"));
+				list.Add(PlayoffMvp(sport, "Самый ценный игрок главного матча", "Самый ценный игрок финала чемпионата по американскому футболу"));
 				break;
 			case Sport.Baseball:
 				list.Add(Mvp(sport, "Самый ценный игрок", "Лучший игрок сезона по бейсболу"));
@@ -838,7 +838,7 @@ public static class AwardBook
 					Score = (AwardContext c, Player p, int[] s) => HitterValue(s),
 					Detail = (AwardContext c, Player p, int[] s) => HitterLine(s)
 				});
-				list.Add(PlayoffMvp(sport, "Самый ценный игрок серии", "MVP финальной серии чемпионата"));
+				list.Add(PlayoffMvp(sport, "Самый ценный игрок серии", "Самый ценный игрок финальной серии чемпионата"));
 				break;
 			default:
 				list.Add(Mvp(sport, "Самый ценный игрок", "Футболист года в России"));
@@ -875,7 +875,7 @@ public static class AwardBook
 					Detail = (AwardContext c, Player p, int[] s) => SoccerLine(p, s)
 				});
 				list.Add(Freshman(sport, "Лучший дебютант года", "Лучший дебютант сезона"));
-				list.Add(PlayoffMvp(sport, "Самый ценный игрок финала Кубка России", "MVP финала Кубка России"));
+				list.Add(PlayoffMvp(sport, "Самый ценный игрок финала Кубка России", "Самый ценный игрок финала Кубка России"));
 				break;
 			}
 			return list;
