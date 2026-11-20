@@ -5299,6 +5299,7 @@ public static class Views
 		{
 			tabs.Add(new KeyValuePair<string, string>("contracts", "Контракты"));
 		}
+		tabs.Add(new KeyValuePair<string, string>("finance", "Финансы и редактор"));
 		tabs.Add(new KeyValuePair<string, string>("staff", "Тренеры"));
 		tabs.Add(new KeyValuePair<string, string>("schedule", "Расписание"));
 		tabs.Add(new KeyValuePair<string, string>("history", "История"));
@@ -5521,6 +5522,9 @@ public static class Views
 		{
 			switch (tab)
 			{
+			case "finance":
+				WriteOverview(j, world, t, league, now);
+				break;
 			case "contracts":
 				WriteContracts(j, world, t, league, now, office: false);
 				break;
