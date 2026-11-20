@@ -101,7 +101,7 @@ public class NameGenerator
 		string[] highSchoolSuffixes;
 		if (baseName.Length > 0)
 		{
-			string candidate = baseName + " High";
+			string candidate = baseName + " школа";
 			if (!Contains(takenNames, candidate))
 			{
 				return candidate;
@@ -109,7 +109,7 @@ public class NameGenerator
 			highSchoolSuffixes = HighSchoolSuffixes;
 			foreach (string suffix in highSchoolSuffixes)
 			{
-				candidate = baseName + " " + suffix + " High";
+				candidate = baseName + " " + suffix + " школа";
 				if (!Contains(takenNames, candidate))
 				{
 					return candidate;
@@ -160,7 +160,7 @@ public class NameGenerator
 
 	public static string Abbreviation(string name)
 	{
-		string[] skip = new string[9] { "high", "university", "of", "state", "college", "tech", "the", "fc", "sc" };
+		string[] skip = new string[9] { "школа", "университет", "государственный", "колледж", "технологический", "лицей", "гимназия", "институт", "академия" };
 		List<string> words = new List<string>();
 		string[] array = (name ?? "").Split(' ', StringSplitOptions.None);
 		for (int i = 0; i < array.Length; i++)
