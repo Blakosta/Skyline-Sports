@@ -1876,7 +1876,7 @@ public class SportsWorld
 		Post(league, NewsKind.General, Wire, "УВОЛЕН: " + TeamName(t.Id) + " расстаётся с " + RoleLabel(head.Role, t.Sport).ToLowerInvariant() + " " + head.Name + ((row != null) ? (" после " + Standings.RecordText(t.Sport, row) + " сезона") : "") + ".", t.IsUser, now, 2);
 		if (t.IsUser)
 		{
-			AddNote(league, "" + TeamName(t.Id) + " отпускает " + RoleLabel(head.Role, t.Sport).ToLowerInvariant() + " " + head.Name + ".);
+			AddNote(league, "" + TeamName(t.Id) + " отпускает " + RoleLabel(head.Role, t.Sport).ToLowerInvariant() + " " + head.Name + ".");
 		}
 		head.TeamId = -1;
 		head.BadSeasons = 0;
@@ -2079,7 +2079,7 @@ public class SportsWorld
 		}
 		if (CoachOf(t.Id, r) != null)
 		{
-			return CommandResult.Fail("Сначала отпустите нынешнего " + RoleLabel(r, t.Sport).ToLowerInvariant() + ".);
+			return CommandResult.Fail("Сначала отпустите нынешнего " + RoleLabel(r, t.Sport).ToLowerInvariant() + ".");
 		}
 		bool num = c.TeamId < 0 && c.Level == t.Level;
 		bool promotion = r == CoachRole.Head && c.Role != CoachRole.Head && c.Level == t.Level;
@@ -2724,7 +2724,7 @@ public class SportsWorld
 		int capacity = SportRules.HomeDateCapacity(v.Type);
 		if (load + need > capacity)
 		{
-			reason = "Недостаточно свободных дат: команде " + SportRules.LevelLabel(level) + " " + SportRules.SportLabel(sport) + " требуется " + need + " домашних дат за сезон, доступно только " + Math.Max(0, capacity - load) + " из " + capacity + ".;
+			reason = "Недостаточно свободных дат: команде " + SportRules.LevelLabel(level) + " " + SportRules.SportLabel(sport) + " требуется " + need + " домашних дат за сезон, доступно только " + Math.Max(0, capacity - load) + " из " + capacity + ".";
 			return false;
 		}
 		return true;
@@ -8972,7 +8972,7 @@ public class SportsWorld
 		if (!SportRules.ProLike(t.Sport, t.Level))
 		{
 			Revision++;
-			return CommandResult.Success(manual ? ("Теперь вы сами выбираете тренеров " + TeamName(t.Id) + " (между окончанием регулярного сезона и началом следующего сезона).") : ("Спортивный директор снова отвечает за тренеров " + TeamName(t.Id) + ".));
+			return CommandResult.Success(manual ? ("Теперь вы сами выбираете тренеров " + TeamName(t.Id) + " (между окончанием регулярного сезона и началом следующего сезона).") : ("Спортивный директор снова отвечает за тренеров " + TeamName(t.Id) + "."));
 		}
 		_clockHint = now;
 		League league = LeagueOf(t);
@@ -8981,7 +8981,7 @@ public class SportsWorld
 			RunDraft(league, now, auto: false);
 		}
 		Revision++;
-		return CommandResult.Success(manual ? ("Теперь вы управляете " + TeamName(t.Id) + ": контракты, свободные агенты, обмены, драфт и тренерский состав. Недостающие места в составе автоматически заполняются, чтобы матчи могли проходить.") : ("Генеральный менеджер снова управляет " + TeamName(t.Id) + ".));
+		return CommandResult.Success(manual ? ("Теперь вы управляете " + TeamName(t.Id) + ": контракты, свободные агенты, обмены, драфт и тренерский состав. Недостающие места в составе автоматически заполняются, чтобы матчи могли проходить.") : ("Генеральный менеджер снова управляет " + TeamName(t.Id) + "."));
 	}
 
 	public CommandResult Resign(int playerId, int now)
@@ -9137,7 +9137,7 @@ public class SportsWorld
 		}
 		if (pick.TeamId != t.Id)
 		{
-			return CommandResult.Fail("Сейчас выбирает " + TeamName(pick.TeamId) + ".);
+			return CommandResult.Fail("Сейчас выбирает " + TeamName(pick.TeamId) + ".");
 		}
 		Player p = GetPlayer(playerId);
 		if (p == null || p.Status != PlayerStatus.DraftPool || p.Sport != t.Sport)
@@ -11443,7 +11443,7 @@ public class SportsWorld
 		case "home":
 			if (e.HomeVisit)
 			{
-				return CommandResult.Fail("Вы уже посещали дом игрока " + p.Name + ".);
+				return CommandResult.Fail("Вы уже посещали дом игрока " + p.Name + ".");
 			}
 			hours = 4;
 			gain = 12;
@@ -11511,7 +11511,7 @@ public class SportsWorld
 		{
 			"official" => p.Name + " посетил вашу школу с официальным визитом.", 
 			"home" => "Вы посетили дом игрока " + p.Name + " и встретились с его семьёй.", 
-			"watch" => "Ваши тренеры посмотрели игру игрока " + p.Name + "., 
+			"watch" => "Ваши тренеры посмотрели игру игрока " + p.Name + ".", 
 			"call" => "Вы позвонили игроку " + p.Name + ".", 
 			_ => "Вы предложили игроку " + p.Name + " стипендию.", 
 		};
