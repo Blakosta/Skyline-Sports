@@ -8,5 +8,5 @@ public class Venue
 
 	public Level Level;
 
-	public int Capacity;
+	public int Capacity = 500;
 }
