@@ -76,7 +76,7 @@ public class Setting : ModSetting
 			//IL_0018: Invalid comparison between Unknown and I4
 			if ((UnityEngine.Object)(object)GameManager.instance == (UnityEngine.Object)null || (int)GameManager.instance.gameMode != 2)
 			{
-				Mod.log.Info((object)"Reset ignored: no city is loaded.");
+				Mod.log.Info((object)"Сброс пропущен: город ещё не загружен.");
 				return;
 			}
 			World defaultGameObjectInjectionWorld = World.DefaultGameObjectInjectionWorld;
@@ -102,7 +102,7 @@ public class Setting : ModSetting
 		}
 		catch (Exception ex)
 		{
-			Mod.log.Error((object)("Saving the Skyline Sports settings failed: " + ex));
+			Mod.log.Error((object)("Не удалось сохранить настройки мода «Спорт России»: " + ex));
 		}
 	}
 
