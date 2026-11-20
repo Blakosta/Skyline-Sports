@@ -2846,6 +2846,7 @@ public class SportsWorld
 			Sport = sport,
 			Level = v.Level,
 			VenueId = v.Id,
+			LogoId = _random.Next(ClubBranding.LogoCount),
 			Rating = _random.Next(45, 66),
 			IsUser = true
 		};
@@ -3254,6 +3255,49 @@ public class SportsWorld
 		return best;
 	}
 
+	private void EnsureUniqueLeagueMascots(League league)
+	{
+		if (league == null) return;
+		List<Team> ordered = new List<Team>();
+		foreach (int id in league.TeamIds)
+		{
+			Team team = GetTeam(id);
+			if (team != null && !team.Retired) ordered.Add(team);
+		}
+		ordered.Sort((Team a, Team b) => (a.IsUser == b.IsUser) ? a.Id.CompareTo(b.Id) : (a.IsUser ? -1 : 1));
+		HashSet<string> used = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+		foreach (Team team in ordered)
+		{
+			Organization org = GetOrg(team.OrgId);
+			if (org == null) continue;
+			string current = TeamName(team.Id);
+			if (used.Add(current)) continue;
+			if (team.IsUser) continue;
+			List<string> taken = OrgMascots(league.Level, org.Id);
+			foreach (string name in used) taken.Add(name);
+			org.Mascot = _names.PickMascot(league.Sport, league.Level, taken, org.Name);
+			used.Add(TeamName(team.Id));
+		}
+	}
+
+	public int TeamLogoId(int teamId)
+	{
+		Team team = GetTeam(teamId);
+		if (team == null) return 0;
+		if (ClubBranding.NormalizeLogo(team.LogoId) >= 0) return team.LogoId;
+		return Math.Abs(team.Id % ClubBranding.LogoCount);
+	}
+
+	public CommandResult SetTeamLogo(int teamId, int logoId)
+	{
+		Team team = GetTeam(teamId);
+		if (team == null || team.Retired) return CommandResult.Fail("Команда не найдена или расформирована.");
+		if (ClubBranding.NormalizeLogo(logoId) < 0) return CommandResult.Fail("Неизвестная эмблема клуба.");
+		team.LogoId = logoId;
+		Revision++;
+		return CommandResult.Success("Эмблема клуба обновлена.");
+	}
+
 	private Team CreateAiTeam(League league, int rating)
 	{
 		List<string> takenNames = OrgNames(league.Level, -1);
@@ -3287,6 +3331,7 @@ public class SportsWorld
 			Sport = league.Sport,
 			Level = league.Level,
 			VenueId = -1,
+			LogoId = _random.Next(ClubBranding.LogoCount),
 			Rating = rating,
 			IsUser = false
 		};
@@ -9286,6 +9331,27 @@ public class SportsWorld
 		};
 	}
 
+	public CommandResult SetClubSponsor(int teamId, int sponsorId, int frequency, int now)
+	{
+		Team team = GetTeam(teamId);
+		if (team == null || team.Retired)
+		{
+			return CommandResult.Fail("Команда не найдена или расформирована.");
+		}
+		if ((sponsorId != -1 && ClubBranding.NormalizeSponsor(sponsorId) < 0) || frequency < 0 || frequency > 2)
+		{
+			return CommandResult.Fail("Выберите доступного спонсора и период выплат.");
+		}
+		team.SponsorId = sponsorId;
+		team.SponsorTier = ClubBranding.SponsorTier(sponsorId);
+		team.SponsorFrequency = frequency;
+		team.SponsorLastPeriod = SponsorPeriodIndex(team, now);
+		Revision++;
+		return CommandResult.Success(sponsorId < 0
+			? "Спонсор клуба снят."
+			: ("Клубу назначен спонсор «" + ClubBranding.SponsorName(sponsorId) + "». Ожидаемая выплата — " + SponsorPeriodRevenue(team).ToString("N0") + " ¢ за период."));
+	}
+
 	public CommandResult SetSponsorSettings(int teamId, int tier, int frequency, int now)
 	{
 		Team team = GetTeam(teamId);
@@ -9301,6 +9367,7 @@ public class SportsWorld
 		{
 			return CommandResult.Fail("Недопустимый уровень спонсорской поддержки или период выплат.");
 		}
+		team.SponsorId = -1;
 		team.SponsorTier = tier;
 		team.SponsorFrequency = frequency;
 		team.SponsorLastPeriod = SponsorPeriodIndex(team, now);
@@ -13752,6 +13819,7 @@ public class SportsWorld
 			chosen = year + 1;
 		}
 		FillWithAiTeams(league);
+		EnsureUniqueLeagueMascots(league);
 		PrunePlayers();
 		foreach (int id in league.TeamIds)
 		{
