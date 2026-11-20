@@ -221,6 +221,9 @@ public class SportsUISystem : UISystemBase
 			CommandResult r = a[0] switch
 			{
 				"manage" => w.SetManaged(Int(a, 1), Int(a, 2) == 1, now),
+				"editClub" => w.EditClub(Int(a, 1), (a.Length > 2) ? a[2] : "", (a.Length > 3) ? a[3] : "", Int(a, 4), now),
+				"editPlayer" => w.EditPlayer(Int(a, 1), (a.Length > 2) ? a[2] : "", (a.Length > 3) ? a[3] : "", Int(a, 4), Int(a, 5), Int(a, 6), Int(a, 7), Int(a, 8), Int(a, 9), Int(a, 10), Int(a, 11), (a.Length > 12) ? a[12] : "", (a.Length > 13) ? a[13] : ""),
+				"editCoach" => w.EditCoach(Int(a, 1), (a.Length > 2) ? a[2] : "", (a.Length > 3) ? a[3] : "", Int(a, 4), Int(a, 5), Int(a, 6), Int(a, 7), Int(a, 8), Int(a, 9), Int(a, 10)),
 				"ticketPrices" => w.SetTicketPrices(Int(a, 1), Int(a, 2), Int(a, 3)),
 				"payrollBudget" => w.SetPayrollBudget(Int(a, 1), Int(a, 2)),
 				"sponsor" => w.SetSponsorSettings(Int(a, 1), Int(a, 2), Int(a, 3), now),
