@@ -16450,10 +16450,10 @@ public class SportsWorld
 	{
 		return WeatherCodes.Kind(code) switch
 		{
-			WeatherKind.Snow => "snow", 
+			WeatherKind.Snow => "снег", 
 			WeatherKind.Storm => "молния и гроза", 
 			WeatherKind.HeavyRain => "сильный дождь", 
-			_ => "rain", 
+			_ => "дождь", 
 		};
 	}
 
