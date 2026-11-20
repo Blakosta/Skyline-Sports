@@ -302,7 +302,15 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 		BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 		m_PlayerMoneyBalance = (MemberInfo)m_PlayerMoneyType.GetProperty("money", flags) ?? (MemberInfo)m_PlayerMoneyType.GetField("money", flags);
 		m_PlayerMoneyUnlimited = (MemberInfo)m_PlayerMoneyType.GetField("m_Unlimited", flags) ?? (MemberInfo)m_PlayerMoneyType.GetProperty("m_Unlimited", flags);
-		m_PlayerMoneyAdd = m_PlayerMoneyType.GetMethod("Add", flags, null, new Type[1] { typeof(int) }, null);
+		m_PlayerMoneyAdd = null;
+		foreach (MethodInfo method in m_PlayerMoneyType.GetMethods(flags))
+		{
+			if (method.Name == "Add" && method.GetParameters().Length == 1 && (method.GetParameters()[0].ParameterType == typeof(int) || method.GetParameters()[0].ParameterType == typeof(long)))
+			{
+				m_PlayerMoneyAdd = method;
+				break;
+			}
+		}
 		m_PlayerMoneyHas = GenericEntityMethod("HasComponent", 1);
 		m_PlayerMoneyGet = GenericEntityMethod("GetComponentData", 1);
 		m_PlayerMoneySet = GenericEntityMethod("SetComponentData", 2);
@@ -402,7 +410,9 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 		}
 		try
 		{
-			m_PlayerMoneyAdd.Invoke(money, new object[1] { amount });
+			Type amountType = m_PlayerMoneyAdd.GetParameters()[0].ParameterType;
+			object delta = Convert.ChangeType(amount, amountType);
+			m_PlayerMoneyAdd.Invoke(money, new object[1] { delta });
 			m_PlayerMoneySet.MakeGenericMethod(m_PlayerMoneyType).Invoke(((ComponentSystemBase)this).EntityManager, new object[2] { city, money });
 			long after = CityMoneyValue(money);
 			Sports.CityBalance = after;
