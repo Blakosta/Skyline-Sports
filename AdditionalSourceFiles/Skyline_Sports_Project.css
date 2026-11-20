@@ -7,3 +7,14 @@
 
 /* Welcome screen: keep the five onboarding steps inside the panel. */
 .empty_nNd{width:100%;min-width:0;max-width:100%;box-sizing:border-box;overflow:hidden}.empty_nNd>div{min-width:0;max-width:100%;box-sizing:border-box;overflow-wrap:anywhere;word-break:normal}.welcomeStep_KYy{display:flex;flex-direction:row;align-items:flex-start;gap:8rem;width:100%;min-width:0;max-width:100%;box-sizing:border-box;overflow:hidden}.welcomeNumber_CHK{flex:0 0 22rem;min-width:22rem;box-sizing:border-box}.welcomeText_uZ9{display:block;flex:1 1 0;min-width:0;max-width:100%;white-space:normal;overflow-wrap:anywhere;word-break:normal;box-sizing:border-box}.welcomeText_uZ9 *{max-width:100%;white-space:normal;overflow-wrap:anywhere;word-break:normal;box-sizing:border-box}
+
+/* Russian contract table spacing and club finance cards */
+.askCol_cKW{width:145rem;flex-shrink:0;text-align:right;padding-right:8rem;box-sizing:border-box}
+.actionWide_sUA{width:180rem;flex-shrink:0;margin-left:8rem;column-gap:6rem;justify-content:flex-end}
+.actionWide_sUA>*{flex-shrink:0}
+.clubFinancePanel{margin-top:10rem;padding:10rem 12rem;border-radius:6rem;background-color:rgba(255,255,255,.045);border:1rem solid rgba(150,170,195,.18)}
+.clubFinancePanel .financeBalance{display:inline-flex;align-items:center;min-width:42%;margin:3rem 6rem 5rem 0;padding:8rem 10rem;border-radius:4rem;background-color:rgba(255,255,255,.07);font-weight:bold;box-sizing:border-box}
+.clubFinancePanel .cityBalance{border-left:3rem solid rgba(110,180,255,.8)}
+.clubFinancePanel .clubBalance{border-left:3rem solid rgba(110,210,120,.8)}
+.clubFinancePanel .financeRevenue{margin:4rem 0 8rem 0;padding:6rem 8rem;border-radius:4rem;background-color:rgba(255,255,255,.035);color:#b9c7d6}
+.clubFinancePanel button{margin:2rem 4rem 2rem 0}
