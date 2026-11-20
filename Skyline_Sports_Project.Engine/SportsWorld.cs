@@ -3648,7 +3648,7 @@ public class SportsWorld
 		}
 		RostersChanged();
 		StaffChanged();
-		List<string> downNames = down.ConvertAll((int teamId) => "the " + TeamName(teamId));
+		List<string> downNames = down.ConvertAll((int teamId) => "команда «" + TeamName(teamId) + "»);
 		List<string> upNames = new List<string>();
 		foreach (int id in up)
 		{
@@ -3797,8 +3797,8 @@ public class SportsWorld
 		string last = "";
 		if (second.LastUp.Count > 0)
 		{
-			List<string> names = ((league.Level == Level.Pro) ? second.LastUp : second.LastDown).ConvertAll((int id) => "the " + TeamName(id));
-			last = " Last season " + JoinNames(names) + " came " + ((league.Level == Level.Pro) ? "up." : "down.");
+			List<string> names = ((league.Level == Level.Pro) ? second.LastUp : second.LastDown).ConvertAll((int id) => "команда «" + TeamName(id) + "»);
+			last = " В прошлом сезоне " + JoinNames(names) + ((league.Level == Level.Pro) ? " вышли в высший дивизион." : " выбыли в низший дивизион.");
 		}
 		if (league.Level == Level.Pro)
 		{
@@ -8431,7 +8431,7 @@ public class SportsWorld
 			ReleaseQuote q = QuoteRelease(reserves[i3], team, now, stretch: false);
 			if (team.IsUser)
 			{
-				PostAsTeam(LeagueOf(team), team, NewsKind.Release, "We have " + q.Verb + " " + Rosters.PositionLabel(reserves[i3].Position) + " " + reserves[i3].Name + ". Thank you!" + ((q.Total > 0) ? (" " + q.Short) : ""), now);
+				PostAsTeam(LeagueOf(team), team, NewsKind.Release, "Мы " + q.Verb + " игрока " + Rosters.PositionLabel(reserves[i3].Position) + " " + reserves[i3].Name + ". Спасибо за его вклад!" + ((q.Total > 0) ? (" " + q.Short) : ""), now);
 			}
 			ApplyRelease(reserves[i3], team, q, now);
 			changed = true;
@@ -8873,12 +8873,12 @@ public class SportsWorld
 		ReleaseQuote q = QuoteRelease(p, t, now, stretch);
 		ApplyRelease(p, t, q, now);
 		string verb = q.Verb;
-		PostAsTeam(LeagueOf(t), t, NewsKind.Release, "We have " + verb + " " + Rosters.PositionLabel(p.Position) + " " + p.Name + "." + ((q.Total > 0) ? (" " + q.Short) : ""), now);
+		PostAsTeam(LeagueOf(t), t, NewsKind.Release, "Мы " + verb + " игрока " + Rosters.PositionLabel(p.Position) + " " + p.Name + "." + ((q.Total > 0) ? (" " + q.Short) : ""), now);
 		ArrangeRoster(t, now);
 		FillHoles(t, CurrentYear(), now, p);
 		UpdateRating(t);
 		Revision++;
-		return CommandResult.Success(p.Name + " was " + verb + " and is now a free agent. " + ((q.Total > 0) ? q.Short : q.Rule));
+		return CommandResult.Success(p.Name + ": " + verb + ". Теперь он свободный агент. " + ((q.Total > 0) ? q.Short : q.Rule));
 	}
 
 	public CommandResult SignFreeAgent(int teamId, int playerId, int now)
