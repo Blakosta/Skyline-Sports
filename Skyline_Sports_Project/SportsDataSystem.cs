@@ -830,7 +830,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 		m_UnreadEntities = null;
 		Sports.LoadProblem = "";
 		int version = default;
-		((IReader)reader/*cast due to constrained. prefix*/).Read(ref version);
+		((IReader)reader/*cast due to constrained. prefix*/).Read(out version);
 		if (version < 1 || version > 2)
 		{
 			Sports.LoadProblem = "Спортивные данные этого города сохранены более новой версией мода «Спорт России», поэтому их нельзя отобразить. Обновите мод, чтобы восстановить их.";
@@ -838,37 +838,37 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 			return;
 		}
 		int chunks = default;
-		((IReader)reader/*cast due to constrained. prefix*/).Read(ref chunks);
+		((IReader)reader/*cast due to constrained. prefix*/).Read(out chunks);
 		StringBuilder sb = new StringBuilder();
 		string chunk = default;
 		for (int i = 0; i < chunks; i++)
 		{
-			((IReader)reader/*cast due to constrained. prefix*/).Read(ref chunk);
+			((IReader)reader/*cast due to constrained. prefix*/).Read(out chunk);
 			sb.Append(chunk);
 		}
 		int count = default;
-		((IReader)reader/*cast due to constrained. prefix*/).Read(ref count);
+		((IReader)reader/*cast due to constrained. prefix*/).Read(out count);
 		Dictionary<int, Entity> entities = new Dictionary<int, Entity>();
 		int id = default;
 		Entity e = default;
 		for (int j = 0; j < count; j++)
 		{
-			((IReader)reader/*cast due to constrained. prefix*/).Read(ref id);
-			((IReader)reader/*cast due to constrained. prefix*/).Read(ref e);
+			((IReader)reader/*cast due to constrained. prefix*/).Read(out id);
+			((IReader)reader/*cast due to constrained. prefix*/).Read(out e);
 			entities[id] = e;
 		}
 		if (version >= 2)
 		{
 			int boosts = default;
-			((IReader)reader/*cast due to constrained. prefix*/).Read(ref boosts);
+			((IReader)reader/*cast due to constrained. prefix*/).Read(out boosts);
 			Entity b = default;
 			int original = default;
 			int boosted = default;
 			for (int k = 0; k < boosts; k++)
 			{
-				((IReader)reader/*cast due to constrained. prefix*/).Read(ref b);
-				((IReader)reader/*cast due to constrained. prefix*/).Read(ref original);
-				((IReader)reader/*cast due to constrained. prefix*/).Read(ref boosted);
+				((IReader)reader/*cast due to constrained. prefix*/).Read(out b);
+				((IReader)reader/*cast due to constrained. prefix*/).Read(out original);
+				((IReader)reader/*cast due to constrained. prefix*/).Read(out boosted);
 				if (b != Entity.Null)
 				{
 					Dictionary<Entity, Boost> dictionary = m_Boosts;
