@@ -34,15 +34,15 @@ public class SportsUISystem : UISystemBase
 	[Preserve]
 	protected override void OnCreate()
 	{
-		((UISystemBase)this).OnCreate();
+		base.OnCreate();
 		m_Data = ((ComponentSystemBase)this).World.GetOrCreateSystemManaged<SportsDataSystem>();
 		m_SelectedInfo = ((ComponentSystemBase)this).World.GetOrCreateSystemManaged<SelectedInfoUISystem>();
-		((UISystemBase)this).AddBinding((IBinding)(object)(m_PanelData = new ValueBinding<string>("SkylineSports", "PanelData", "{}", (IWriter<string>)null, (EqualityComparer<string>)null)));
-		((UISystemBase)this).AddBinding((IBinding)(object)(m_ShowButton = new ValueBinding<bool>("SkylineSports", "ShowButton", true, (IWriter<bool>)null, (EqualityComparer<bool>)null)));
-		((UISystemBase)this).AddBinding((IBinding)(object)new TriggerBinding<string>("SkylineSports", "SetCityName", (Action<string>)OnSetCityName, (IReader<string>)null));
-		((UISystemBase)this).AddBinding((IBinding)(object)new TriggerBinding<bool>("SkylineSports", "SetPanelOpen", (Action<bool>)OnSetPanelOpen, (IReader<bool>)null));
-		((UISystemBase)this).AddBinding((IBinding)(object)new TriggerBinding<string>("SkylineSports", "SetView", (Action<string>)OnSetView, (IReader<string>)null));
-		((UISystemBase)this).AddBinding((IBinding)(object)new TriggerBinding<string>("SkylineSports", "PanelCommand", (Action<string>)OnPanelCommand, (IReader<string>)null));
+		AddBinding((IBinding)(object)(m_PanelData = new ValueBinding<string>("SkylineSports", "PanelData", "{}", (IWriter<string>)null, (EqualityComparer<string>)null)));
+		AddBinding((IBinding)(object)(m_ShowButton = new ValueBinding<bool>("SkylineSports", "ShowButton", true, (IWriter<bool>)null, (EqualityComparer<bool>)null)));
+		AddBinding((IBinding)(object)new TriggerBinding<string>("SkylineSports", "SetCityName", (Action<string>)OnSetCityName, (IReader<string>)null));
+		AddBinding((IBinding)(object)new TriggerBinding<bool>("SkylineSports", "SetPanelOpen", (Action<bool>)OnSetPanelOpen, (IReader<bool>)null));
+		AddBinding((IBinding)(object)new TriggerBinding<string>("SkylineSports", "SetView", (Action<string>)OnSetView, (IReader<string>)null));
+		AddBinding((IBinding)(object)new TriggerBinding<string>("SkylineSports", "PanelCommand", (Action<string>)OnPanelCommand, (IReader<string>)null));
 	}
 
 	[Preserve]
@@ -50,12 +50,12 @@ public class SportsUISystem : UISystemBase
 	{
 		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
 		//IL_001e: Invalid comparison between Unknown and I4
-		((UISystemBase)this).OnUpdate();
-		if ((Object)(object)GameManager.instance == (Object)null || (int)GameManager.instance.gameMode != 2)
+		base.OnUpdate();
+		if (UnityEngine.Object)GameManager.instance == UnityEngine.Object)null || (int)GameManager.instance.gameMode != 2)
 		{
 			return;
 		}
-		m_Timer += Time.unscaledDeltaTime;
+		m_Timer += UnityEngine.Time.unscaledDeltaTime;
 		if (m_Timer < 0.5f)
 		{
 			return;
@@ -112,7 +112,7 @@ public class SportsUISystem : UISystemBase
 		}
 		try
 		{
-			if ((Object)(object)GameManager.instance == (Object)null)
+			if (UnityEngine.Object)GameManager.instance == UnityEngine.Object)null)
 			{
 				return false;
 			}
@@ -215,7 +215,7 @@ public class SportsUISystem : UISystemBase
 	{
 		try
 		{
-			string[] a = (command ?? "").Split('\u001f', StringSplitOptions.None);
+			string[] a = (command ?? "").Split(new[] { '\u001f' }, StringSplitOptions.None);
 			int now = m_Data.NowOrLast();
 			SportsWorld w = m_Data.Sports;
 			CommandResult r = a[0] switch
@@ -275,7 +275,7 @@ public class SportsUISystem : UISystemBase
 		{
 			return list;
 		}
-		string[] array = a[i].Split(',', StringSplitOptions.None);
+		string[] array = a[i].Split(new[] { ',' }, StringSplitOptions.None);
 		for (int j = 0; j < array.Length; j++)
 		{
 			if (int.TryParse(array[j], out var v))
