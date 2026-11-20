@@ -14653,7 +14653,7 @@ public class SportsWorld
 		string club;
 		if (owner != null)
 		{
-			club = "the " + TeamName(owner.Id);
+			club = "клуб «" + TeamName(owner.Id) + "»";
 		}
 		else
 		{
