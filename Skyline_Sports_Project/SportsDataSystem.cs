@@ -1214,6 +1214,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 			Mod.log.Warn((object)("Не удалось прочитать спортивные данные: " + error + ((copy.Length > 0) ? (" Копия сохранена в " + copy) : "")));
 			return;
 		}
+		Sports.NormalizeLeagueClubNames();
 		foreach (KeyValuePair<int, Entity> kv in entities)
 		{
 			if (Sports.GetVenue(kv.Key) != null)
