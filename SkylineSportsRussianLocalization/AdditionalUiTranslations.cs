@@ -55,7 +55,7 @@ namespace SkylineSportsRussianLocalization
         private static void Translate(ref string __0)
         {
             if (string.IsNullOrEmpty(__0)) return;
-            string s;
+            string s = null;
             switch (__0)
             {
                 case "My teams": s = "Мои команды"; break;
@@ -89,7 +89,8 @@ namespace SkylineSportsRussianLocalization
             s = s.Replace("Football · OVR ", "Американский футбол · ОБЩ ");
             s = s.Replace("Hockey · OVR ", "Хоккей · ОБЩ ");
             s = s.Replace(" more games this month.", " матчей осталось в этом месяце.");
-            s = s.Replace("The ", ""); // handled below only for the known season-start sentence
+            s = s.Replace("The ", "");
+            s = s.Replace(" season starts ", " сезон начинается ");
             s = Regex.Replace(s, @"\b(Sun|Sunday)\b", "воскресенье", RegexOptions.IgnoreCase);
             s = Regex.Replace(s, @"\b(Mon|Monday)\b", "понедельник", RegexOptions.IgnoreCase);
             s = Regex.Replace(s, @"\b(Tue|Tuesday)\b", "вторник", RegexOptions.IgnoreCase);
