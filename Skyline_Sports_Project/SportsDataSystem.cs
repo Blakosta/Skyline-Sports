@@ -183,7 +183,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 
 	private readonly HashSet<int> m_FansDone = new HashSet<int>();
 
-	private readonly Random m_FanRandom = new Random();
+	private readonly System.Random m_FanRandom = new System.Random();
 
 	private const int FansFirstWave = 150;
 
@@ -211,7 +211,6 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 	}
 
 	[Preserve]
-	[Preserve]
 	protected override void OnCreate()
 	{
 		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
@@ -235,7 +234,6 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 		Mod.log.Info((object)"SportsDataSystem created");
 	}
 
-	[Preserve]
 	[Preserve]
 	protected override void OnUpdate()
 	{
