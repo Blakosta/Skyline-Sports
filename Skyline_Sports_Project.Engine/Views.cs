@@ -4768,6 +4768,25 @@ public static class Views
 		j.Name("playerView").BeginObject();
 		j.Prop("id", p.Id);
 		j.Prop("name", p.Name);
+		j.Prop("firstName", p.FirstName);
+		j.Prop("lastName", p.LastName);
+		j.Prop("birthYear", p.BirthYear);
+		j.Prop("height", p.Height);
+		j.Prop("weight", p.Weight);
+		j.Prop("hometownRaw", p.Hometown ?? "");
+		j.Prop("handRaw", p.Hand ?? "");
+		j.Prop("overallValue", p.Overall);
+		j.Prop("potentialValue", p.Potential);
+		j.Prop("positionId", (int)p.Position);
+		j.Prop("canEdit", team?.IsUser ?? false);
+		j.Name("positions").BeginArray();
+		foreach (Position positionOption in Rosters.Positions(p.Sport))
+		{
+			j.BeginObject().Prop("id", (int)positionOption)
+				.Prop("label", Rosters.NewsPositionLabel(positionOption, p.Sport))
+				.EndObject();
+		}
+		j.EndArray();
 		j.Prop("number", p.Number);
 		j.Prop("pos", Rosters.PositionLabel(p.Position, p.Sport));
 		j.Prop("position", PositionName(p.Position));
@@ -5289,6 +5308,20 @@ public static class Views
 		j.Name("teamView").BeginObject();
 		j.Prop("id", t.Id);
 		j.Prop("name", (o == null) ? "Не определено" : o.FullName);
+		j.Prop("orgCity", o?.Name ?? "");
+		j.Prop("clubName", o?.Mascot ?? "");
+		j.Prop("venueId", t.VenueId);
+		j.Name("venues").BeginArray();
+		foreach (Venue venueOption in world.Venues.Values)
+		{
+			if (world.CanHost(venueOption, t.Sport, t.Level, t.Id, out var _))
+			{
+				j.BeginObject().Prop("id", venueOption.Id)
+					.Prop("label", "Арена №" + venueOption.Id + " · " + SportRules.VenueTypeLabel(venueOption.Type) + " · " + SportRules.LevelLabel(venueOption.Level))
+					.EndObject();
+			}
+		}
+		j.EndArray();
 		j.Prop("title", SportRules.LevelLabel(t.Sport, t.Level) + " " + SportRules.SportLabel(t.Sport));
 		j.Prop("isUser", t.IsUser);
 		j.Prop("isPro", pro);
@@ -5859,6 +5892,21 @@ public static class Views
 	{
 		j.BeginObject();
 		j.Prop("id", c.Id);
+		j.Prop("firstName", c.FirstName);
+		j.Prop("lastName", c.LastName);
+		j.Prop("birthYear", c.BirthYear);
+		j.Prop("potentialValue", c.Potential);
+		Team coachTeam = world.GetTeam(c.TeamId);
+		j.Prop("canEdit", !where && coachTeam != null && coachTeam.IsUser);
+		j.Name("roleOptions").BeginArray();
+		CoachRole[] roleOptions = c.Sport == Sport.Football ? new CoachRole[] { CoachRole.Head, CoachRole.Offense, CoachRole.Defense } : new CoachRole[] { CoachRole.Head };
+		foreach (CoachRole roleOption in roleOptions)
+		{
+			j.BeginObject().Prop("id", (int)roleOption)
+				.Prop("label", SportsWorld.RoleLabel(roleOption, c.Sport))
+				.EndObject();
+		}
+		j.EndArray();
 		j.Prop("roleId", (int)c.Role);
 		j.Prop("role", SportsWorld.RoleLabel(c.Role, c.Sport));
 		j.Prop("name", c.Name);
