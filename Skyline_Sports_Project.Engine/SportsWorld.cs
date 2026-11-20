@@ -12348,13 +12348,20 @@ public class SportsWorld
 
 	private void ApplyLeagueSizes(int now)
 	{
-		if (Settings.LeagueSize == _appliedLeagueSize)
+		bool otherSizeChanged = Settings.LeagueSize != _appliedLeagueSize;
+		bool soccerSizeChanged = Settings.SoccerLeagueSize != _appliedSoccerLeagueSize;
+		if (!otherSizeChanged && !soccerSizeChanged)
 		{
 			return;
 		}
 		_appliedLeagueSize = Settings.LeagueSize;
+		_appliedSoccerLeagueSize = Settings.SoccerLeagueSize;
 		foreach (League league in OrderedLeagues())
 		{
+			if ((league.Sport == Sport.Soccer && !soccerSizeChanged) || (league.Sport != Sport.Soccer && !otherSizeChanged))
+			{
+				continue;
+			}
 			Season s = league.Current;
 			if (s != null && !s.AnyPlayed && !s.PlayoffsCreated && league.TeamIds.Count != TargetSize(league))
 			{
