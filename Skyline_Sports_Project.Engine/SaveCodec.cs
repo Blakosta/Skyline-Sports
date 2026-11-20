@@ -186,14 +186,14 @@ public static class SaveCodec
 		}
 	}
 
-	public const int Version = 20;
+	public const int Version = 21;
 
 	private const char Sep = '\u001f';
 
 	public static string Encode(SportsWorld world)
 	{
 		TokenWriter w = new TokenWriter();
-		w.Int(20);
+		w.Int(21);
 		w.Int(world.NextId);
 		w.Int(world.LastTime);
 		w.Int(world.Orgs.Count);
@@ -1033,7 +1033,7 @@ public static class SaveCodec
 		{
 			TokenReader r = new TokenReader(blob);
 			int version = r.Int();
-			if (version < 1 || version > 20)
+			if (version < 1 || version > 21)
 			{
 				error = "Спортивные данные сохранены более новой версией мода (версия данных " + version + ").";
 				return false;
@@ -2353,12 +2353,94 @@ public static class SaveCodec
 	{
 		w.Str(world.CountryName);
 		w.Str(world.CountryAbbrev);
+		WriteV21(w, world);
+	}
+
+	private static void WriteV21(TokenWriter w, SportsWorld world)
+	{
+		w.Int(world.Teams.Count);
+		foreach (Team t in world.Teams.Values)
+		{
+			w.Int(t.Id);
+			w.Int(Math.Max(0, t.ClubBalance));
+			w.Int(Math.Max(1, Math.Min(1500, t.TicketPriceResidents)));
+			w.Int(Math.Max(1, Math.Min(1500, t.TicketPriceVisitors)));
+		}
+		List<Match> matches = new List<Match>();
+		foreach (League l in world.Leagues)
+		{
+			Season[] seasons = new Season[2] { l.Current, l.Previous };
+			foreach (Season s in seasons)
+			{
+				if (s == null) continue;
+				foreach (Match g in s.Games)
+				{
+					if (g.TicketRevenue > 0 || g.TicketIncomePaid || g.TicketLocalAttendance > 0 || g.TicketVisitorAttendance > 0)
+						matches.Add(g);
+				}
+			}
+		}
+		w.Int(matches.Count);
+		foreach (Match g in matches)
+		{
+			w.Int(g.Id);
+			w.Int(g.TicketLocalAttendance);
+			w.Int(g.TicketVisitorAttendance);
+			w.Int(g.TicketRevenue);
+			w.Bool(g.TicketIncomePaid);
+		}
 	}
 
 	private static void ReadV20(TokenReader r, SportsWorld world, int version)
 	{
 		world.CountryName = r.Str();
 		world.CountryAbbrev = r.Str();
+		if (version >= 21)
+			ReadV21(r, world);
+	}
+
+	private static void ReadV21(TokenReader r, SportsWorld world)
+	{
+		int teams = Count(r, 100000, "клубные бюджеты");
+		for (int i = 0; i < teams; i++)
+		{
+			int id = r.Int();
+			int balance = r.Int();
+			int residents = r.Int();
+			int visitors = r.Int();
+			if (world.Teams.TryGetValue(id, out var t))
+			{
+				t.ClubBalance = Math.Max(0, balance);
+				t.TicketPriceResidents = Math.Max(1, Math.Min(1500, residents));
+				t.TicketPriceVisitors = Math.Max(1, Math.Min(1500, visitors));
+			}
+		}
+		Dictionary<int, Match> byId = new Dictionary<int, Match>();
+		foreach (League l in world.Leagues)
+		{
+			Season[] seasons = new Season[2] { l.Current, l.Previous };
+			foreach (Season s in seasons)
+			{
+				if (s == null) continue;
+				foreach (Match g in s.Games) byId[g.Id] = g;
+			}
+		}
+		int matches = Count(r, 1000000, "доходы от билетов");
+		for (int i = 0; i < matches; i++)
+		{
+			int id = r.Int();
+			int local = r.Int();
+			int visitors = r.Int();
+			int revenue = r.Int();
+			bool paid = r.Bool();
+			if (byId.TryGetValue(id, out var g))
+			{
+				g.TicketLocalAttendance = Math.Max(0, local);
+				g.TicketVisitorAttendance = Math.Max(0, visitors);
+				g.TicketRevenue = Math.Max(0, revenue);
+				g.TicketIncomePaid = paid;
+			}
+		}
 	}
 
 	private static void ReadV19(TokenReader r, SportsWorld world, int version)
