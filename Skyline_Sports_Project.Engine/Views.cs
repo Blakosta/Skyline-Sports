@@ -1799,8 +1799,8 @@ public static class Views
 			break;
 		case Sport.Football:
 			top((Player p) => p.Position == Position.Quarterback, (int[] s) => G(s, 3), (int[] s) => G(s, 3) + " ярдов пасом, " + G(s, 4) + " TD", 1);
-			top((Player p) => true, (int[] s) => G(s, 7), (int[] s) => G(s, 7) + " ярдов на выносе, " + G(s, 8) + " TD", 1);
-			top((Player p) => true, (int[] s) => G(s, 10), (int[] s) => G(s, 10) + " ярдов на приёме, " + G(s, 11) + " TD", 1);
+			top((Player p) => true, (int[] s) => G(s, 7), (int[] s) => G(s, 7) + " ярдов на выносе, " + G(s, 8) + " ТД", 1);
+			top((Player p) => true, (int[] s) => G(s, 10), (int[] s) => G(s, 10) + " ярдов на приёме, " + G(s, 11) + " ТД", 1);
 			break;
 		case Sport.Baseball:
 			top((Player p) => !Rosters.IsPitcher(p.Position), (int[] s) => G(s, 5) * 10 + G(s, 6), (int[] s) => G(s, 5) + " ХР, " + G(s, 6) + " РБИ, " + ((G(s, 1) <= 0) ? ".000" : ((double)G(s, 3) / (double)G(s, 1)).ToString(".000", CultureInfo.InvariantCulture)), 3);
@@ -1814,7 +1814,7 @@ public static class Views
 
 	private static string DayRange(Tournament t)
 	{
-		return GameClock.DateOf(t.StartDay).ToString("MMM d", CultureInfo.InvariantCulture) + " to " + GameClock.DateOf(t.StartDay + 10).ToString("MMM d, yyyy", CultureInfo.InvariantCulture);
+		return GameClock.DateOf(t.StartDay).ToString("d MMM", CultureInfo.GetCultureInfo("ru-RU")) + " — " + GameClock.DateOf(t.StartDay + 10).ToString("d MMM yyyy", CultureInfo.GetCultureInfo("ru-RU"));
 	}
 
 	private static bool UserPlayer(SportsWorld world, int playerId)
@@ -1836,7 +1836,7 @@ public static class Views
 			}
 		}
 		j.Name("intl").BeginObject();
-		j.Name("country").BeginObject().Prop("name", world.HomeCountry)
+		j.Name("country").BeginObject().Prop("name", SportsWorld.NationLabel(world.HomeCountry))
 			.Prop("abbr", world.HomeAbbrev)
 			.Prop("custom", world.CustomCountry);
 		j.Name("known").BeginArray();
@@ -1903,7 +1903,7 @@ public static class Views
 				{
 					int[] row = world.GroupRow(i);
 					bool mine2 = sel.Teams[i].PlayerIds.Exists((int playerId) => UserPlayer(world, playerId));
-					j.BeginObject().Prop("nation", sel.Teams[i].Nation).Prop("abbr", world.NationAbbrev(sel.Teams[i].Nation))
+					j.BeginObject().Prop("nation", SportsWorld.NationLabel(sel.Teams[i].Nation)).Prop("abbr", world.NationAbbrev(sel.Teams[i].Nation))
 						.Prop("home", sel.Teams[i].Nation == world.HomeNation(sel.Sport))
 						.Prop("gp", row[6])
 						.Prop("w", row[3])
@@ -1924,10 +1924,10 @@ public static class Views
 			{
 				NationTeam h = sel.Teams[g2.Home];
 				NationTeam a = sel.Teams[g2.Away];
-				string score = ((!g2.Played) ? "" : (g2.HomeScore + "-" + g2.AwayScore + ((g2.Suffix.Length > 0) ? (" " + g2.Suffix) : "") + ((g2.TieWinner >= 0) ? (" (" + sel.Teams[g2.TieWinner].Nation + " выигрывает серию буллитов)") : "")));
+				string score = ((!g2.Played) ? "" : (g2.HomeScore + "-" + g2.AwayScore + ((g2.Suffix.Length > 0) ? (" " + g2.Suffix) : "") + ((g2.TieWinner >= 0) ? (" (сборная " + SportsWorld.NationLabel(sel.Teams[g2.TieWinner].Nation) + " выигрывает серию буллитов)") : "")));
 				j.BeginObject().Prop("stage", g2.Stage).Prop("date", GameClock.ShortDayLabel(g2.Day) + ", " + GameClock.ClockLabel(g2.Minute))
-					.Prop("home", h.Nation)
-					.Prop("away", a.Nation)
+					.Prop("home", SportsWorld.NationLabel(h.Nation))
+					.Prop("away", SportsWorld.NationLabel(a.Nation))
 					.Prop("homeAbbr", world.NationAbbrev(h.Nation))
 					.Prop("awayAbbr", world.NationAbbrev(a.Nation))
 					.Prop("score", score)
@@ -1941,7 +1941,7 @@ public static class Views
 			j.Name("teams").BeginArray();
 			foreach (NationTeam n2 in list4)
 			{
-				JsonBuilder jsonBuilder = j.BeginObject().Prop("nation", n2.Nation).Prop("abbr", world.NationAbbrev(n2.Nation))
+				JsonBuilder jsonBuilder = j.BeginObject().Prop("nation", SportsWorld.NationLabel(n2.Nation)).Prop("abbr", world.NationAbbrev(n2.Nation))
 					.Prop("home", n2.Nation == world.HomeNation(sel.Sport));
 				string text = ((n2.Group >= 0) ? ("Группа " + (char)(65 + n2.Group)) : "Не прошла квалификацию");
 				string text2 = ((n2.Qualifier && n2.Group >= 0) ? ", через квалификацию" : "");
@@ -2135,7 +2135,7 @@ public static class Views
 		string[] array = Columns(league.Sport);
 		foreach (string c in array)
 		{
-			j.Value(c);
+			j.Value(SportsWorld.NationLabel(c));
 		}
 		j.EndArray();
 		j.Name("standings").BeginArray();
@@ -4802,7 +4802,7 @@ public static class Views
 		}
 		bio("Рост", Bios.HeightLabel(Bios.ShownHeight(p)));
 		int weight = Bios.ShownWeight(p);
-		bio("Weight", (weight > 0) ? (weight + " lbs") : "");
+		bio("Weight", (weight > 0) ? (weight + " фунт.") : "");
 		bio((p.Sport == Sport.Baseball && !Rosters.IsPitcher(p.Position)) ? "Бьёт и бросает" : "Рука", p.Hand);
 		bio("Родной город", world.HometownOf(p));
 		bio("Откуда пришёл", (string.IsNullOrEmpty(p.From) || p.From == "Prospect") ? "" : p.From);
