@@ -1618,7 +1618,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 		m_CitizenQueryMade = true;
 		m_FanApi = a;
 		Sports.FanStatus = "";
-		Mod.log.Info((object)("Система болельщиков готова (поездка на матч: " + a.GoOutName + " to the venue, затем возвращение домой)."));
+		Mod.log.Info((object)("Система болельщиков готова (поездка на матч: " + a.GoOutName + " до арены, затем возвращение домой)."));
 		return true;
 	}
 
