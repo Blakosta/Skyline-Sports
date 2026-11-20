@@ -1605,12 +1605,14 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 			StopFans("can't look up citizens");
 			return false;
 		}
-		m_CitizenQuery = ((ComponentSystemBase)this).GetEntityQuery(new ComponentType[3]
-		{
-			(ComponentType)readOnly.Invoke(null, new object[1] { a.Citizen }),
-			(ComponentType)readOnly.Invoke(null, new object[1] { a.HouseholdMember }),
-			(ComponentType)readOnly.Invoke(null, new object[1] { a.CurrentBuilding })
-		});
+		m_CitizenQuery = new EntityQueryBuilder(Allocator.Temp)
+			.WithAll(new ComponentType[]
+			{
+				(ComponentType)readOnly.Invoke(null, new object[1] { a.Citizen }),
+				(ComponentType)readOnly.Invoke(null, new object[1] { a.HouseholdMember }),
+				(ComponentType)readOnly.Invoke(null, new object[1] { a.CurrentBuilding })
+			})
+			.Build(this);
 		m_CitizenQueryMade = true;
 		m_FanApi = a;
 		Sports.FanStatus = "";
