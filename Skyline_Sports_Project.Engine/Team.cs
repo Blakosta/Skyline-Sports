@@ -16,6 +16,8 @@ public class Team
 
 	public string StadiumName = "";
 
+	public int LogoId = -1;
+
 	public int StadiumCapacity = 500;
 
 	public int Rating = 50;
@@ -61,6 +63,8 @@ public class Team
 	public int TransferBudget = -1;
 
 	public int ClubBalance = -1;
+
+	public int SponsorId = -1;
 
 	public int SponsorTier;
 
