@@ -246,7 +246,79 @@ public class SportsWorld
 		{ "Holland", "Netherlands" },
 		{ "Czech Republic", "Czechia" },
 		{ "Taiwan", "Chinese Taipei" },
-		{ "Deutschland", "Germany" }
+		{ "Deutschland", "Germany" },
+		{ "США", "USA" },
+		{ "Канада", "Canada" },
+		{ "Мексика", "Mexico" },
+		{ "Швеция", "Sweden" },
+		{ "Финляндия", "Finland" },
+		{ "Россия", "Russia" },
+		{ "Чехия", "Czechia" },
+		{ "Словакия", "Slovakia" },
+		{ "Швейцария", "Switzerland" },
+		{ "Германия", "Germany" },
+		{ "Латвия", "Latvia" },
+		{ "Норвегия", "Norway" },
+		{ "Дания", "Denmark" },
+		{ "Австрия", "Austria" },
+		{ "Франция", "France" },
+		{ "Казахстан", "Kazakhstan" },
+		{ "Словения", "Slovenia" },
+		{ "Италия", "Italy" },
+		{ "Венгрия", "Hungary" },
+		{ "Польша", "Poland" },
+		{ "Англия", "England" },
+		{ "Шотландия", "Scotland" },
+		{ "Уэльс", "Wales" },
+		{ "Ирландия", "Ireland" },
+		{ "Бразилия", "Brazil" },
+		{ "Аргентина", "Argentina" },
+		{ "Испания", "Spain" },
+		{ "Португалия", "Portugal" },
+		{ "Нидерланды", "Netherlands" },
+		{ "Бельгия", "Belgium" },
+		{ "Уругвай", "Uruguay" },
+		{ "Колумбия", "Colombia" },
+		{ "Эквадор", "Ecuador" },
+		{ "Чили", "Chile" },
+		{ "Перу", "Peru" },
+		{ "Венесуэла", "Venezuela" },
+		{ "Нигерия", "Nigeria" },
+		{ "Гана", "Ghana" },
+		{ "Сенегал", "Senegal" },
+		{ "Марокко", "Morocco" },
+		{ "Камерун", "Cameroon" },
+		{ "Египет", "Egypt" },
+		{ "ЮАР", "South Africa" },
+		{ "Япония", "Japan" },
+		{ "Южная Корея", "South Korea" },
+		{ "Китай", "China" },
+		{ "Тайвань", "Chinese Taipei" },
+		{ "Австралия", "Australia" },
+		{ "Новая Зеландия", "New Zealand" },
+		{ "Филиппины", "Philippines" },
+		{ "Индия", "India" },
+		{ "Иран", "Iran" },
+		{ "Саудовская Аравия", "Saudi Arabia" },
+		{ "Израиль", "Israel" },
+		{ "Турция", "Turkey" },
+		{ "Греция", "Greece" },
+		{ "Сербия", "Serbia" },
+		{ "Хорватия", "Croatia" },
+		{ "Черногория", "Montenegro" },
+		{ "Литва", "Lithuania" },
+		{ "Эстония", "Estonia" },
+		{ "Украина", "Ukraine" },
+		{ "Беларусь", "Belarus" },
+		{ "Румыния", "Romania" },
+		{ "Болгария", "Bulgaria" },
+		{ "Исландия", "Iceland" },
+		{ "Пуэрто-Рико", "Puerto Rico" },
+		{ "Доминиканская Республика", "Dominican Republic" },
+		{ "Куба", "Cuba" },
+		{ "Панама", "Panama" },
+		{ "Никарагуа", "Nicaragua" },
+		{ "Ямайка", "Jamaica" }
 	};
 
 	private Dictionary<int, int[]> _groupRows;
@@ -5470,8 +5542,93 @@ public class SportsWorld
 		return d;
 	}
 
+	public static string NationLabel(string nation)
+	{
+		return nation switch
+		{
+			"USA" => "США",
+			"Canada" => "Канада",
+			"Mexico" => "Мексика",
+			"Sweden" => "Швеция",
+			"Finland" => "Финляндия",
+			"Russia" => "Россия",
+			"Czechia" => "Чехия",
+			"Slovakia" => "Словакия",
+			"Switzerland" => "Швейцария",
+			"Germany" => "Германия",
+			"Latvia" => "Латвия",
+			"Norway" => "Норвегия",
+			"Denmark" => "Дания",
+			"Austria" => "Австрия",
+			"France" => "Франция",
+			"Kazakhstan" => "Казахстан",
+			"Slovenia" => "Словения",
+			"Italy" => "Италия",
+			"Hungary" => "Венгрия",
+			"Poland" => "Польша",
+			"England" => "Англия",
+			"Scotland" => "Шотландия",
+			"Wales" => "Уэльс",
+			"Ireland" => "Ирландия",
+			"Brazil" => "Бразилия",
+			"Argentina" => "Аргентина",
+			"Spain" => "Испания",
+			"Portugal" => "Португалия",
+			"Netherlands" => "Нидерланды",
+			"Belgium" => "Бельгия",
+			"Uruguay" => "Уругвай",
+			"Colombia" => "Колумбия",
+			"Ecuador" => "Эквадор",
+			"Chile" => "Чили",
+			"Peru" => "Перу",
+			"Venezuela" => "Венесуэла",
+			"Nigeria" => "Нигерия",
+			"Ghana" => "Гана",
+			"Senegal" => "Сенегал",
+			"Morocco" => "Марокко",
+			"Cameroon" => "Камерун",
+			"Egypt" => "Египет",
+			"South Africa" => "ЮАР",
+			"Japan" => "Япония",
+			"South Korea" => "Южная Корея",
+			"China" => "Китай",
+			"Chinese Taipei" => "Тайвань",
+			"Australia" => "Австралия",
+			"New Zealand" => "Новая Зеландия",
+			"Philippines" => "Филиппины",
+			"India" => "Индия",
+			"Iran" => "Иран",
+			"Saudi Arabia" => "Саудовская Аравия",
+			"Israel" => "Израиль",
+			"Turkey" => "Турция",
+			"Greece" => "Греция",
+			"Serbia" => "Сербия",
+			"Croatia" => "Хорватия",
+			"Montenegro" => "Черногория",
+			"Lithuania" => "Литва",
+			"Estonia" => "Эстония",
+			"Ukraine" => "Украина",
+			"Belarus" => "Беларусь",
+			"Romania" => "Румыния",
+			"Bulgaria" => "Болгария",
+			"Iceland" => "Исландия",
+			"Puerto Rico" => "Пуэрто-Рико",
+			"Dominican Republic" => "Доминиканская Республика",
+			"Cuba" => "Куба",
+			"Panama" => "Панама",
+			"Nicaragua" => "Никарагуа",
+			"Jamaica" => "Ямайка",
+			"Великобритания" => "Великобритания",
+			_ => nation ?? ""
+		};
+	}
+
 	public static string Abbrev(string nation)
 	{
+		if (nation != null && CountryAliases.TryGetValue(nation, out var alias))
+		{
+			nation = alias;
+		}
 		if (nation != null && Codes.TryGetValue(nation, out var code))
 		{
 			return code;
@@ -5499,7 +5656,7 @@ public class SportsWorld
 		list.Remove("Russia");
 		list.Sort(StringComparer.OrdinalIgnoreCase);
 		list.Insert(0, "Russia");
-		return list;
+		return list.ConvertAll(NationLabel);
 	}
 
 	public List<string> UpcomingTournaments(int now)
