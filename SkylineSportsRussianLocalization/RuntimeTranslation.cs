@@ -610,6 +610,11 @@ namespace SkylineSportsRussianLocalization
                     (draftPick.Groups[3].Success ? " (из команды " + draftPick.Groups[3].Value + ")" : "");
             }
 
+            __0 = Regex.Replace(__0, @"^(\d+)(?:st|nd|rd|th) период$", "$1-й период");
+            __0 = Regex.Replace(__0, @"^(\d+)(?:st|nd|rd|th) четверть$", "$1-я четверть");
+            __0 = Regex.Replace(__0, @"^(\d+)(?:st|nd|rd|th) овертайм$", "$1-й овертайм");
+            __0 = Regex.Replace(__0, @"^(Верх|Низ) (\d+)(?:st|nd|rd|th)$", "$1 $2-го");
+
             __0 = Regex.Replace(__0, @"\bTD\b", "ТД");
             __0 = Regex.Replace(__0, @"\bFG\b", "полевых голов");
             __0 = Regex.Replace(__0, @"\bGroup ([A-Z])\b", "Группа $1");
