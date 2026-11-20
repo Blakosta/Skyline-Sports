@@ -5356,6 +5356,16 @@ public static class Views
 		{
 			j.Prop("farmId", farm.Id).Prop("farmName", world.TeamName(farm.Id));
 		}
+		long ticketRevenue = 0L;
+		Season ticketSeason = (league == null) ? null : (league.Current ?? league.Previous);
+		if (ticketSeason != null)
+		{
+			foreach (Match ticketMatch in ticketSeason.Games)
+			{
+				if (ticketMatch.HomeTeamId == t.Id) ticketRevenue += ticketMatch.TicketRevenue;
+			}
+		}
+		j.Prop("ticketRevenue", ticketRevenue);
 		j.Prop("manual", t.Manual);
 		j.Prop("cityBalance", world.CityBalance);
 		j.Prop("cityUnlimited", world.CityUnlimited);
