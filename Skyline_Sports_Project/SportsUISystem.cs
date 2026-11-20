@@ -221,6 +221,8 @@ public class SportsUISystem : UISystemBase
 			CommandResult r = a[0] switch
 			{
 				"manage" => w.SetManaged(Int(a, 1), Int(a, 2) == 1, now),
+				"ticketPrices" => w.SetTicketPrices(Int(a, 1), Int(a, 2), Int(a, 3)),
+				"transferFunds" => m_Data.TransferCityFunds(Int(a, 1), Int(a, 2), a.Length > 3 && a[3] == "club"),
 				"resign" => w.Resign(Int(a, 1), now),
 				"release" => w.Release(Int(a, 1), now, a.Length > 2 && a[2] == "stretch"),
 				"sign" => w.SignFreeAgent(Int(a, 1), Int(a, 2), now),
