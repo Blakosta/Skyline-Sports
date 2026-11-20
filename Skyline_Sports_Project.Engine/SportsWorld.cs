@@ -2937,9 +2937,9 @@ public class SportsWorld
 	public CommandResult RenameOrg(int orgId, string name, string mascot)
 	{
 		Organization o = GetOrg(orgId);
-		if (o == null || !o.IsUser)
+		if (o == null)
 		{
-			return CommandResult.Fail("Команда не найдена.");
+			return CommandResult.Fail("Организация не найдена.");
 		}
 		string n = NameGenerator.CleanName(name, 40);
 		string m = NameGenerator.CleanName(mascot, 30);
@@ -9087,9 +9087,9 @@ public class SportsWorld
 	public CommandResult EditClub(int teamId, string city, string clubName, int venueId, int now)
 	{
 		Team team = GetTeam(teamId);
-		if (team == null || team.Retired || !team.IsUser)
+		if (team == null || team.Retired)
 		{
-			return CommandResult.Fail("Редактировать можно только вашу команду.");
+			return CommandResult.Fail("Команда не найдена или расформирована.");
 		}
 		Organization org = GetOrg(team.OrgId);
 		if (org == null)
@@ -9109,9 +9109,20 @@ public class SportsWorld
 		if (!renamed.Ok) return renamed;
 		if (venueId != team.VenueId)
 		{
-			CommandResult moved = MoveTeam(team.Id, venueId, "арену №" + venueId, now);
-			if (!moved.Ok) return CommandResult.Fail("Название клуба обновлено, но стадион не изменён: " + moved.Message);
-			return CommandResult.Success(renamed.Message + " " + moved.Message);
+			int oldVenue = team.VenueId;
+			team.VenueId = venueId;
+			League league = LeagueOf(team);
+			if (league != null && league.Current != null)
+			{
+				foreach (Match game in league.Current.Games)
+				{
+					if (!game.Played && game.HomeTeamId == team.Id && game.VenueId == oldVenue) game.VenueId = venueId;
+				}
+				ReassignVenues(league);
+			}
+			Post(league, NewsKind.General, Wire, "ПЕРЕЕЗД: " + TeamName(team.Id) + " переносят домашние матчи на арену №" + venueId + ".", team.IsUser, now, 2);
+			Revision++;
+			return CommandResult.Success(renamed.Message + " Домашняя арена изменена.");
 		}
 		return renamed;
 	}
@@ -9121,7 +9132,7 @@ public class SportsWorld
 		Player player = GetPlayer(playerId);
 		if (player == null) return CommandResult.Fail("Игрок не найден.");
 		Team team = GetTeam(player.TeamId);
-		if (team == null || !team.IsUser) return CommandResult.Fail("Редактировать можно игроков ваших клубов.");
+		if (team == null || team.Retired) return CommandResult.Fail("Команда игрока не найдена или расформирована.");
 		string first = NameGenerator.CleanName(firstName, 30);
 		string last = NameGenerator.CleanName(lastName, 30);
 		if (first.Length == 0 || last.Length == 0) return CommandResult.Fail("Имя и фамилия не могут быть пустыми.");
@@ -9156,7 +9167,7 @@ public class SportsWorld
 	{
 		if (!Coaches.TryGetValue(coachId, out var coach)) return CommandResult.Fail("Тренер не найден.");
 		Team team = GetTeam(coach.TeamId);
-		if (team == null || !team.IsUser) return CommandResult.Fail("Редактировать можно тренеров ваших клубов.");
+		if (team == null || team.Retired) return CommandResult.Fail("Команда тренера не найдена или расформирована.");
 		string first = NameGenerator.CleanName(firstName, 30);
 		string last = NameGenerator.CleanName(lastName, 30);
 		if (first.Length == 0 || last.Length == 0) return CommandResult.Fail("Имя и фамилия не могут быть пустыми.");
@@ -9186,9 +9197,9 @@ public class SportsWorld
 	public CommandResult SetTicketPrices(int teamId, int residents, int visitors)
 	{
 		Team t = GetTeam(teamId);
-		if (t == null || t.Retired || !t.IsUser)
+		if (t == null || t.Retired)
 		{
-			return CommandResult.Fail("Изменять цены на билеты можно только у вашей команды.");
+			return CommandResult.Fail("Команда не найдена или расформирована.");
 		}
 		t.TicketPriceResidents = Math.Max(1, Math.Min(1500, residents));
 		t.TicketPriceVisitors = Math.Max(1, Math.Min(1500, visitors));
@@ -9264,9 +9275,9 @@ public class SportsWorld
 	public CommandResult SetSponsorSettings(int teamId, int tier, int frequency, int now)
 	{
 		Team team = GetTeam(teamId);
-		if (team == null || team.Retired || !team.IsUser)
+		if (team == null || team.Retired)
 		{
-			return CommandResult.Fail("Настраивать спонсоров можно только у вашей команды.");
+			return CommandResult.Fail("Команда не найдена или расформирована.");
 		}
 		if (tier < 0 || tier > 4 || frequency < 0 || frequency > 2)
 		{
@@ -9283,7 +9294,7 @@ public class SportsWorld
 	{
 		foreach (Team team in Teams.Values)
 		{
-			if (!team.IsUser || team.Retired || team.SponsorTier <= 0) continue;
+			if (team.Retired || team.SponsorTier <= 0) continue;
 			EnsureClubBalance(team);
 			int period = SponsorPeriodIndex(team, now);
 			if (team.SponsorLastPeriod == int.MinValue)
@@ -9316,9 +9327,9 @@ public class SportsWorld
 	public CommandResult SetPayrollBudget(int teamId, int budgetThousands)
 	{
 		Team team = GetTeam(teamId);
-		if (team == null || team.Retired || !team.IsUser)
+		if (team == null || team.Retired)
 		{
-			return CommandResult.Fail("Изменять зарплатный бюджет можно только у вашей команды.");
+			return CommandResult.Fail("Команда не найдена или расформирована.");
 		}
 		if (Economy.Get(team.Sport).Type != CapType.Budget)
 		{
@@ -9369,9 +9380,9 @@ public class SportsWorld
 	public CommandResult TransferClubFunds(int teamId, int amount, bool toClub)
 	{
 		Team t = GetTeam(teamId);
-		if (t == null || t.Retired || !t.IsUser)
+		if (t == null || t.Retired)
 		{
-			return CommandResult.Fail("Переводы доступны только для вашей команды.");
+			return CommandResult.Fail("Команда не найдена или расформирована.");
 		}
 		EnsureClubBalance(t);
 		if (amount <= 0)
