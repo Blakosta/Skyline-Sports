@@ -914,6 +914,20 @@ namespace SkylineSportsRussianLocalization
             __0 = Regex.Replace(__0, @"\bOct\b", "окт", RegexOptions.IgnoreCase);
             __0 = Regex.Replace(__0, @"\bNov\b", "ноя", RegexOptions.IgnoreCase);
             __0 = Regex.Replace(__0, @"\bDec\b", "дек", RegexOptions.IgnoreCase);
+            __0 = Regex.Replace(__0, @"\bPPG\b", "очков за матч");
+            __0 = Regex.Replace(__0, @"\bRPG\b", "подборов за матч");
+            __0 = Regex.Replace(__0, @"\bAPG\b", "передач за матч");
+            __0 = Regex.Replace(__0, @"\bSV%\b", "% отражённых бросков");
+            __0 = Regex.Replace(__0, @"\bGAA\b", "пропущенных шайб за матч");
+            __0 = __0.Replace(" W, ", " побед, ");
+            __0 = Regex.Replace(__0, @"\bpass yds\b", "ярдов пасом");
+            __0 = Regex.Replace(__0, @"\bscrimmage yds\b", "ярдов на розыгрышах");
+            __0 = Regex.Replace(__0, @"\btackles\b", "захватов");
+            __0 = Regex.Replace(__0, @"\bsacks\b", "сэков");
+            __0 = Regex.Replace(__0, @"\bgames\b", "матчей");
+            __0 = Regex.Replace(__0, @"\bOVR\b", "ОБЩ");
+            __0 = Regex.Replace(__0, @"\bTD\b", "тачдаунов");
+            __0 = Regex.Replace(__0, @"\bINT\b", "перехватов");
         }
     }
 }
