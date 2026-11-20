@@ -759,7 +759,7 @@ public class SportsWorld
 			Player p4 = GetPlayer(k.PlayerId);
 			if (p4 != null)
 			{
-				AddHonor(p4, Level.Pro, label, (sport == Sport.Football) ? "Pro Bowl" : "All-Star", AllStarGameName(sport));
+				AddHonor(p4, Level.Pro, label, (sport == Sport.Football) ? "Пробоул" : "Матч всех звёзд", AllStarGameName(sport));
 			}
 		}
 		StoreSelections(league, s.Year, 0, picks);
@@ -3648,7 +3648,7 @@ public class SportsWorld
 		}
 		RostersChanged();
 		StaffChanged();
-		List<string> downNames = down.ConvertAll((int teamId) => "команда «" + TeamName(teamId) + "»);
+		List<string> downNames = down.ConvertAll((int teamId) => "команда «" + TeamName(teamId) + "»");
 		List<string> upNames = new List<string>();
 		foreach (int id in up)
 		{
@@ -3797,7 +3797,7 @@ public class SportsWorld
 		string last = "";
 		if (second.LastUp.Count > 0)
 		{
-			List<string> names = ((league.Level == Level.Pro) ? second.LastUp : second.LastDown).ConvertAll((int id) => "команда «" + TeamName(id) + "»);
+			List<string> names = ((league.Level == Level.Pro) ? second.LastUp : second.LastDown).ConvertAll((int id) => "команда «" + TeamName(id) + "»");
 			last = " В прошлом сезоне " + JoinNames(names) + ((league.Level == Level.Pro) ? " вышли в высший дивизион." : " выбыли в низший дивизион.");
 		}
 		if (league.Level == Level.Pro)
@@ -5520,7 +5520,7 @@ public class SportsWorld
 					int start = GameClock.DayNumber(StartOf(kv.Value, y));
 					if (start >= today)
 					{
-						list.Add(new KeyValuePair<int, string>(start, y + " " + kv.Value.Name + ": " + StartOf(kv.Value, y).ToString("MMM d, yyyy", CultureInfo.InvariantCulture)));
+						list.Add(new KeyValuePair<int, string>(start, y + " " + kv.Value.Name + ": " + StartOf(kv.Value, y).ToString("dd.MM.yyyy", CultureInfo.InvariantCulture)));
 						break;
 					}
 				}
@@ -6220,7 +6220,7 @@ public class SportsWorld
 		{
 			rows[i2] = new int[7];
 		}
-		string stage = "Group " + (char)(65 + group);
+		string stage = "Группа " + (char)(65 + group);
 		foreach (TourGame g in t.Games)
 		{
 			if (g.Stage != stage || !g.Played)
@@ -6338,7 +6338,7 @@ public class SportsWorld
 				}
 			}
 		}
-		string when = GameClock.DateOf(t.StartDay).ToString("MMM d", CultureInfo.InvariantCulture);
+		string when = GameClock.DateOf(t.StartDay).ToString("dd.MM", CultureInfo.InvariantCulture);
 		string homeLine = "";
 		int hi = t.Teams.FindIndex((NationTeam nationTeam) => nationTeam.Nation == HomeNation(t.Sport));
 		int firstQualifier = t.Teams.FindIndex((NationTeam nationTeam) => nationTeam.Qualifier);
@@ -11369,7 +11369,7 @@ public class SportsWorld
 		bool flip = r.CommittedTo >= 0;
 		string from = (flip ? TeamShortName(r.CommittedTo) : "");
 		r.CommittedTo = best.Id;
-		string stars = r.Stars + "-star";
+		string stars = r.Stars + "-звёздный";
 		Organization o = GetOrg(best.OrgId);
 		AddPost(league, NewsKind.Recruiting, Campus.Name, Campus.Handle, (flip ? "СМЕНА РЕШЕНИЯ: " : "ВЫБОР: ") + stars + " " + Rosters.PositionLabel(p.Position) + " " + p.Name + ((p.From.Length > 0 && !r.National) ? (" из " + p.From) : (r.National ? (" (" + HometownOf(p) + ")") : "")) + (flip ? (" меняет решение: вместо " + from + " выбирает ") : " выбирает ") + ((o == null) ? TeamName(best.Id) : o.Name) + "!", isUser: true, now, (r.Stars >= 4) ? 3 : 2);
 		Revision++;
