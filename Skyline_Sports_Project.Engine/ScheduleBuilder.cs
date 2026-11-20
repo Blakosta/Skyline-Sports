@@ -202,7 +202,7 @@ public static class ScheduleBuilder
 			foreach (Pairing original in rounds[i])
 			{
 				bool homeAndHome = slot.Size > 1 && slot.Template.HomeAndHomeChance > 0.0 && random.NextDouble() < slot.Template.HomeAndHomeChance;
-				Pairing pair = balancer.Orient(original, slot.Size, homeAndHome);
+				Pairing pair = (p.Sport == Sport.Soccer) ? original : balancer.Orient(original, slot.Size, homeAndHome);
 				if (slot.Size == 1)
 				{
 					List<TimeOption> options = ValidOptions(p, year, slot.FirstDay, slot.Template.Times(GameClock.Weekday(slot.FirstDay), arg2: true), start, end, today);
