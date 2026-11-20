@@ -153,6 +153,22 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 
 	private TimeSystem m_TimeSystem;
 
+	private CitySystem m_CitySystem;
+
+	private Type m_PlayerMoneyType;
+
+	private MemberInfo m_PlayerMoneyBalance;
+
+	private MemberInfo m_PlayerMoneyUnlimited;
+
+	private MethodInfo m_PlayerMoneyAdd;
+
+	private MethodInfo m_PlayerMoneyHas;
+
+	private MethodInfo m_PlayerMoneyGet;
+
+	private MethodInfo m_PlayerMoneySet;
+
 	private NameSystem m_NameSystem;
 
 	private EntityQuery m_DistrictQuery;
@@ -224,6 +240,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 		base.OnCreate();
 		Sports = new SportsWorld();
 		m_TimeSystem = ((ComponentSystemBase)this).World.GetOrCreateSystemManaged<TimeSystem>();
+		m_CitySystem = ((ComponentSystemBase)this).World.GetExistingSystemManaged<CitySystem>();
 		m_NameSystem = ((ComponentSystemBase)this).World.GetOrCreateSystemManaged<NameSystem>();
 		m_DistrictQuery = new EntityQueryBuilder(Allocator.Temp)
 			.WithAll<District>()
@@ -256,7 +273,10 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 				}
 				ScanDistricts(now);
 				ReadCityWeather(now);
+				Sports.VisitorAttendancePercent = ((Mod.Settings == null || Mod.Settings.VisitorFans) ? 20 : 0);
+				UpdateCityBalance();
 				Sports.Advance(now);
+				SettleTicketIncome();
 				RunFans(now);
 			}
 		}
@@ -267,36 +287,97 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 	}
 
 
-	private bool TryGetCityMoney(out Entity city, out PlayerMoney money)
+	private bool EnsurePlayerMoneyApi()
+	{
+		if (m_PlayerMoneyType != null && m_PlayerMoneyBalance != null && m_PlayerMoneyUnlimited != null && m_PlayerMoneyAdd != null && m_PlayerMoneyHas != null && m_PlayerMoneyGet != null && m_PlayerMoneySet != null)
+		{
+			return true;
+		}
+		m_PlayerMoneyType = FindGameType("Game.PlayerMoney") ?? FindGameType("Game.City.PlayerMoney");
+		if (m_PlayerMoneyType == null)
+		{
+			Mod.log.Warn((object)"Казна города: тип PlayerMoney не найден.");
+			return false;
+		}
+		BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+		m_PlayerMoneyBalance = (MemberInfo)m_PlayerMoneyType.GetProperty("money", flags) ?? (MemberInfo)m_PlayerMoneyType.GetField("money", flags);
+		m_PlayerMoneyUnlimited = (MemberInfo)m_PlayerMoneyType.GetField("m_Unlimited", flags) ?? (MemberInfo)m_PlayerMoneyType.GetProperty("m_Unlimited", flags);
+		m_PlayerMoneyAdd = m_PlayerMoneyType.GetMethod("Add", flags, null, new Type[1] { typeof(int) }, null);
+		m_PlayerMoneyHas = GenericEntityMethod("HasComponent", 1);
+		m_PlayerMoneyGet = GenericEntityMethod("GetComponentData", 1);
+		m_PlayerMoneySet = GenericEntityMethod("SetComponentData", 2);
+		if (m_PlayerMoneyBalance == null || m_PlayerMoneyUnlimited == null || m_PlayerMoneyAdd == null || m_PlayerMoneyHas == null || m_PlayerMoneyGet == null || m_PlayerMoneySet == null)
+		{
+			Mod.log.Warn((object)("Казна города: API PlayerMoney неполное (" + m_PlayerMoneyType.FullName + ")."));
+			return false;
+		}
+		Mod.log.Info((object)("Казна города: найден API " + m_PlayerMoneyType.FullName + "."));
+		return true;
+	}
+
+	private static object ReadMember(MemberInfo member, object target)
+	{
+		if (member is FieldInfo)
+		{
+			return ((FieldInfo)member).GetValue(target);
+		}
+		return ((PropertyInfo)member).GetValue(target, null);
+	}
+
+	private long CityMoneyValue(object money)
+	{
+		return Convert.ToInt64(ReadMember(m_PlayerMoneyBalance, money));
+	}
+
+	private bool CityMoneyUnlimited(object money)
+	{
+		return Convert.ToBoolean(ReadMember(m_PlayerMoneyUnlimited, money));
+	}
+
+	private bool TryGetCityMoney(out Entity city, out object money)
 	{
 		city = Entity.Null;
-		money = default(PlayerMoney);
+		money = null;
 		if (m_CitySystem == null)
 		{
 			m_CitySystem = ((ComponentSystemBase)this).World.GetExistingSystemManaged<CitySystem>();
 		}
-		if (m_CitySystem == null)
+		if (m_CitySystem == null || !EnsurePlayerMoneyApi())
 		{
 			return false;
 		}
 		city = m_CitySystem.City;
 		EntityManager em = ((ComponentSystemBase)this).EntityManager;
-		if (city == Entity.Null || !em.Exists(city) || !em.HasComponent<PlayerMoney>(city))
+		if (city == Entity.Null || !em.Exists(city))
 		{
 			return false;
 		}
-		money = em.GetComponentData<PlayerMoney>(city);
-		return true;
+		try
+		{
+			if (!(bool)m_PlayerMoneyHas.MakeGenericMethod(m_PlayerMoneyType).Invoke(em, new object[1] { city }))
+			{
+				return false;
+			}
+			money = m_PlayerMoneyGet.MakeGenericMethod(m_PlayerMoneyType).Invoke(em, new object[1] { city });
+			return money != null;
+		}
+		catch (Exception ex)
+		{
+			Mod.log.Warn((object)("Казна города: не удалось прочитать PlayerMoney (" + ex.Message + ")."));
+			return false;
+		}
 	}
 
 	private void UpdateCityBalance()
 	{
 		if (TryGetCityMoney(out var city, out var money))
 		{
-			if (Sports.CityBalance != money.money || Sports.CityUnlimited != money.m_Unlimited)
+			long balance = CityMoneyValue(money);
+			bool unlimited = CityMoneyUnlimited(money);
+			if (Sports.CityBalance != balance || Sports.CityUnlimited != unlimited)
 			{
-				Sports.CityBalance = money.money;
-				Sports.CityUnlimited = money.m_Unlimited;
+				Sports.CityBalance = balance;
+				Sports.CityUnlimited = unlimited;
 				Sports.Revision++;
 			}
 		}
@@ -308,21 +389,30 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 		{
 			return false;
 		}
-		Sports.CityUnlimited = money.m_Unlimited;
-		if (money.m_Unlimited)
+		Sports.CityUnlimited = CityMoneyUnlimited(money);
+		if (Sports.CityUnlimited)
 		{
-			Sports.CityBalance = money.money;
+			Sports.CityBalance = CityMoneyValue(money);
 			return true;
 		}
-		if (amount < 0 && (long)money.money < -(long)amount)
+		long before = CityMoneyValue(money);
+		if (amount < 0 && before < -(long)amount)
 		{
 			return false;
 		}
-		long before = money.money;
-		money.Add(amount);
-		((ComponentSystemBase)this).EntityManager.SetComponentData(city, money);
-		Sports.CityBalance = money.money;
-		return money.money - before == amount;
+		try
+		{
+			m_PlayerMoneyAdd.Invoke(money, new object[1] { amount });
+			m_PlayerMoneySet.MakeGenericMethod(m_PlayerMoneyType).Invoke(((ComponentSystemBase)this).EntityManager, new object[2] { city, money });
+			long after = CityMoneyValue(money);
+			Sports.CityBalance = after;
+			return after - before == amount;
+		}
+		catch (Exception ex)
+		{
+			Mod.log.Warn((object)("Казна города: не удалось изменить баланс (" + ex.Message + ")."));
+			return false;
+		}
 	}
 
 	public CommandResult TransferCityFunds(int teamId, int amount, bool toClub)
@@ -342,7 +432,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 			{
 				return CommandResult.Fail("Не удалось получить доступ к казне города.");
 			}
-			if (!money.m_Unlimited && money.money < amount)
+			if (!CityMoneyUnlimited(money) && CityMoneyValue(money) < amount)
 			{
 				return CommandResult.Fail("В городской казне недостаточно средств.");
 			}
@@ -358,7 +448,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 			}
 			return result;
 		}
-		if (TryGetCityMoney(out var cityAccount, out var cityMoney) && cityMoney.m_Unlimited)
+		if (TryGetCityMoney(out var cityAccount, out var cityMoney) && CityMoneyUnlimited(cityMoney))
 		{
 			return CommandResult.Fail("Городской бюджет безлимитный — отключите безлимитные деньги, чтобы переводить средства из клуба в казну.");
 		}
@@ -392,7 +482,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 						game.TicketIncomePaid = true;
 						continue;
 					}
-					if (TryGetCityMoney(out var city, out var balance) && (balance.m_Unlimited || balance.money >= 2000000000L))
+					if (TryGetCityMoney(out var city, out var balance) && (CityMoneyUnlimited(balance) || CityMoneyValue(balance) >= 2000000000L))
 					{
 						game.TicketIncomePaid = true;
 						continue;
