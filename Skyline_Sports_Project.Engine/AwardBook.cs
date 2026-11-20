@@ -660,7 +660,7 @@ public static class AwardBook
 			case Sport.Soccer:
 				list.Add(Mvp(sport, "Лучший игрок сезона ФНЛ", "Лучший игрок сезона ФНЛ"));
 				list.Add(Freshman(sport, "Лучший молодой игрок", "Лучший молодой игрок ФНЛ"));
-				list.Add(PlayoffMvp(sport, "Самый ценный игрок плей-офф", "MVP плей-офф Кубка ФНЛ"));
+				list.Add(PlayoffMvp(sport, "Самый ценный игрок плей-офф", "Самый ценный игрок плей-офф Кубка ФНЛ"));
 				break;
 			default:
 				list.Add(Mvp(sport, "Самый ценный игрок", "Лучший игрок сезона"));
@@ -672,7 +672,7 @@ public static class AwardBook
 		case Level.Junior:
 			list.Add(Mvp(sport, "Игрок года", sport == Sport.Hockey ? "Лучший игрок МХЛ" : "Лучший игрок юниорского чемпионата"));
 			list.Add(Freshman(sport, "Новичок года", sport == Sport.Hockey ? "Приз имени Алексея Черепанова" : "Лучший новичок юниорского чемпионата"));
-			list.Add(PlayoffMvp(sport, "Самый ценный игрок плей-офф", sport == Sport.Hockey ? "Самый ценный игрок плей-офф Кубка Харламова" : "MVP плей-офф юниорского чемпионата"));
+			list.Add(PlayoffMvp(sport, "Самый ценный игрок плей-офф", sport == Sport.Hockey ? "Самый ценный игрок плей-офф Кубка Харламова" : "Самый ценный игрок плей-офф юниорского чемпионата"));
 			return list;
 		case Level.College:
 			list.Add(Mvp(sport, "Игрок года страны", sport switch
