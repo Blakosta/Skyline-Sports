@@ -186,7 +186,7 @@ public static class SaveCodec
 		}
 	}
 
-	public const int Version = 21;
+	public const int Version = 22;
 
 	private const char Sep = '\u001f';
 
@@ -2353,7 +2353,26 @@ public static class SaveCodec
 	{
 		w.Str(world.CountryName);
 		w.Str(world.CountryAbbrev);
+		WriteV22(w, world);
+	}
+
+	private static void WriteV22(TokenWriter w, SportsWorld world)
+	{
 		WriteV21(w, world);
+		w.Int(world.Venues.Count);
+		foreach (Venue venue in world.Venues.Values)
+		{
+			w.Int(venue.Id);
+			w.Int(Math.Max(0, Math.Min(150000, venue.Capacity)));
+		}
+		w.Int(world.Teams.Count);
+		foreach (Team team in world.Teams.Values)
+		{
+			w.Int(team.Id);
+			w.Int(Math.Max(0, Math.Min(4, team.SponsorTier)));
+			w.Int(Math.Max(0, Math.Min(2, team.SponsorFrequency)));
+			w.Int(team.SponsorLastPeriod);
+		}
 	}
 
 	private static void WriteV21(TokenWriter w, SportsWorld world)
@@ -2399,6 +2418,8 @@ public static class SaveCodec
 		world.CountryAbbrev = r.Str();
 		if (version >= 21)
 			ReadV21(r, world);
+		if (version >= 22)
+			ReadV22(r, world);
 	}
 
 	private static void ReadV21(TokenReader r, SportsWorld world)
@@ -2441,6 +2462,34 @@ public static class SaveCodec
 				g.TicketVisitorAttendance = Math.Max(0, visitors);
 				g.TicketRevenue = Math.Max(0, revenue);
 				g.TicketIncomePaid = paid;
+			}
+		}
+	}
+
+	private static void ReadV22(TokenReader r, SportsWorld world)
+	{
+		int venues = Count(r, 100000, "вместимость арен");
+		for (int i = 0; i < venues; i++)
+		{
+			int id = r.Int();
+			int capacity = r.Int();
+			if (world.Venues.TryGetValue(id, out var venue))
+			{
+				venue.Capacity = Math.Max(0, Math.Min(150000, capacity));
+			}
+		}
+		int teams = Count(r, 100000, "спонсоры клубов");
+		for (int i = 0; i < teams; i++)
+		{
+			int id = r.Int();
+			int tier = r.Int();
+			int frequency = r.Int();
+			int lastPeriod = r.Int();
+			if (world.Teams.TryGetValue(id, out var team))
+			{
+				team.SponsorTier = Math.Max(0, Math.Min(4, tier));
+				team.SponsorFrequency = Math.Max(0, Math.Min(2, frequency));
+				team.SponsorLastPeriod = lastPeriod;
 			}
 		}
 	}
