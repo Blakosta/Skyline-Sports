@@ -142,6 +142,16 @@ namespace SkylineSportsRussianLocalization
             { "Dominican Republic", "Доминиканская Республика" },
             { "United States of America", "Соединённые Штаты Америки" },
             { "Czech Republic", "Чехия" },
+            { "USA", "США" },
+            { "United States", "США" },
+            { "Chinese Taipei", "Тайвань" },
+            { "The qualifiers decide the last spots.", "Оставшиеся места определяются по итогам квалификации." },
+            { "National teams are picked from the players in your sports world by where they're from; the spots nobody fills go to players from clubs abroad.", "Составы сборных формируются из игроков вашего спортивного мира по стране их происхождения. Недостающие места занимают игроки зарубежных клубов." },
+            { "Most awards won.", "Больше всего завоёванных наград." },
+            { "The best single regular seasons ever in this league. A record stays until someone beats it.", "Лучшие отдельные сезоны в истории этой лиги. Рекорд сохраняется, пока его не побьют." },
+            { "Career totals while playing in this league (regular season). Rate stats need about four full seasons to qualify.", "Суммарная статистика за карьеру в этой лиге (регулярный сезон). Для попадания в рейтинг по средним показателям требуется около четырёх полных сезонов." },
+            { "Under 20.", "Турнир среди игроков до 20 лет." },
+            { "(kick)", "(удар)" },
             { "American Samoa", "Американское Самоа" },
             { "Today", "Сегодня" },
             { "Tomorrow", "Завтра" },
@@ -347,8 +357,16 @@ namespace SkylineSportsRussianLocalization
                 return;
             }
 
+            // Translate known dynamic templates without touching player or club names.
+            if (__0.StartsWith("No young prospects on the market right now. A new class arrives every ", StringComparison.Ordinal))
+                __0 = "Сейчас на рынке нет молодых перспективных игроков. Новый набор появится в " + __0.Substring("No young prospects on the market right now. A new class arrives every ".Length);
+            if (__0.StartsWith("FOLDED: The ", StringComparison.Ordinal))
+                __0 = "РАСФОРМИРОВАНИЕ: команда «" + __0.Substring("FOLDED: The ".Length).Replace(" have folded after ", "» прекратила существование после сезона ").Replace("the season", "текущего сезона").TrimEnd('.') + ".";
+            if (__0.StartsWith("NATIONAL TEAMS: the ", StringComparison.Ordinal))
+                __0 = "СБОРНЫЕ: турнир «" + __0.Substring("NATIONAL TEAMS: the ".Length).Replace(" starts ", "» начинается ").Replace(" in ", " в ").TrimEnd('.') + ".";
+            __0 = Regex.Replace(__0, @"\bGroup ([A-Z])\b", "Группа $1");
             // Exact-value translations only: avoid changing generated player or team names.
-                        __0 = Regex.Replace(__0, @"\bJan\b", "янв", RegexOptions.IgnoreCase);
+            __0 = Regex.Replace(__0, @"\bJan\b", "янв", RegexOptions.IgnoreCase);
             __0 = Regex.Replace(__0, @"\bFeb\b", "фев", RegexOptions.IgnoreCase);
             __0 = Regex.Replace(__0, @"\bMar\b", "мар", RegexOptions.IgnoreCase);
             __0 = Regex.Replace(__0, @"\bApr\b", "апр", RegexOptions.IgnoreCase);
