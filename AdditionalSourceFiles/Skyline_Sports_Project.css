@@ -18,3 +18,16 @@
 .clubFinancePanel .clubBalance{border-left:3rem solid rgba(110,210,120,.8)}
 .clubFinancePanel .financeRevenue{margin:4rem 0 8rem 0;padding:6rem 8rem;border-radius:4rem;background-color:rgba(255,255,255,.035);color:#b9c7d6}
 .clubFinancePanel button{margin:2rem 4rem 2rem 0}
+
+/* Sponsor tiers and expanded finance controls */
+.clubFinancePanel .financeBalanceRow{display:flex;flex-direction:row;flex-wrap:wrap;align-items:stretch;gap:6rem;margin:6rem 0}
+.clubFinancePanel .financeBalance{flex:1;min-width:180rem;margin:0;padding:9rem 10rem;border-radius:5rem;background-color:rgba(255,255,255,.07);font-weight:bold;box-sizing:border-box}
+.clubFinancePanel .financeSponsorAmount{margin:6rem 0 10rem 0;padding:7rem 9rem;border-radius:4rem;background-color:rgba(110,180,255,.08);color:#d9e8f7}
+.clubFinancePanel .financePayroll{margin-top:10rem;padding:8rem 10rem;border-top:1rem solid rgba(150,170,195,.2);border-bottom:1rem solid rgba(150,170,195,.2)}
+.clubFinancePanel .sponsorChoice{display:inline-flex;flex-direction:row;align-items:center;gap:5rem;white-space:nowrap}
+.clubFinancePanel .sponsorDot{display:inline-block;width:8rem;height:8rem;border-radius:50%;background-color:#777;box-shadow:0 0 3rem rgba(0,0,0,.4)}
+.clubFinancePanel .sponsorDot0{background-color:#777}
+.clubFinancePanel .sponsorDot1{background-color:#d84b4b}
+.clubFinancePanel .sponsorDot2{background-color:#e68b3d}
+.clubFinancePanel .sponsorDot3{background-color:#b7cb42}
+.clubFinancePanel .sponsorDot4{background-color:#45dc70}
