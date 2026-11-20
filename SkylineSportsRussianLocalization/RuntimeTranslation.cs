@@ -754,7 +754,7 @@ namespace SkylineSportsRussianLocalization
             {
                 Match host = Regex.Match(__0, @"^In (.+?), ");
                 if (host.Success)
-                    __0 = "В городе " + LocalizeTournamentHost(host.Groups[1].Value) + __0.Substring(host.Length - 1);
+                    __0 = "В городе " + LocalizeTournamentHost(host.Groups[1].Value) + __0.Substring(host.Length - 2);
                 __0 = __0.Replace(" Under 20.", " Турнир для игроков до 20 лет.")
                     .Replace(" nations", " сборных")
                     .Replace(" through the qualifiers", " прошли отборочный турнир")
