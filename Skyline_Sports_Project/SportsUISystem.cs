@@ -51,7 +51,7 @@ public class SportsUISystem : UISystemBase
 		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
 		//IL_001e: Invalid comparison between Unknown and I4
 		base.OnUpdate();
-		if (UnityEngine.Object)GameManager.instance == UnityEngine.Object)null || (int)GameManager.instance.gameMode != 2)
+		if ((UnityEngine.Object)(object)GameManager.instance == (UnityEngine.Object)null || (int)GameManager.instance.gameMode != 2)
 		{
 			return;
 		}
@@ -112,7 +112,7 @@ public class SportsUISystem : UISystemBase
 		}
 		try
 		{
-			if (UnityEngine.Object)GameManager.instance == UnityEngine.Object)null)
+			if ((UnityEngine.Object)(object)GameManager.instance == (UnityEngine.Object)null)
 			{
 				return false;
 			}
