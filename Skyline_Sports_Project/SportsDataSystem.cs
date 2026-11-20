@@ -221,16 +221,14 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 		//IL_005a: Unknown result type (might be due to invalid IL or missing references)
 		//IL_005f: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0064: Unknown result type (might be due to invalid IL or missing references)
-		((GameSystemBase)this).OnCreate();
+		base.OnCreate();
 		Sports = new SportsWorld();
 		m_TimeSystem = ((ComponentSystemBase)this).World.GetOrCreateSystemManaged<TimeSystem>();
 		m_NameSystem = ((ComponentSystemBase)this).World.GetOrCreateSystemManaged<NameSystem>();
-		m_DistrictQuery = ((ComponentSystemBase)this).GetEntityQuery(new ComponentType[3]
-		{
-			ComponentType.ReadOnly<District>(),
-			ComponentType.Exclude<Deleted>(),
-			ComponentType.Exclude<Temp>()
-		});
+		m_DistrictQuery = new EntityQueryBuilder(Allocator.Temp)
+			.WithAll<District>()
+			.WithNone<Deleted, Temp>()
+			.Build(this);
 		Mod.log.Info((object)"SportsDataSystem created");
 	}
 
@@ -622,7 +620,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 		try
 		{
 			List<string> names = new List<string>();
-			NativeArray<Entity> districts = m_DistrictQuery.ToEntityArray(AllocatorHandle.op_Implicit((Allocator)2));
+			NativeArray<Entity> districts = m_DistrictQuery.ToEntityArray(Allocator.Temp);
 			try
 			{
 				for (int i = 0; i < districts.Length; i++)
@@ -1895,7 +1893,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 		{
 			return;
 		}
-		NativeArray<Entity> citizens = m_CitizenQuery.ToEntityArray(AllocatorHandle.op_Implicit((Allocator)2));
+		NativeArray<Entity> citizens = m_CitizenQuery.ToEntityArray(Allocator.Temp);
 		try
 		{
 			int n = citizens.Length;
