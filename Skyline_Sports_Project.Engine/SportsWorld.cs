@@ -2265,6 +2265,26 @@ public class SportsWorld
 		}
 	}
 
+	public void EnsureTicketPrices(Team team)
+	{
+		if (team == null) return;
+		if (team.TicketPriceResidents <= 0)
+		{
+			team.TicketPriceResidents = team.Level switch
+			{
+				Level.Pro => ((team.Sport == Sport.Soccer) ? 30 : 25),
+				Level.Minor => 14,
+				Level.College => 10,
+				Level.Junior => 5,
+				_ => 3,
+			};
+		}
+		if (team.TicketPriceVisitors <= 0)
+		{
+			team.TicketPriceVisitors = Math.Min(1500, (int)Math.Round((double)team.TicketPriceResidents * 1.5));
+		}
+	}
+
 	private int Attendance(League league, Match g)
 	{
 		Team home = GetTeam(g.HomeTeamId);
@@ -2273,6 +2293,7 @@ public class SportsWorld
 		{
 			return 0;
 		}
+		EnsureTicketPrices(home);
 		int seats = VenueCapacity(league.Sport, league.Level, g.VenueId);
 		Random r = new Random((int)Hash(g.Id * 7 + 3));
 		double fill = UsualFill(league.Sport, league.Level);
