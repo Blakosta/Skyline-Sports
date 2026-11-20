@@ -759,7 +759,7 @@ public class SportsWorld
 			Player p4 = GetPlayer(k.PlayerId);
 			if (p4 != null)
 			{
-				AddHonor(p4, Level.Pro, label, (sport == Sport.Football) ? "Pro Bowl" : "All-Star", AllStarGameName(sport));
+				AddHonor(p4, Level.Pro, label, (sport == Sport.Football) ? "Матч всех звёзд" : "Матч всех звёзд", AllStarGameName(sport));
 			}
 		}
 		StoreSelections(league, s.Year, 0, picks);
@@ -3648,7 +3648,7 @@ public class SportsWorld
 		}
 		RostersChanged();
 		StaffChanged();
-		List<string> downNames = down.ConvertAll((int teamId) => "the " + TeamName(teamId));
+		List<string> downNames = down.ConvertAll((int teamId) => "команда «" + TeamName(teamId) + "»");
 		List<string> upNames = new List<string>();
 		foreach (int id in up)
 		{
@@ -3664,7 +3664,7 @@ public class SportsWorld
 			{
 				text2 = ((place == 1) ? " (чемпионы)" : (" (" + Views.Ordinal(place) + " )"));
 			}
-			list.Add("the " + text + text2);
+			list.Add("команда «" + text + "»" + text2);
 		}
 		string topTitle = Views.LeagueTitle(top);
 		string secondTitle = "Вторая лига";
@@ -6220,7 +6220,7 @@ public class SportsWorld
 		{
 			rows[i2] = new int[7];
 		}
-		string stage = "Group " + (char)(65 + group);
+		string stage = "Группа " + (char)(65 + group);
 		foreach (TourGame g in t.Games)
 		{
 			if (g.Stage != stage || !g.Played)
@@ -6350,7 +6350,7 @@ public class SportsWorld
 				Player player = GetPlayer(id2);
 				return player != null && (player.Hometown ?? "").StartsWith("*");
 			}).Count;
-			homeLine = " " + h.Nation + ", your city's country, " + (h.Qualifier ? "plays in the qualifiers" : "is in the main event") + ((local > 0) ? (", with " + local + ((local == 1) ? " player who grew up in your city" : " players who grew up in your city")) : "") + ".";
+			homeLine = " Сборная " + h.Nation + (h.Qualifier ? " участвует в квалификации" : " вышла в основную часть турнира") + ((local > 0) ? (", в её составе " + local + (local == 1 ? " игрок, выросший в вашем городе" : " игрока, выросших в вашем городе")) : "") + ".";
 		}
 		string text = "СБОРНЫЕ: турнир «" + t.Label + "» начнётся " + when + " в городе " + t.Host + "." + homeLine + ((mine.Count > 0) ? (" Ваши игроки в составе сборных: " + string.Join("; ", mine.GetRange(0, Math.Min(8, mine.Count)).ToArray()) + ((mine.Count > 8) ? (" и ещё " + (mine.Count - 8)) : "") + ".") : "");
 		Post(league, NewsKind.General, Wire, text, mine.Count > 0 || homeLine.Length > 0, now, (mine.Count <= 0 && homeLine.Length <= 0) ? 1 : 2);
@@ -6377,7 +6377,7 @@ public class SportsWorld
 					Team club = GetTeam(p.TeamId);
 					if (club != null && club.IsUser)
 					{
-						mine.Add(p.Name + " (" + medal[k].Split(new[] { ' ' }, StringSplitOptions.None)[0].ToLowerInvariant() + " with " + t.Teams[who[k]].Nation + ")");
+						mine.Add(p.Name + " (" + medal[k].Split(new[] { ' ' }, StringSplitOptions.None)[0].ToLowerInvariant() + " медаль, сборная " + t.Teams[who[k]].Nation + ")");
 					}
 				}
 			}
@@ -14466,7 +14466,7 @@ public class SportsWorld
 		string club;
 		if (owner != null)
 		{
-			club = "the " + TeamName(owner.Id);
+			club = "клуб «" + TeamName(owner.Id) + "»";
 		}
 		else
 		{
