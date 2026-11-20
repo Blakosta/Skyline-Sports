@@ -4793,7 +4793,7 @@ public static class Views
 		j.Prop("overallValue", p.Overall);
 		j.Prop("potentialValue", p.Potential);
 		j.Prop("positionId", (int)p.Position);
-		j.Prop("canEdit", team?.IsUser ?? false);
+		j.Prop("canEdit", team != null && !team.Retired);
 		j.Name("positions").BeginArray();
 		foreach (Position positionOption in Rosters.Positions(p.Sport))
 		{
@@ -5435,6 +5435,7 @@ public static class Views
 		j.Prop("sponsorPeriodRevenue", (int)Math.Min(int.MaxValue, SportsWorld.SponsorPeriodRevenue(t)));
 		j.Prop("sponsorAnnualRevenue", (int)Math.Min(int.MaxValue, SportsWorld.SponsorAnnualRevenue(t)));
 		j.Prop("canManage", t.IsUser);
+		j.Prop("canEditClub", !t.Retired);
 		JsonBuilder jsonBuilder3 = j;
 		string value3;
 		if (t.IsUser)
@@ -5912,7 +5913,7 @@ public static class Views
 		j.Prop("birthYear", c.BirthYear);
 		j.Prop("potentialValue", c.Potential);
 		Team coachTeam = world.GetTeam(c.TeamId);
-		j.Prop("canEdit", !where && coachTeam != null && coachTeam.IsUser);
+		j.Prop("canEdit", !where && coachTeam != null && !coachTeam.Retired);
 		j.Name("roleOptions").BeginArray();
 		CoachRole[] roleOptions = c.Sport == Sport.Football ? new CoachRole[] { CoachRole.Head, CoachRole.Offense, CoachRole.Defense } : new CoachRole[] { CoachRole.Head };
 		foreach (CoachRole roleOption in roleOptions)
