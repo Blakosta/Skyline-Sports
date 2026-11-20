@@ -171,6 +171,17 @@ namespace SkylineSportsRussianLocalization
             { "Loyalty", "Преданность" },
             { "Money", "Деньги" },
             { "Balanced", "Сбалансированный" },
+            { "SameAsGame", "Как в игре" },
+            { "Celsius", "Цельсий" },
+            { "Fahrenheit", "Фаренгейт" },
+            { "integer", "целое число" },
+            { "percentage", "проценты" },
+            { "LW", "ЛК" }, { "RW", "ПК" }, { "PG", "РЗ" }, { "SG", "АЗ" },
+            { "SF", "ЛФ" }, { "PF", "ТФ" }, { "QB", "КБ" }, { "RB", "РБ" },
+            { "WR", "ПР" }, { "TE", "ТЭ" }, { "OL", "ЛН" }, { "DL", "ЛЗ" },
+            { "LB", "ЛБ" }, { "CB", "КБ" }, { "SP", "ПТ" }, { "RP", "ПРЛ" },
+            { "SS", "ШС" }, { "LF", "ЛП" }, { "CF", "ЦП" }, { "RF", "ПП" },
+            { "GK", "ВР" }, { "DF", "ЗЩ" }, { "MF", "ПЗ" }, { "FW", "НП" },
             { "Taiwan", "Тайвань" },
             { "SH", "БР" },
             { "YC", "ЖК" },
@@ -665,6 +676,7 @@ namespace SkylineSportsRussianLocalization
             if (__0.StartsWith("FLIP: ", StringComparison.Ordinal))
             {
                 string text = __0.Substring("FLIP: ".Length).TrimEnd('!');
+                text = Regex.Replace(text, @"(\d+)-star\b", "$1-звёздный");
                 text = text.Replace(" flips from ", " меняет команду «")
                     .Replace(" from ", " из ")
                     .Replace(" to ", "» на команду «");
@@ -673,6 +685,7 @@ namespace SkylineSportsRussianLocalization
             else if (__0.StartsWith("COMMIT: ", StringComparison.Ordinal))
             {
                 string text = __0.Substring("COMMIT: ".Length).TrimEnd('!');
+                text = Regex.Replace(text, @"(\d+)-star\b", "$1-звёздный");
                 text = text.Replace(" from ", " из ")
                     .Replace(" commits to ", " выбирает команду «");
                 __0 = "ПОДПИСАНИЕ: " + text + "»!";
