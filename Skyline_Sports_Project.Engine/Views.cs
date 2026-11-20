@@ -403,7 +403,7 @@ public static class Views
 		j.BeginObject();
 		j.Prop("id", t.Id);
 		j.Prop("orgId", t.OrgId);
-		j.Prop("name", (o == null) ? "Не определено" : o.Name);
+		j.Prop("name", (o == null) ? "Не определено" : ((o.Level == Level.HighSchool || o.Level == Level.College || string.IsNullOrEmpty(o.Mascot)) ? o.Name : o.Mascot));
 		j.Prop("school", (o == null) ? "" : o.Name);
 		j.Prop("mascot", (o == null) ? "" : o.Mascot);
 		j.Prop("sport", (int)t.Sport);
