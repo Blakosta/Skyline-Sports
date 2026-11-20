@@ -95,6 +95,18 @@ namespace SkylineSportsRussianLocalization
             return localizedCity + ", " + localizedRegion;
         }
 
+        private static string LocalizeTournamentHost(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value)) return value;
+            string place = LocalizeHometown(value);
+            if (!string.Equals(place, value, StringComparison.Ordinal)) return place;
+            if (Exact.TryGetValue(value, out string country)) return country;
+            if (HometownExceptions.TryGetValue(value, out string city)) return city;
+            // Tournament hosts are standalone place labels; transliterate only this known UI field.
+            if (Regex.IsMatch(value, @"^[A-Za-z][A-Za-z .'-]*$")) return TransliterateCity(value);
+            return value;
+        }
+
         private static string TransliterateCity(string value)
         {
             string input = (value ?? "").ToLowerInvariant();
@@ -740,7 +752,9 @@ namespace SkylineSportsRussianLocalization
             // Tournament overview and date range.
             if (__0.StartsWith("In ", StringComparison.Ordinal))
             {
-                __0 = Regex.Replace(__0, @"^In (.+?), ", "В городе $1, ");
+                Match host = Regex.Match(__0, @"^In (.+?), ");
+                if (host.Success)
+                    __0 = "В городе " + LocalizeTournamentHost(host.Groups[1].Value) + __0.Substring(host.Length - 1);
                 __0 = __0.Replace(" Under 20.", " Турнир для игроков до 20 лет.")
                     .Replace(" nations", " сборных")
                     .Replace(" through the qualifiers", " прошли отборочный турнир")
