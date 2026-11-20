@@ -81,7 +81,7 @@ namespace SkylineSportsRussianLocalization
             { "New York", "Нью-Йорк" }, { "Salt Lake City", "Солт-Лейк-Сити" }, { "Washington", "Вашингтон" },
             { "Houston", "Хьюстон" }, { "Dallas", "Даллас" }, { "Atlanta", "Атланта" },
             { "Baltimore", "Балтимор" }, { "Newark", "Ньюарк" }, { "Charlotte", "Шарлотт" }, { "Columbus", "Колумбус" }
-            { "Oakville", "Оквилл" }, { "London", "Лондон" }, { "Sudbury", "Садбери" }, { "Kingston", "Кингстон" },
+            { "Oakville", "Оквилл" }, { "Sudbury", "Садбери" }, { "Kingston", "Кингстон" },
             { "Thunder Bay", "Тандер-Бей" }, { "Red Deer", "Ред-Дир" }, { "Regina", "Реджайна" }, { "Saskatoon", "Саскатун" },
             { "Brandon", "Брандон" }, { "Kelowna", "Келоуна" }, { "Burnaby", "Бёрнаби" }, { "Halifax", "Галифакс" },
             { "Moncton", "Монктон" }, { "Laval", "Лаваль" }, { "Sherbrooke", "Шербрук" }, { "Trois-Rivieres", "Труа-Ривьер" },
