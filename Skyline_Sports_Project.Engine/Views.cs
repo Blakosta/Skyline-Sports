@@ -339,6 +339,8 @@ public static class Views
 		j.Prop("hour", GameClock.ClockLabel(GameClock.MinuteOfDay(g.Time)));
 		j.Prop("home", world.TeamName(g.HomeTeamId));
 		j.Prop("away", world.TeamName(g.AwayTeamId));
+		j.Prop("homeLogoId", world.TeamLogoId(g.HomeTeamId));
+		j.Prop("awayLogoId", world.TeamLogoId(g.AwayTeamId));
 		j.Prop("homeFirst", value: true);
 		j.Prop("homeAbbr", world.TeamAbbrev(g.HomeTeamId));
 		j.Prop("awayAbbr", world.TeamAbbrev(g.AwayTeamId));
@@ -2056,6 +2058,7 @@ public static class Views
 		j.Name("league").BeginObject();
 		j.Prop("key", league.Key);
 		j.Prop("title", LeagueTitle(league));
+		j.Prop("hasRplLogo", league.Sport == Sport.Soccer && league.Level == Level.Pro);
 		j.Prop("isPro", pro);
 		JsonBuilder jsonBuilder = j;
 		string value;
@@ -2362,7 +2365,7 @@ public static class Views
 		j.Name("upcoming").BeginArray();
 		if (league.Current != null)
 		{
-			foreach (KeyValuePair<int, List<Match>> day2 in UpcomingDays(league.Current, 4, 30))
+			foreach (KeyValuePair<int, List<Match>> day2 in UpcomingDays(league.Current, Math.Max(1, league.Current.Games.Count), Math.Max(1, league.Current.Games.Count)))
 			{
 				WriteDay(j, world, league, day2);
 			}
@@ -4453,7 +4456,8 @@ public static class Views
 				group = ((league2.Level == Level.Junior) ? "Юниорские лиги" : "Школьная лига");
 			}
 			JsonBuilder jsonBuilder = j.BeginObject().Prop("key", league2.Key).Prop("group", group)
-				.Prop("title", LeagueTitle(league2));
+				.Prop("title", LeagueTitle(league2))
+				.Prop("hasRplLogo", league2.Sport == Sport.Soccer && league2.Level == Level.Pro);
 			string value;
 			if (waiting != null)
 			{
@@ -4651,16 +4655,35 @@ public static class Views
 			j.BeginObject().Prop("id", p.Id).Prop("when", GameClock.MonthLabel(p.Time))
 				.Prop("league", league ?? "")
 				.Prop("leagueKey", p.LeagueKey ?? "")
+				.Prop("hasRplLogo", p.LeagueKey == "Soccer-Pro")
 				.Prop("kind", p.Kind.ToString())
 				.Prop("account", p.Account)
 				.Prop("handle", p.Handle)
 				.Prop("text", ShortNewsText(world, p.Text))
+				.Prop("teamLogoIds", NewsTeamLogoIds(world, p))
 				.Prop("isUser", p.IsUser)
 				.Prop("likes", p.Likes)
 				.Prop("reposts", p.Reposts)
 				.EndObject();
 		}
 		j.EndArray();
+	}
+
+	private static List<int> NewsTeamLogoIds(SportsWorld world, NewsPost post)
+	{
+		List<int> ids = new List<int>();
+		if (post.LeagueKey != "Soccer-Pro" || string.IsNullOrEmpty(post.Text)) return ids;
+		foreach (Team team in world.Teams.Values)
+		{
+			if (team.Sport != Sport.Soccer || team.Level != Level.Pro) continue;
+			string name = world.TeamName(team.Id);
+			if (!string.IsNullOrWhiteSpace(name) && post.Text.IndexOf(name, StringComparison.OrdinalIgnoreCase) >= 0)
+			{
+				ids.Add(world.TeamLogoId(team.Id));
+				if (ids.Count >= 2) break;
+			}
+		}
+		return ids;
 	}
 
 	private static string PositionName(Position p)
@@ -5449,25 +5472,14 @@ public static class Views
 			CapType.Soft => "Фонд зарплат — сумма зарплат по контрактам и текущих выплат по расторгнутым контрактам. Лига использует мягкий потолок с отдельными исключениями.",
 			_ => "Фонд зарплат — сумма зарплат по контрактам и текущих выплат по расторгнутым контрактам. Жёсткий потолок задаётся правилами лиги."
 		});
-		j.Prop("sponsorId", t.SponsorId);
-		j.Prop("sponsorName", ClubBranding.SponsorName(t.SponsorId));
-		j.Name("sponsorOptions").BeginArray();
-		for (int sponsorId = 0; sponsorId < ClubBranding.SponsorCount; sponsorId++)
-		{
-			j.BeginObject().Prop("id", sponsorId)
-				.Prop("name", ClubBranding.SponsorName(sponsorId))
-				.Prop("tier", ClubBranding.SponsorTier(sponsorId))
-				.Prop("tierLabel", SportsWorld.SponsorTierLabel(ClubBranding.SponsorTier(sponsorId)))
-				.EndObject();
-		}
-		j.EndArray();
 		j.Prop("sponsorTier", t.SponsorTier);
 		j.Prop("sponsorFrequency", t.SponsorFrequency);
 		j.Prop("sponsorTierLabel", SportsWorld.SponsorTierLabel(t.SponsorTier));
 		j.Prop("sponsorFrequencyLabel", SportsWorld.SponsorFrequencyLabel(t.SponsorFrequency));
 		j.Prop("sponsorPeriodRevenue", (int)Math.Min(int.MaxValue, SportsWorld.SponsorPeriodRevenue(t)));
 		j.Prop("sponsorAnnualRevenue", (int)Math.Min(int.MaxValue, SportsWorld.SponsorAnnualRevenue(t)));
-		j.Prop("canManage", t.IsUser);
+		j.Prop("canManage", t.IsUser)
+			.Prop("canManageSponsors", !t.Retired);
 		j.Prop("canEditClub", !t.Retired);
 		JsonBuilder jsonBuilder3 = j;
 		string value3;
@@ -6342,6 +6354,7 @@ public static class Views
 		{
 			Match g2 = results[i];
 			j.BeginObject().Prop("id", g2.Id).Prop("date", GameClock.ShortDayLabel(GameClock.DayOf(g2.Time)))
+				.Prop("logoId", world.TeamLogoId(g2.HomeTeamId == t.Id ? g2.AwayTeamId : g2.HomeTeamId))
 				.Prop("text", LastGameText(world, t.Id, g2))
 				.Prop("rival", RivalryTag(world, league, g2))
 				.Prop("stars", g2.Summary ?? "")
@@ -6350,12 +6363,13 @@ public static class Views
 		}
 		j.EndArray();
 		j.Name("schedule").BeginArray();
-		for (int i2 = 0; i2 < coming.Count && i2 < 12; i2++)
+		for (int i2 = 0; i2 < coming.Count; i2++)
 		{
 			Match g3 = coming[i2];
 			LiveSnapshot live = Live(league.Sport, league.Level, g3, world.LastTime);
 			j.BeginObject().Prop("id", g3.Id).Prop("date", (live != null) ? "В ЭФИРЕ" : GameClock.TimeLabel(g3.Time))
 				.Prop("live", live != null)
+				.Prop("logoId", world.TeamLogoId(g3.HomeTeamId == t.Id ? g3.AwayTeamId : g3.HomeTeamId))
 				.Prop("text", (live != null) ? (world.TeamAbbrev(g3.AwayTeamId) + " " + live.AwayScore + ", " + world.TeamAbbrev(g3.HomeTeamId) + " " + live.HomeScore + "  ·  " + live.Status) : NextGameText(world, league, t.Id, g3).Substring(GameClock.TimeLabel(g3.Time).Length).Trim())
 				.Prop("rival", RivalryTag(world, league, g3))
 				.Prop("featured", g3.Featured)

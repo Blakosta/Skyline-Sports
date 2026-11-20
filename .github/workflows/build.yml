@@ -72,6 +72,7 @@ jobs:
           Copy-Item ".\AdditionalSourceFiles\Skyline_Sports_Project.mjs" $package
           Copy-Item ".\AdditionalSourceFiles\Skyline_Sports_Project.css" $package
           Copy-Item ".\AdditionalSourceFiles\images" (Join-Path $package "images") -Recurse -Force
+          Copy-Item ".\RPL" (Join-Path $package "RPL") -Recurse -Force
 
           @'
           Полная русская сборка мода «Спорт России».
@@ -87,6 +88,8 @@ jobs:
           - Skyline_Sports_Project.mjs
           - Skyline_Sports_Project.css
           - images/sports.svg
+          - RPL/RPL.cc.svg
+          - RPL/logo/*.cc.svg
           
           Не устанавливайте только DLL: интерфейсный перевод находится также в MJS-файле.
           '@ | Set-Content -LiteralPath (Join-Path $package "УСТАНОВКА.txt") -Encoding utf8

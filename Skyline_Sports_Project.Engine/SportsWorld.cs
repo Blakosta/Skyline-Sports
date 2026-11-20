@@ -2846,7 +2846,7 @@ public class SportsWorld
 			Sport = sport,
 			Level = v.Level,
 			VenueId = v.Id,
-			LogoId = _random.Next(ClubBranding.LogoCount),
+			LogoId = _random.Next(ClubBranding.GenericLogoCount),
 			Rating = _random.Next(45, 66),
 			IsUser = true
 		};
@@ -3305,8 +3305,17 @@ public class SportsWorld
 	{
 		Team team = GetTeam(teamId);
 		if (team == null) return 0;
+		if (team.LogoId == ClubBranding.NoLogoId) return ClubBranding.NoLogoId;
+		if (team.LogoId >= ClubBranding.RplLogoOffset && team.LogoId < ClubBranding.RplLogoOffset + ClubBranding.RplLogoCount) return team.LogoId;
+		if (team.LogoId >= ClubBranding.ManualGenericLogoOffset && team.LogoId < ClubBranding.LogoCount) return team.LogoId;
+		if (team.Sport == Sport.Soccer && team.Level == Level.Pro)
+		{
+			Organization org = GetOrg(team.OrgId);
+			int rplLogo = ClubBranding.FindRplLogoId(org?.Name, org?.Mascot);
+			if (rplLogo >= 0) return ClubBranding.RplLogoOffset + rplLogo;
+		}
 		if (ClubBranding.NormalizeLogo(team.LogoId) >= 0) return team.LogoId;
-		return Math.Abs(team.Id % ClubBranding.LogoCount);
+		return Math.Abs(team.Id % ClubBranding.GenericLogoCount);
 	}
 
 	public CommandResult SetTeamLogo(int teamId, int logoId)
@@ -3352,7 +3361,7 @@ public class SportsWorld
 			Sport = league.Sport,
 			Level = league.Level,
 			VenueId = -1,
-			LogoId = _random.Next(ClubBranding.LogoCount),
+			LogoId = _random.Next(ClubBranding.GenericLogoCount),
 			Rating = rating,
 			IsUser = false
 		};
@@ -9379,10 +9388,6 @@ public class SportsWorld
 		if (team == null || team.Retired)
 		{
 			return CommandResult.Fail("Команда не найдена или расформирована.");
-		}
-		if (!team.IsUser)
-		{
-			return CommandResult.Fail("Настройки финансирования доступны только вашему клубу.");
 		}
 		if (tier < 0 || tier > 4 || frequency < 0 || frequency > 2)
 		{
