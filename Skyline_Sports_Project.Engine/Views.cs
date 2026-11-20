@@ -6196,7 +6196,7 @@ public static class Views
 		{
 			Match g3 = coming[i2];
 			LiveSnapshot live = Live(league.Sport, league.Level, g3, world.LastTime);
-			j.BeginObject().Prop("id", g3.Id).Prop("date", (live != null) ? "LIVE" : GameClock.TimeLabel(g3.Time))
+			j.BeginObject().Prop("id", g3.Id).Prop("date", (live != null) ? "В ЭФИРЕ" : GameClock.TimeLabel(g3.Time))
 				.Prop("live", live != null)
 				.Prop("text", (live != null) ? (world.TeamAbbrev(g3.AwayTeamId) + " " + live.AwayScore + ", " + world.TeamAbbrev(g3.HomeTeamId) + " " + live.HomeScore + "  ·  " + live.Status) : NextGameText(world, league, t.Id, g3).Substring(GameClock.TimeLabel(g3.Time).Length).Trim())
 				.Prop("rival", RivalryTag(world, league, g3))
