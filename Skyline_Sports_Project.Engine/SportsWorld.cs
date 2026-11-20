@@ -426,6 +426,8 @@ public class SportsWorld
 
 	private int _appliedLeagueSize = int.MinValue;
 
+	private int _appliedSoccerLeagueSize = int.MinValue;
+
 	public int LiveTick;
 
 	public const int LiveBuffer = 15;
@@ -1110,7 +1112,7 @@ public class SportsWorld
 				first = DayOf(p.Start(y));
 				last = DayOf(p.End(y));
 			}
-			AddEvent(list, first, "Начало регулярного сезона", SeasonLabel(league, cur) + " сезон: " + TargetGames(p) + " матчей на команду.", now, -1);
+			AddEvent(list, first, "Начало регулярного сезона", SeasonLabel(league, cur) + " сезон: " + TargetGames(league) + " матчей на команду.", now, -1);
 			if (pro && league.Sport == Sport.Soccer)
 			{
 				AddEvent(list, DayOf(new DateTime(y, 7, 13)), "Летнее трансферное окно", "Открыто до 2 сентября: клубы покупают и продают игроков за трансферную плату (Офис клуба → Трансферы).", now, -1);
@@ -2999,7 +3001,8 @@ public class SportsWorld
 	private int TargetSize(League league)
 	{
 		int users = CountUserTeams(league);
-		int target = Math.Max(Math.Max(4, Math.Min(20, Settings.LeagueSize)), users);
+		int configured = (league.Sport == Sport.Soccer) ? Settings.SoccerLeagueSize : Settings.LeagueSize;
+		int target = Math.Max(Math.Max((league.Sport == Sport.Soccer) ? 16 : 4, Math.Min(20, configured)), users);
 		if (target % 2 == 1)
 		{
 			target++;
@@ -10212,7 +10215,7 @@ public class SportsWorld
 		{
 			return;
 		}
-		int games = Math.Max(10, TargetGames(Profile(league)));
+		int games = Math.Max(10, TargetGames(league));
 		double d = 1.0 - 2.5 / (double)games;
 		t.Surprise = (int)Math.Round((double)t.Surprise * d + 1000.0 * (result - expected));
 		double threshold = CinderellaK * 480.0 / Math.Sqrt(1.0 - d * d);
@@ -12187,7 +12190,7 @@ public class SportsWorld
 			if (g.Stage == GameStage.Regular)
 			{
 				int teams = Math.Max(2, league.TeamIds.Count);
-				double meetings = Math.Max(1.0, (double)TargetGames(Profile(league)) / (double)(teams - 1));
+				double meetings = Math.Max(1.0, (double)TargetGames(league) / (double)(teams - 1));
 				gain *= Math.Min(3.0, 4.0 / meetings);
 			}
 			else
@@ -13211,6 +13214,15 @@ public class SportsWorld
 		return Math.Max(Math.Min(p.GamesPerTeam, 4), games);
 	}
 
+	public int TargetGames(League league)
+	{
+		if (league != null && league.Sport == Sport.Soccer)
+		{
+			return Math.Max(0, (TargetSize(league) - 1) * 2);
+		}
+		return TargetGames(Profile(league));
+	}
+
 	private static int MinimumPartialGames(int target)
 	{
 		return Math.Max(2, (int)Math.Ceiling((double)target * 0.2));
@@ -13221,7 +13233,7 @@ public class SportsWorld
 		SportProfile p = Profile(league);
 		int today = GameClock.MonthStartDay(now) - 1;
 		int year = GameClock.YearOfDay(today + 1);
-		int target = TargetGames(p);
+		int target = TargetGames(league);
 		int chosen = int.MinValue;
 		for (int y = year - 1; y <= year + 1; y++)
 		{
