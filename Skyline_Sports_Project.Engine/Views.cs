@@ -333,6 +333,7 @@ public static class Views
 		j.Prop("hour", GameClock.ClockLabel(GameClock.MinuteOfDay(g.Time)));
 		j.Prop("home", world.TeamName(g.HomeTeamId));
 		j.Prop("away", world.TeamName(g.AwayTeamId));
+		j.Prop("homeFirst", league.Sport == Sport.Soccer);
 		j.Prop("homeAbbr", world.TeamAbbrev(g.HomeTeamId));
 		j.Prop("awayAbbr", world.TeamAbbrev(g.AwayTeamId));
 		j.Prop("isUser", (home != null && home.IsUser) || (away?.IsUser ?? false));
