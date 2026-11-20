@@ -364,6 +364,14 @@ namespace SkylineSportsRussianLocalization
                 __0 = "РАСФОРМИРОВАНИЕ: команда «" + __0.Substring("FOLDED: The ".Length).Replace(" have folded after ", "» прекратила существование после сезона ").Replace("the season", "текущего сезона").TrimEnd('.') + ".";
             if (__0.StartsWith("NATIONAL TEAMS: the ", StringComparison.Ordinal))
                 __0 = "СБОРНЫЕ: турнир «" + __0.Substring("NATIONAL TEAMS: the ".Length).Replace(" starts ", "» начинается ").Replace(" in ", " в ").TrimEnd('.') + ".";
+            if (__0.StartsWith("FLIP: ", StringComparison.Ordinal))
+                __0 = "ПЕРЕХОД: " + __0.Substring("FLIP: ".Length).Replace(" flips from ", " переходит из команды ").Replace(" to ", " в команду ");
+            if (__0.StartsWith("COMMIT: ", StringComparison.Ordinal))
+                __0 = "ПОДПИСАНИЕ: " + __0.Substring("COMMIT: ".Length).Replace(" commits to ", " подписывает контракт с командой ");
+            if (__0.StartsWith("TRANSFER: The ", StringComparison.Ordinal))
+                __0 = "ТРАНСФЕР: команда «" + __0.Substring("TRANSFER: The ".Length).Replace(" sign ", "» подписывает игрока ").Replace(" from ", " из команды ").Replace(" for ", " за ");
+            if (__0.StartsWith(" Last season ", StringComparison.Ordinal))
+                __0 = " В прошлом сезоне " + __0.Substring(" Last season ".Length).Replace(" came down.", " выбыли в лигу ниже.").Replace(" came up.", " поднялись в лигу выше.");
             __0 = Regex.Replace(__0, @"\bGroup ([A-Z])\b", "Группа $1");
             // Exact-value translations only: avoid changing generated player or team names.
             __0 = Regex.Replace(__0, @"\bJan\b", "янв", RegexOptions.IgnoreCase);
