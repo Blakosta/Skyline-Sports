@@ -2355,6 +2355,27 @@ public class SportsWorld
 			_ => 3.0,
 		};
 		referencePrice *= 0.75 + (double)home.Rating / 200.0;
+		Venue venue = GetVenue(g.VenueId);
+		if (venue != null)
+		{
+			referencePrice *= venue.Type switch
+			{
+				VenueType.Stadium => 1.12,
+				VenueType.Ballpark => 1.10,
+				VenueType.IndoorArena => 1.06,
+				VenueType.IceRink => 1.0,
+				VenueType.Field => 0.88,
+				_ => 0.84,
+			};
+			referencePrice *= venue.Level switch
+			{
+				Level.Pro => 1.08,
+				Level.Minor => 1.0,
+				Level.College => 0.95,
+				Level.Junior => 0.88,
+				_ => 0.82,
+			};
+		}
 		double touristShare = Math.Max(0.0, Math.Min(1.0, (double)VisitorAttendancePercent / 100.0));
 		double effectivePrice = (double)home.TicketPriceResidents * (1.0 - touristShare) + (double)home.TicketPriceVisitors * touristShare;
 		double priceFactor = Math.Pow(referencePrice / (double)Math.Max(1, (int)Math.Round(effectivePrice)), 0.28);
