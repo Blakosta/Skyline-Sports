@@ -45,6 +45,10 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
+      - name: Restore NuGet packages
+        shell: pwsh
+        run: dotnet restore .\Skyline_Sports_Project.csproj
+
       - name: Build mod
         shell: pwsh
         run: |
