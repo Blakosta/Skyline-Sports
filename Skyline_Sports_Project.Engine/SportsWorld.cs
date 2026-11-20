@@ -5484,6 +5484,88 @@ public class SportsWorld
 		return letters;
 	}
 
+	public static string NationLabel(string nation)
+	{
+		if (string.IsNullOrEmpty(nation)) return nation ?? "";
+		switch (nation)
+		{
+			case "Russia": return "Россия";
+			case "USA": case "United States of America": return "США";
+			case "Canada": return "Канада";
+			case "Mexico": return "Мексика";
+			case "Sweden": return "Швеция";
+			case "Finland": return "Финляндия";
+			case "Czechia": case "Czech Republic": return "Чехия";
+			case "Slovakia": return "Словакия";
+			case "Switzerland": return "Швейцария";
+			case "Germany": return "Германия";
+			case "Latvia": return "Латвия";
+			case "Norway": return "Норвегия";
+			case "Denmark": return "Дания";
+			case "Austria": return "Австрия";
+			case "France": return "Франция";
+			case "Kazakhstan": return "Казахстан";
+			case "Slovenia": return "Словения";
+			case "Italy": return "Италия";
+			case "Hungary": return "Венгрия";
+			case "Poland": return "Польша";
+			case "England": return "Англия";
+			case "Scotland": return "Шотландия";
+			case "Wales": return "Уэльс";
+			case "Ireland": return "Ирландия";
+			case "Brazil": return "Бразилия";
+			case "Argentina": return "Аргентина";
+			case "Spain": return "Испания";
+			case "Portugal": return "Португалия";
+			case "Netherlands": return "Нидерланды";
+			case "Belgium": return "Бельгия";
+			case "Uruguay": return "Уругвай";
+			case "Colombia": return "Колумбия";
+			case "Ecuador": return "Эквадор";
+			case "Chile": return "Чили";
+			case "Peru": return "Перу";
+			case "Venezuela": return "Венесуэла";
+			case "Nigeria": return "Нигерия";
+			case "Ghana": return "Гана";
+			case "Senegal": return "Сенегал";
+			case "Morocco": return "Марокко";
+			case "Cameroon": return "Камерун";
+			case "Egypt": return "Египет";
+			case "South Africa": return "ЮАР";
+			case "Japan": return "Япония";
+			case "South Korea": return "Южная Корея";
+			case "China": return "Китай";
+			case "Chinese Taipei": return "Тайвань";
+			case "Australia": return "Австралия";
+			case "New Zealand": return "Новая Зеландия";
+			case "Philippines": return "Филиппины";
+			case "India": return "Индия";
+			case "Iran": return "Иран";
+			case "Saudi Arabia": return "Саудовская Аравия";
+			case "Israel": return "Израиль";
+			case "Turkey": return "Турция";
+			case "Greece": return "Греция";
+			case "Serbia": return "Сербия";
+			case "Croatia": return "Хорватия";
+			case "Montenegro": return "Черногория";
+			case "Lithuania": return "Литва";
+			case "Estonia": return "Эстония";
+			case "Ukraine": return "Украина";
+			case "Belarus": return "Беларусь";
+			case "Romania": return "Румыния";
+			case "Bulgaria": return "Болгария";
+			case "Iceland": return "Исландия";
+			case "Puerto Rico": return "Пуэрто-Рико";
+			case "Dominican Republic": return "Доминиканская Республика";
+			case "Cuba": return "Куба";
+			case "Panama": return "Панама";
+			case "Nicaragua": return "Никарагуа";
+			case "Jamaica": return "Ямайка";
+			case "American Samoa": return "Американское Самоа";
+			default: return nation;
+		}
+	}
+
 	public string NationAbbrev(string nation)
 	{
 		if (CountryAbbrev.Length > 0 && string.Equals(nation, HomeCountry, StringComparison.OrdinalIgnoreCase))
