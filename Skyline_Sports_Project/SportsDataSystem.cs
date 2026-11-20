@@ -293,8 +293,12 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 	{
 		if (TryGetCityMoney(out var city, out var money))
 		{
-			Sports.CityBalance = money.money;
-			Sports.CityUnlimited = money.m_Unlimited;
+			if (Sports.CityBalance != money.money || Sports.CityUnlimited != money.m_Unlimited)
+			{
+				Sports.CityBalance = money.money;
+				Sports.CityUnlimited = money.m_Unlimited;
+				Sports.Revision++;
+			}
 		}
 	}
 
