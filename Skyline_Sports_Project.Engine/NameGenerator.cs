@@ -101,7 +101,7 @@ public class NameGenerator
 		string[] highSchoolSuffixes;
 		if (baseName.Length > 0)
 		{
-			string candidate = baseName + " High";
+			string candidate = baseName + " школа";
 			if (!Contains(takenNames, candidate))
 			{
 				return candidate;
@@ -109,7 +109,7 @@ public class NameGenerator
 			highSchoolSuffixes = HighSchoolSuffixes;
 			foreach (string suffix in highSchoolSuffixes)
 			{
-				candidate = baseName + " " + suffix + " High";
+				candidate = baseName + " " + suffix + " школа";
 				if (!Contains(takenNames, candidate))
 				{
 					return candidate;
@@ -120,7 +120,7 @@ public class NameGenerator
 		highSchoolSuffixes = HighSchoolNames;
 		for (int i = 0; i < highSchoolSuffixes.Length; i++)
 		{
-			string candidate2 = highSchoolSuffixes[i] + " High";
+			string candidate2 = highSchoolSuffixes[i] + " школа";
 			if (!Contains(takenNames, candidate2))
 			{
 				options.Add(candidate2);
