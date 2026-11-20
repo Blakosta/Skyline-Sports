@@ -1907,7 +1907,7 @@ public static class Views
 			{
 				NationTeam h = sel.Teams[g2.Home];
 				NationTeam a = sel.Teams[g2.Away];
-				string score = ((!g2.Played) ? "" : (g2.HomeScore + "-" + g2.AwayScore + ((g2.Suffix.Length > 0) ? (" " + g2.Suffix) : "") + ((g2.TieWinner >= 0) ? (" (" + sel.Teams[g2.TieWinner].Nation + " выигрывает серию буллитов)") : "")));
+				string score = ((!g2.Played) ? "" : (g2.HomeScore + "-" + g2.AwayScore + ((g2.Suffix.Length > 0) ? (" " + g2.Suffix) : "") + ((g2.TieWinner >= 0) ? (" (" + SportsWorld.NationLabel(sel.Teams[g2.TieWinner].Nation) + " выигрывает серию буллитов)") : "")));
 				j.BeginObject().Prop("stage", g2.Stage).Prop("date", GameClock.ShortDayLabel(g2.Day) + ", " + GameClock.ClockLabel(g2.Minute))
 					.Prop("home", SportsWorld.NationLabel(h.Nation))
 					.Prop("away", SportsWorld.NationLabel(a.Nation))
