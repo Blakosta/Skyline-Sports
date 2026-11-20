@@ -56,6 +56,12 @@ public class Team
 
 	public int TransferBudget = -1;
 
+	public int ClubBalance;
+
+	public int TicketPriceResidents = 20;
+
+	public int TicketPriceVisitors = 35;
+
 	public int FarmPref;
 
 	public int FoldedYear;
