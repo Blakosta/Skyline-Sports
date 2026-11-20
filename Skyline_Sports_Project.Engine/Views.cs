@@ -4229,7 +4229,7 @@ public static class Views
 				young.Sort((Player a, Player b) => b.Potential.CompareTo(a.Potential));
 				if (young.Count == 0)
 				{
-					draft.Lines.Add("Сейчас на рынке нет молодых перспективных игроков. Новое поколение появится в " + Economy.Get(t.Sport).DraftDate(world.CurrentYear()).ToString("MMMM") + ".");
+					draft.Lines.Add("Сейчас на рынке нет молодых перспективных игроков. Новое поколение появится в " + Economy.Get(t.Sport).DraftDate(world.CurrentYear()).ToString("MMMM", CultureInfo.GetCultureInfo("ru-RU")) + ".");
 				}
 				else
 				{
