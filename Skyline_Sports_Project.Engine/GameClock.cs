@@ -20,6 +20,12 @@ public static class GameClock
 		"ноя", "дек"
 	};
 
+	private static readonly string[] MonthsGenitive = new string[12]
+	{
+		"января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября",
+		"ноября", "декабря"
+	};
+
 	private static readonly string[] Weekdays = new string[7] { "воскресенье", "понедельник", "вторник", "среда", "четверг", "пятница", "суббота" };
 
 	private static readonly string[] WeekdaysShort = new string[7] { "вс", "пн", "вт", "ср", "чт", "пт", "сб" };
@@ -118,13 +124,13 @@ public static class GameClock
 	public static string DayLabel(int dayNumber)
 	{
 		DateTime d = DateOf(dayNumber);
-		return Weekdays[(int)d.DayOfWeek] + ", " + Months[d.Month - 1] + " " + d.Day + ", " + d.Year;
+		return Weekdays[(int)d.DayOfWeek] + ", " + d.Day + " " + MonthsGenitive[d.Month - 1] + " " + d.Year;
 	}
 
 	public static string ShortDayLabel(int dayNumber)
 	{
 		DateTime d = DateOf(dayNumber);
-		return WeekdaysShort[(int)d.DayOfWeek] + ", " + MonthsShort[d.Month - 1] + " " + d.Day;
+		return WeekdaysShort[(int)d.DayOfWeek] + ", " + d.Day + " " + MonthsShort[d.Month - 1];
 	}
 
 	public static string ClockLabel(int minuteOfDay)
