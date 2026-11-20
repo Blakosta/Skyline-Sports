@@ -1798,7 +1798,7 @@ public static class Views
 			top((Player p) => true, (int[] s) => (G(s, 0) > 0) ? ((double)G(s, 1) / (double)G(s, 0)) : 0.0, (int[] s) => ((double)G(s, 1) / (double)Math.Max(1, G(s, 0))).ToString("0.0", CultureInfo.InvariantCulture) + " ОЧК/М, " + ((double)G(s, 2) / (double)Math.Max(1, G(s, 0))).ToString("0.0", CultureInfo.InvariantCulture) + " ПДБ/М", 3);
 			break;
 		case Sport.Football:
-			top((Player p) => p.Position == Position.Quarterback, (int[] s) => G(s, 3), (int[] s) => G(s, 3) + " ярдов пасом, " + G(s, 4) + " TD", 1);
+			top((Player p) => p.Position == Position.Quarterback, (int[] s) => G(s, 3), (int[] s) => G(s, 3) + " ярдов пасом, " + G(s, 4) + " ТД", 1);
 			top((Player p) => true, (int[] s) => G(s, 7), (int[] s) => G(s, 7) + " ярдов на выносе, " + G(s, 8) + " ТД", 1);
 			top((Player p) => true, (int[] s) => G(s, 10), (int[] s) => G(s, 10) + " ярдов на приёме, " + G(s, 11) + " ТД", 1);
 			break;
@@ -6244,7 +6244,7 @@ public static class Views
 				{
 					j.BeginObject().Prop("id", o.Id).Prop("playerId", p.Id)
 						.Prop("player", Rosters.PositionLabel(p.Position) + " " + p.Name + ", " + Rosters.Ovr(p) + " ОБЩ, возраст " + (year - p.BirthYear))
-						.Prop("buyer", (o.BuyerTeamId < 0) ? o.BuyerName : ("the " + o.BuyerName))
+						.Prop("buyer", (o.BuyerTeamId < 0) ? o.BuyerName : ("клуб «" + o.BuyerName + "»"))
 						.Prop("abroad", o.BuyerTeamId < 0)
 						.Prop("fee", Economy.Money(o.Fee))
 						.Prop("value", Economy.Money(world.TransferValue(p)))
