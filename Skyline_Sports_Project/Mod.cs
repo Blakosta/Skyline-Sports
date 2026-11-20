@@ -39,7 +39,7 @@ public class Mod : IMod
 	{
 		log.Info((object)"OnLoad");
 		ExecutableAsset asset = default;
-		if (GameManager.instance.modManager.TryGetExecutableAsset((IMod)(object)this, ref asset))
+		if (GameManager.instance.modManager.TryGetExecutableAsset((IMod)(object)this, out asset))
 		{
 			log.Info((object)("Current mod asset at " + ((AssetData)asset).path));
 		}
