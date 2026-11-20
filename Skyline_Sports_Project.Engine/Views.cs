@@ -1303,7 +1303,7 @@ public static class Views
 			}
 		}
 		j.Name(name).BeginObject().Prop("id", t?.Id ?? (-1))
-			.Prop("name", (t == null) ? "Не определено" : world.TeamFullName(t.Id))
+			.Prop("name", (t == null) ? "Не определено" : world.TeamShortName(t.Id))
 			.Prop("abbr", (t == null) ? "" : world.TeamAbbrev(t.Id))
 			.Prop("record", record)
 			.Prop("isUser", t?.IsUser ?? false)
