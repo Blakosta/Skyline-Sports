@@ -670,24 +670,7 @@ public static class Views
 
 	public static string Ordinal(int n)
 	{
-		int mod100 = n % 100;
-		string suffix = "th";
-		if (mod100 < 11 || mod100 > 13)
-		{
-			switch (n % 10)
-			{
-			case 1:
-				suffix = "st";
-				break;
-			case 2:
-				suffix = "nd";
-				break;
-			case 3:
-				suffix = "rd";
-				break;
-			}
-		}
-		return n + suffix;
+		return n + "-е";
 	}
 
 	private static string SportsList(VenueType type)
@@ -1163,7 +1146,7 @@ public static class Views
 			string value;
 			if (period <= 4)
 			{
-				value = "Q" + period;
+				value = "Ч" + period;
 			}
 			else
 			{
