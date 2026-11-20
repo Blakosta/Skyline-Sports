@@ -583,6 +583,7 @@ namespace SkylineSportsRussianLocalization
                     (draftPick.Groups[3].Success ? " (из команды " + draftPick.Groups[3].Value + ")" : "");
             }
 
+            __0 = Regex.Replace(__0, @"\bTD\b", "ТД");
             __0 = Regex.Replace(__0, @"\bGroup ([A-Z])\b", "Группа $1");
             __0 = Regex.Replace(__0, @"([A-Z][a-z]{2} \d{1,2}) to ([A-Z][a-z]{2} \d{1,2}, \d{4})", "$1 — $2");
 
