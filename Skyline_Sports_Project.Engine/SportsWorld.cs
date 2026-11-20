@@ -565,7 +565,7 @@ public class SportsWorld
 
 	public static bool IsSelection(string award)
 	{
-		if (!(award == "All-Star") && !(award == "Матч звёзд") && !award.Contains("Сборная всех звёзд"))
+		if (!(award == "All-Star") && !(award == "Матч звёзд") && !(award == "Матч всех звёзд") && !award.Contains("Сборная всех звёзд"))
 		{
 			return award.Contains("Сборная лиги");
 		}
@@ -7625,7 +7625,7 @@ public class SportsWorld
 				}
 				else
 				{
-					move = ((i4 > slot) ? ("поднялась на " + (i4 - slot) + ((i4 - slot == 1) ? " spot" : " позиций")) : ("опустилась на " + (slot - i4) + ((slot - i4 == 1) ? " spot" : " позиций")));
+					move = ((i4 > slot) ? ("поднялась на " + (i4 - slot) + ((i4 - slot == 1) ? " позицию" : " позиций")) : ("опустилась на " + (slot - i4) + ((slot - i4 == 1) ? " позицию" : " позиций")));
 				}
 				d.Lottery.Add("№ " + (slot + 1) + ": " + TeamName(non[i4]) + " (" + Views.Ordinal(i4 + 1) + " худший результат, " + (weights[i4] * 100.0 / total).ToString("0.0", CultureInfo.InvariantCulture) + "% вероятности получить первый выбор), " + move + ".");
 			}
