@@ -545,6 +545,15 @@ namespace SkylineSportsRussianLocalization
                         "Составы сборных формируются по месту происхождения игроков; свободные места занимают спортсмены зарубежных клубов.");
             }
 
+            Match draftPick = Regex.Match(__0, @"^(.+?) (1st|2nd|3rd|\d+th) round pick(?: \(от (.+?) \))?$");
+            if (draftPick.Success)
+            {
+                string ordinal = draftPick.Groups[2].Value;
+                string round = ordinal == "1st" ? "первого" : ordinal == "2nd" ? "второго" : ordinal == "3rd" ? "третьего" : ordinal.Substring(0, ordinal.Length - 2) + "-го";
+                __0 = draftPick.Groups[1].Value + ", выбор " + round + " раунда" +
+                    (draftPick.Groups[3].Success ? " (из команды " + draftPick.Groups[3].Value + ")" : "");
+            }
+
             __0 = Regex.Replace(__0, @"\bGroup ([A-Z])\b", "Группа $1");
             __0 = Regex.Replace(__0, @"([A-Z][a-z]{2} \d{1,2}) to ([A-Z][a-z]{2} \d{1,2}, \d{4})", "$1 — $2");
 
