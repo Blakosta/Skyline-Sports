@@ -58,9 +58,9 @@ public class Team
 
 	public int ClubBalance;
 
-	public int TicketPriceResidents = 20;
+	public int TicketPriceResidents;
 
-	public int TicketPriceVisitors = 35;
+	public int TicketPriceVisitors;
 
 	public int FarmPref;
 
