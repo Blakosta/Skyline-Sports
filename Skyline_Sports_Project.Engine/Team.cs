@@ -58,6 +58,12 @@ public class Team
 
 	public int ClubBalance = -1;
 
+	public int SponsorTier;
+
+	public int SponsorFrequency;
+
+	public int SponsorLastPeriod = int.MinValue;
+
 	public int TicketPriceResidents;
 
 	public int TicketPriceVisitors;
