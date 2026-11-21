@@ -13615,6 +13615,7 @@ public class SportsWorld
 					int day = GameClock.DayOf(game.Time);
 					if (day < monthStart || day >= nextMonth || game.VenueId == team.VenueId) continue;
 					int minute = GameClock.MinuteOfDay(game.Time);
+					int mappedTime = GameClock.MonthIndex(game.Time) * GameClock.MinutesPerDay + minute;
 					int end = GameClock.ToTime(monthStart, minute) + PlannedMinutes(league.Sport, league.Level);
 					if (now >= end) continue;
 					bool conflict = false;
@@ -13624,17 +13625,19 @@ public class SportsWorld
 						foreach (Match other in otherLeague.Current.Games)
 						{
 							if (other == game || other.VenueId != team.VenueId) continue;
-							int otherDay = GameClock.DayOf(other.Time);
-							if (otherDay < monthStart || otherDay >= nextMonth) continue;
+							int otherMonth = GameClock.MonthIndex(other.Time);
+							int gameMonth = GameClock.MonthIndex(game.Time);
+							if (otherMonth < gameMonth - 1 || otherMonth > gameMonth + 1) continue;
+							int otherMappedTime = otherMonth * GameClock.MinutesPerDay + GameClock.MinuteOfDay(other.Time);
 							int gap = PlannedMinutes(otherLeague.Sport, otherLeague.Level) + 60;
-							if (Math.Abs(GameClock.MinuteOfDay(other.Time) - minute) < gap) { conflict = true; break; }
+							if (Math.Abs(otherMappedTime - mappedTime) < gap) { conflict = true; break; }
 						}
 						if (conflict) break;
 					}
 					if (conflict) continue;
 					if (!booked.TryGetValue(team.VenueId, out var times)) booked[team.VenueId] = times = new List<int>();
-					if (times.Exists(x => Math.Abs(x - minute) < PlannedMinutes(league.Sport, league.Level) + 60)) continue;
-					times.Add(minute);
+					if (times.Exists(x => Math.Abs(x - mappedTime) < PlannedMinutes(league.Sport, league.Level) + 60)) continue;
+					times.Add(mappedTime);
 					result.Add(new Match
 					{
 						Id = -Math.Max(1, game.Id), Time = game.Time,
