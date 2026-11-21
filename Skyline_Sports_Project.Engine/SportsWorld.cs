@@ -2583,6 +2583,20 @@ public class SportsWorld
 		Organization o = ((t == null) ? null : GetOrg(t.OrgId));
 		if (o != null)
 		{
+			if (t != null && t.Sport == Sport.Soccer)
+			{
+				string club = TeamShortName(teamId);
+				StringBuilder letters = new StringBuilder(3);
+				foreach (char ch in club)
+				{
+					if (char.IsLetter(ch))
+					{
+						letters.Append(char.ToUpperInvariant(ch));
+						if (letters.Length == 3) break;
+					}
+				}
+				if (letters.Length > 0) return letters.ToString();
+			}
 			return NameGenerator.Abbreviation(o.Name);
 		}
 		return "Не определено";
@@ -12899,10 +12913,10 @@ public class SportsWorld
 		{
 			return false;
 		}
-		return IsDue(g, GameClock.MonthStartDay(now), GameClock.NextMonthStartDay(now), GameClock.MinuteOfDay(now));
+		return IsDue(g, GameClock.MonthStartDay(now), GameClock.NextMonthStartDay(now), GameClock.MinuteOfDay(now), Sport.Basketball);
 	}
 
-	private static bool IsDue(Match g, int monthStart, int nextMonth, int clock)
+	private static bool IsDue(Match g, int monthStart, int nextMonth, int clock, Sport sport)
 	{
 		if (g.Played)
 		{
@@ -12913,7 +12927,7 @@ public class SportsWorld
 		{
 			return true;
 		}
-		if (g.Featured && day < nextMonth)
+		if ((g.Featured || sport == Sport.Soccer) && day < nextMonth)
 		{
 			return GameClock.MinuteOfDay(g.Time) <= clock;
 		}
@@ -12977,7 +12991,7 @@ public class SportsWorld
 		List<Match> due = null;
 		foreach (Match g in s.Games)
 		{
-			if (IsDue(g, monthStart, nextMonth, clock))
+			if (IsDue(g, monthStart, nextMonth, clock, league.Sport))
 			{
 				if (due == null)
 				{
@@ -13582,6 +13596,67 @@ public class SportsWorld
 		return list;
 	}
 
+	public List<Match> FanZoneGames(int now)
+	{
+		List<Match> result = new List<Match>();
+		int monthStart = GameClock.MonthStartDay(now);
+		int nextMonth = GameClock.NextMonthStartDay(now);
+		Dictionary<int, List<int>> booked = new Dictionary<int, List<int>>();
+		foreach (League league in Leagues)
+		{
+			if (league.Sport != Sport.Soccer || league.Current == null) continue;
+			foreach (int teamId in league.TeamIds)
+			{
+				Team team = GetTeam(teamId);
+				if (team == null || !team.IsUser || team.VenueId < 0) continue;
+				foreach (Match game in league.Current.Games)
+				{
+					if (game.AwayTeamId != team.Id) continue;
+					int day = GameClock.DayOf(game.Time);
+					if (day < monthStart || day >= nextMonth || game.VenueId == team.VenueId) continue;
+					int minute = GameClock.MinuteOfDay(game.Time);
+					int end = GameClock.ToTime(monthStart, minute) + PlannedMinutes(league.Sport, league.Level);
+					if (now >= end) continue;
+					bool conflict = false;
+					foreach (League otherLeague in Leagues)
+					{
+						if (otherLeague.Current == null) continue;
+						foreach (Match other in otherLeague.Current.Games)
+						{
+							if (other == game || other.VenueId != team.VenueId) continue;
+							int otherDay = GameClock.DayOf(other.Time);
+							if (otherDay < monthStart || otherDay >= nextMonth) continue;
+							int gap = PlannedMinutes(otherLeague.Sport, otherLeague.Level) + 60;
+							if (Math.Abs(GameClock.MinuteOfDay(other.Time) - minute) < gap) { conflict = true; break; }
+						}
+						if (conflict) break;
+					}
+					if (conflict) continue;
+					if (!booked.TryGetValue(team.VenueId, out var times)) booked[team.VenueId] = times = new List<int>();
+					if (times.Exists(x => Math.Abs(x - minute) < PlannedMinutes(league.Sport, league.Level) + 60)) continue;
+					times.Add(minute);
+					result.Add(new Match
+					{
+						Id = -Math.Max(1, game.Id), Time = game.Time,
+						HomeTeamId = game.HomeTeamId, AwayTeamId = game.AwayTeamId,
+						VenueId = team.VenueId, Stage = game.Stage, Featured = true, Spotlight = true,
+						FanZone = true, FanZoneTeamId = team.Id
+					});
+				}
+			}
+		}
+		result.Sort(ByTime);
+		return result;
+	}
+
+	public int FanZoneTarget(int teamId)
+	{
+		Team team = GetTeam(teamId);
+		if (team == null) return 1;
+		int capacity = VenueCapacity(team.Sport, team.Level, team.VenueId, team.Id);
+		return Math.Max(1, (int)Math.Round((double)capacity * 0.4));
+	}
+
 	public Match SpotlightGame(int now)
 	{
 		int monthStart = GameClock.MonthStartDay(now);
@@ -13846,6 +13921,14 @@ public class SportsWorld
 		};
 		season.PlayoffEndDay = season.RegularEndDay;
 		season.Games = ScheduleBuilder.BuildRegularSeason(p, year, league.TeamIds, today, target, _random, () => NextId++);
+		if (league.Sport == Sport.Soccer)
+		{
+			foreach (Match game in season.Games)
+			{
+				int day = GameClock.DayOf(game.Time);
+				game.Time = GameClock.ToTime(day, GameClock.SoccerMinuteOfMonth(day));
+			}
+		}
 		return season;
 	}
 
