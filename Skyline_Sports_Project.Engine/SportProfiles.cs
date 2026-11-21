@@ -507,17 +507,14 @@ public static class SportProfiles
 		{
 			Sport = Sport.Soccer,
 			Level = Level.Pro,
-			Summary = "34 матча по календарю «лето–весна»: с середины июля до середины декабря, зимний перерыв, затем с февраля до конца апреля, а также несколько туров среди недели. В мае проводится плей-офф на вылет, финал кубка — в последнюю субботу мая.",
-			GamesPerTeam = 34,
+			Summary = "30 туров: июль–декабрь, январский отпуск, возобновление в феврале и завершение в мае. Последний, 30-й тур проводится одновременно для всех клубов.",
+			GamesPerTeam = 30,
 			Weekly = true,
-			Start = (int y) => GameClock.Nth(y, 7, DayOfWeek.Saturday, 3),
-			End = (int y) => GameClock.Last(y + 1, 4, DayOfWeek.Sunday),
-			Breaks = (int y) => new DateRange[4]
+			Start = (int y) => GameClock.D(y, 7, 1),
+			End = (int y) => GameClock.D(y + 1, 5, 31),
+			Breaks = (int y) => new DateRange[1]
 			{
-				new DateRange(GameClock.Nth(y, 12, DayOfWeek.Monday, 2), GameClock.Nth(y + 1, 2, DayOfWeek.Friday, 2)),
-				new DateRange(GameClock.Nth(y, 10, DayOfWeek.Saturday, 2).AddDays(-3.0), GameClock.Nth(y, 10, DayOfWeek.Saturday, 2).AddDays(3.0)),
-				new DateRange(GameClock.Nth(y, 11, DayOfWeek.Saturday, 2).AddDays(-3.0), GameClock.Nth(y, 11, DayOfWeek.Saturday, 2).AddDays(3.0)),
-				new DateRange(GameClock.Nth(y + 1, 3, DayOfWeek.Saturday, 4).AddDays(-3.0), GameClock.Nth(y + 1, 3, DayOfWeek.Saturday, 4).AddDays(3.0))
+				new DateRange(GameClock.D(y + 1, 1, 1), GameClock.D(y + 1, 1, 31))
 			},
 			Week = new SlotTemplate[2]
 			{
@@ -546,8 +543,8 @@ public static class SportProfiles
 					}
 				}
 			},
-			PlayoffShare = 0.6,
-			MaxPlayoffTeams = 16,
+			PlayoffShare = 0.0,
+			MaxPlayoffTeams = 0,
 			RoundsFromFinal = new PlayoffRoundFormat[4]
 			{
 				new PlayoffRoundFormat
@@ -588,17 +585,14 @@ public static class SportProfiles
 		{
 			Sport = Sport.Soccer,
 			Level = Level.Minor,
-			Summary = "34 матча по тому же календарю, что и в высшем дивизионе: с середины июля до середины декабря, зимний перерыв, затем с февраля до конца апреля. Лидер таблицы повышается напрямую, последнее место на повышение разыгрывается в стыковом плей-офф в мае.",
-			GamesPerTeam = 34,
+			Summary = "30 туров: июль–декабрь, январский отпуск, возобновление в феврале и завершение в мае. Первые три клуба выходят в РПЛ напрямую.",
+			GamesPerTeam = 30,
 			Weekly = true,
-			Start = (int y) => GameClock.Nth(y, 7, DayOfWeek.Saturday, 3),
-			End = (int y) => GameClock.Last(y + 1, 4, DayOfWeek.Sunday),
-			Breaks = (int y) => new DateRange[4]
+			Start = (int y) => GameClock.D(y, 7, 1),
+			End = (int y) => GameClock.D(y + 1, 5, 31),
+			Breaks = (int y) => new DateRange[1]
 			{
-				new DateRange(GameClock.Nth(y, 12, DayOfWeek.Monday, 2), GameClock.Nth(y + 1, 2, DayOfWeek.Friday, 2)),
-				new DateRange(GameClock.Nth(y, 10, DayOfWeek.Saturday, 2).AddDays(-3.0), GameClock.Nth(y, 10, DayOfWeek.Saturday, 2).AddDays(3.0)),
-				new DateRange(GameClock.Nth(y, 11, DayOfWeek.Saturday, 2).AddDays(-3.0), GameClock.Nth(y, 11, DayOfWeek.Saturday, 2).AddDays(3.0)),
-				new DateRange(GameClock.Nth(y + 1, 3, DayOfWeek.Saturday, 4).AddDays(-3.0), GameClock.Nth(y + 1, 3, DayOfWeek.Saturday, 4).AddDays(3.0))
+				new DateRange(GameClock.D(y + 1, 1, 1), GameClock.D(y + 1, 1, 31))
 			},
 			Week = new SlotTemplate[2]
 			{
@@ -625,8 +619,8 @@ public static class SportProfiles
 					}
 				}
 			},
-			PlayoffShare = 0.4,
-			MaxPlayoffTeams = 8,
+			PlayoffShare = 0.0,
+			MaxPlayoffTeams = 0,
 			RoundsFromFinal = new PlayoffRoundFormat[3]
 			{
 				new PlayoffRoundFormat
