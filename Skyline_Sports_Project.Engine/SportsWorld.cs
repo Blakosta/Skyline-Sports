@@ -3305,23 +3305,23 @@ public class SportsWorld
 	{
 		Team team = GetTeam(teamId);
 		if (team == null) return ClubBranding.NoLogoId;
+		// Explicit player choice always wins, including the deliberate "no logo" option.
 		if (team.LogoId == ClubBranding.NoLogoId) return ClubBranding.NoLogoId;
 		if (team.LogoId >= ClubBranding.RplLogoOffset && team.LogoId < ClubBranding.RplLogoOffset + ClubBranding.RplLogoCount) return team.LogoId;
 		if (team.LogoId >= ClubBranding.FnlLogoOffset && team.LogoId < ClubBranding.FnlLogoOffset + ClubBranding.FnlLogoCount) return team.LogoId;
 		if (team.LogoId >= ClubBranding.OtherLogoOffset && team.LogoId < ClubBranding.OtherLogoOffset + ClubBranding.OtherLogoCount) return team.LogoId;
+		if (team.Sport != Sport.Soccer) return ClubBranding.NoLogoId;
+
 		Organization org = GetOrg(team.OrgId);
-		if (team.Sport == Sport.Soccer && team.Level == Level.Minor)
-		{
-			int fnlLogo = ClubBranding.FindFnlLogoId(org?.Name, org?.Mascot);
-			if (fnlLogo >= 0) return ClubBranding.FnlLogoOffset + fnlLogo;
-		}
-		if (team.Sport == Sport.Soccer && team.Level == Level.Pro)
-		{
-			int rplLogo = ClubBranding.FindRplLogoId(org?.Name, org?.Mascot);
-			if (rplLogo >= 0) return ClubBranding.RplLogoOffset + rplLogo;
-		}
-		// Legacy generated/standard IDs remain readable in saves but are no longer rendered.
-		return ClubBranding.NoLogoId;
+		// First prefer a club badge that matches the generated club's name/mascot.
+		int rplLogo = ClubBranding.FindRplLogoId(org?.Name, org?.Mascot);
+		if (rplLogo >= 0) return ClubBranding.RplLogoOffset + rplLogo;
+		int fnlLogo = ClubBranding.FindFnlLogoId(org?.Name, org?.Mascot);
+		if (fnlLogo >= 0) return ClubBranding.FnlLogoOffset + fnlLogo;
+
+		// No name match: deterministically cycle through all 41 RPL/FNL/Other badges.
+		// Team IDs are stable, so logos do not change between UI refreshes or saves.
+		return ClubBranding.FallbackFootballLogoId(team.Id);
 	}
 
 	public CommandResult SetTeamLogo(int teamId, int logoId)
