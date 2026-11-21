@@ -172,10 +172,6 @@ public static class Views
 			j.EndArray();
 			j.Name("homeGames").BeginArray();
 			List<Match> venueGames = UpcomingAtVenue(world, v.Id, 5, now);
-			foreach (Match fanGame in world.FanZoneGames(now))
-			{
-				if (fanGame.VenueId == v.Id) venueGames.Add(fanGame);
-			}
 			venueGames.Sort((Match a, Match b) => a.Time.CompareTo(b.Time));
 			foreach (Match g in venueGames)
 			{
@@ -191,11 +187,11 @@ public static class Views
 				}
 				else
 				{
-					value = (g.FanZone ? "ФАН-ЗОНА · " : "") + (tonight ? ("Сегодня в " + GameClock.ClockLabel(GameClock.MinuteOfDay(g.Time))) : GameClock.TimeLabel(g.Time));
+					value = tonight ? ("Сегодня в " + GameClock.ClockLabel(GameClock.MinuteOfDay(g.Time))) : GameClock.TimeLabel(g.Time);
 				}
 				jsonBuilder.Prop("time", value).Prop("live", live != null).Prop("featured", tonight)
 					.Prop("sport", (home == null) ? "" : SportRules.SportLabel(home.Sport))
-					.Prop("label", (g.FanZone ? "Трансляция: " : "") + world.TeamShortName(g.HomeTeamId) + " — " + world.TeamShortName(g.AwayTeamId))
+					.Prop("label", world.TeamShortName(g.HomeTeamId) + " — " + world.TeamShortName(g.AwayTeamId))
 					.Prop("stage", (league == null) ? "" : world.StageLabel(league, g))
 					.EndObject();
 			}
