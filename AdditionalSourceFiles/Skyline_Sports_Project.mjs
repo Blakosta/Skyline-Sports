@@ -71,10 +71,10 @@ e.isUser&&(0,i.jsxs)("div",{children:[(0,i.jsx)(In,{title:"ПЕРЕВОДЫ МЕ
 },SkylineClubEditor=({view:e})=>{
 const[s,a]=(0,n.useState)(!1),[l,c]=(0,n.useState)(e.orgCity||""),[d,r]=(0,n.useState)(e.clubName||""),[u,h]=(0,n.useState)(String(e.venueId??-1)),[v,g]=(0,n.useState)(e.stadiumName||""),[p,b]=(0,n.useState)(String(e.stadiumCapacity||500)),[logoId,setLogoId]=(0,n.useState)(e.logoId??0),[logoPickerOpen,setLogoPickerOpen]=(0,n.useState)(!1);
 n.useEffect(()=>{c(e.orgCity||""),r(e.clubName||""),h(String(e.venueId??-1)),g(e.stadiumName||""),b(String(e.stadiumCapacity||500)),setLogoId(e.logoId??0),setLogoPickerOpen(!1)},[e.id,e.orgCity,e.clubName,e.venueId,e.stadiumName,e.stadiumCapacity,e.logoId]);
-if(!e.canEditClub)return null;
-const save=()=>{A("editClub",e.id,l,d,parseInt(u,10),Math.max(500,Math.min(150000,parseInt(p,10)||500)),v);A("clubLogo",e.id,logoId);a(!1);setLogoPickerOpen(!1)};
 const chooseLogo=(0,n.useCallback)(id=>{setLogoId(id);A("clubLogo",e.id,id);setLogoPickerOpen(!1)},[e.id]);
 const rplNames=["Зенит","Ахмат","Акрон","Балтика","ЦСКА","Динамо Махачкала","Динамо Москва","Факел","Краснодар","Крылья Советов","Локомотив","Оренбург","Родина","Ростов","Рубин","Спартак"],fnlNames=["Арсенал Тула","Челябинск","КАМАЗ","Ленинградец","Нефтехимик","Пари НН","Ротор","Шинник","СКА-Хабаровск","Сочи","Спартак Кострома","Текстильщик","Торпедо Москва","Уфа","Урал","Велес","Волга Ульяновск","Енисей"],otherNames=["Амкар","Чайка","Черноморец Новороссийск","Чертаново","Тюмень","Химки","Спартак Нальчик"],rplItems=(0,n.useMemo)(()=>rplNames.map((name,q)=>({id:24+q,name})),[]),fnlItems=(0,n.useMemo)(()=>fnlNames.map((name,q)=>({id:65+q,name})),[]),otherItems=(0,n.useMemo)(()=>otherNames.map((name,q)=>({id:83+q,name})),[]);
+if(!e.canEditClub)return null;
+const save=()=>{A("editClub",e.id,l,d,parseInt(u,10),Math.max(500,Math.min(150000,parseInt(p,10)||500)),v);A("clubLogo",e.id,logoId);a(!1);setLogoPickerOpen(!1)};
 return(0,i.jsxs)("div",{className:"clubEditorPanel",children:[!s?(0,i.jsx)(X,{children:(0,i.jsx)(Z,{onClick:()=>a(!0),children:"✏️ Редактировать клуб"})}):(0,i.jsxs)("div",{children:[
 (0,i.jsx)(In,{title:"РЕДАКТОР КЛУБА"}),
 (0,i.jsx)(Ve,{label:"Город / организация",value:l,onChange:c,onEnter:save}),
