@@ -101,7 +101,7 @@ return(0,i.jsxs)("div",{className:"clubEditorPanel",children:[!s?(0,i.jsx)(X,{ch
 (0,i.jsxs)("div",{className:"clubBrandingSection",children:[
 (0,i.jsx)("div",{className:ks,children:"Эмблема клуба"}),
 (0,i.jsxs)("button",{type:"button",className:"clubLogoCurrent",onClick:()=>setLogoPickerOpen(!0),children:[(0,i.jsx)(ClubLogo,{id:logoId,size:46}),(0,i.jsx)("span",{children:"Нажмите, чтобы выбрать эмблему"})]}),
-logoPickerOpen&&(0,i.jsx)("div",{className:"clubLogoModalOverlay",onClick:()=>setLogoPickerOpen(!1),children:(0,i.jsxs)("div",{className:"clubLogoModal",onClick:e=>e.stopPropagation(),children:[
+logoPickerOpen&&(0,i.jsx)("div",{className:"clubLogoPickerInline",children:(0,i.jsxs)("div",{className:"clubLogoModal",children:[
 (0,i.jsxs)("div",{className:"clubLogoModalHeader",children:[(0,i.jsx)("strong",{children:"ВЫБОР ЭМБЛЕМЫ КЛУБА"}),(0,i.jsx)(Z,{onClick:()=>setLogoPickerOpen(!1),children:"Закрыть"})]}),
 (0,i.jsxs)("div",{className:"clubLogoModalScroll",children:[
 (0,i.jsx)("div",{className:ks,children:"Российская Премьер-лига"}),
