@@ -3304,18 +3304,24 @@ public class SportsWorld
 	public int TeamLogoId(int teamId)
 	{
 		Team team = GetTeam(teamId);
-		if (team == null) return 0;
+		if (team == null) return ClubBranding.NoLogoId;
 		if (team.LogoId == ClubBranding.NoLogoId) return ClubBranding.NoLogoId;
 		if (team.LogoId >= ClubBranding.RplLogoOffset && team.LogoId < ClubBranding.RplLogoOffset + ClubBranding.RplLogoCount) return team.LogoId;
-		if (team.LogoId >= ClubBranding.ManualGenericLogoOffset && team.LogoId < ClubBranding.LogoCount) return team.LogoId;
+		if (team.LogoId >= ClubBranding.FnlLogoOffset && team.LogoId < ClubBranding.FnlLogoOffset + ClubBranding.FnlLogoCount) return team.LogoId;
+		if (team.LogoId >= ClubBranding.OtherLogoOffset && team.LogoId < ClubBranding.OtherLogoOffset + ClubBranding.OtherLogoCount) return team.LogoId;
+		Organization org = GetOrg(team.OrgId);
+		if (team.Sport == Sport.Soccer && team.Level == Level.Minor)
+		{
+			int fnlLogo = ClubBranding.FindFnlLogoId(org?.Name, org?.Mascot);
+			if (fnlLogo >= 0) return ClubBranding.FnlLogoOffset + fnlLogo;
+		}
 		if (team.Sport == Sport.Soccer && team.Level == Level.Pro)
 		{
-			Organization org = GetOrg(team.OrgId);
 			int rplLogo = ClubBranding.FindRplLogoId(org?.Name, org?.Mascot);
 			if (rplLogo >= 0) return ClubBranding.RplLogoOffset + rplLogo;
 		}
-		if (ClubBranding.NormalizeLogo(team.LogoId) >= 0) return team.LogoId;
-		return Math.Abs(team.Id % ClubBranding.GenericLogoCount);
+		// Legacy generated/standard IDs remain readable in saves but are no longer rendered.
+		return ClubBranding.NoLogoId;
 	}
 
 	public CommandResult SetTeamLogo(int teamId, int logoId)
