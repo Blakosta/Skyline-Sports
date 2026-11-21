@@ -64,6 +64,11 @@ public class Match
 
 	public bool Spotlight;
 
+	// Synthetic home-stadium event used for viewing an away match.
+	public bool FanZone;
+
+	public int FanZoneTeamId = -1;
+
 	public int WinnerId
 	{
 		get
