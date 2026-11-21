@@ -17,4 +17,6 @@ public static class ClubBranding
  public static int NormalizeSponsor(int id)=>id>=0&&id<Sponsors.Length?id:-1;
  public static int FindRplLogoId(string organizationName,string mascot){string v=((organizationName??"")+" "+(mascot??"")).ToLowerInvariant();for(int i=0;i<RplAliases.Length;i++)foreach(string a in RplAliases[i])if(v.IndexOf(a,StringComparison.OrdinalIgnoreCase)>=0)return i;return -1;}
  public static int FindFnlLogoId(string organizationName,string mascot){string v=((organizationName??"")+" "+(mascot??"")).ToLowerInvariant();for(int i=0;i<FnlAliases.Length;i++)foreach(string a in FnlAliases[i])if(v.IndexOf(a,StringComparison.OrdinalIgnoreCase)>=0)return i;return -1;}
+ // Deterministic fallback: every generated football club receives one of the 41 shipped club badges.
+ public static int FallbackFootballLogoId(int teamId){int slot=(int)((uint)teamId% (uint)(RplLogoCount+FnlLogoCount+OtherLogoCount));if(slot<RplLogoCount)return RplLogoOffset+slot;slot-=RplLogoCount;if(slot<FnlLogoCount)return FnlLogoOffset+slot;return OtherLogoOffset+(slot-FnlLogoCount);}
 }
