@@ -48,7 +48,7 @@ const freqLabels=["Ежемесячно","Еженедельно","Ежегод�
 const fmt=t=>Number(t||0).toLocaleString("ru-RU")+" ¢";
 return(0,i.jsxs)("div",{className:"clubFinancePanel",children:[
 (0,i.jsx)(In,{title:"ФИНАНСЫ КЛУБА И БИЛЕТЫ"}),
-(0,i.jsxs)("div",{className:"financeBalanceRow",children:[
+e.isUser&&(0,i.jsxs)("div",{className:"financeBalanceRow",children:[
 (0,i.jsx)("div",{className:"financeBalance cityBalance",children:"Казна города: "+(e.cityUnlimited?"Безлимитный бюджет":fmt(e.cityBalance))}),
 (0,i.jsx)("div",{className:"financeBalance clubBalance",children:"Казна клуба: "+fmt(e.clubBalance)})
 ]}),
@@ -100,7 +100,7 @@ return(0,i.jsxs)("div",{className:"clubEditorPanel",children:[!s?(0,i.jsx)(X,{ch
 (0,i.jsx)(Ve,{label:"Вместимость стадиона (мест)",value:p,onChange:b,onEnter:save}),
 (0,i.jsxs)("div",{className:"clubBrandingSection",children:[
 (0,i.jsx)("div",{className:ks,children:"Эмблема клуба"}),
-(0,i.jsxs)("div",{className:"clubLogoCurrent",onClick:()=>setLogoPickerOpen(!0),children:[(0,i.jsx)(ClubLogo,{id:logoId,size:46}),(0,i.jsx)("span",{children:"Нажмите, чтобы выбрать эмблему"})]}),
+(0,i.jsxs)("button",{type:"button",className:"clubLogoCurrent",onClick:()=>setLogoPickerOpen(!0),children:[(0,i.jsx)(ClubLogo,{id:logoId,size:46}),(0,i.jsx)("span",{children:"Нажмите, чтобы выбрать эмблему"})]}),
 logoPickerOpen&&(0,i.jsx)("div",{className:"clubLogoModalOverlay",onClick:()=>setLogoPickerOpen(!1),children:(0,i.jsxs)("div",{className:"clubLogoModal",onClick:e=>e.stopPropagation(),children:[
 (0,i.jsxs)("div",{className:"clubLogoModalHeader",children:[(0,i.jsx)("strong",{children:"ВЫБОР ЭМБЛЕМЫ КЛУБА"}),(0,i.jsx)(Z,{onClick:()=>setLogoPickerOpen(!1),children:"Закрыть"})]}),
 (0,i.jsxs)("div",{className:"clubLogoModalScroll",children:[
@@ -139,7 +139,7 @@ return(0,i.jsxs)("div",{className:"coachEditorPanel",children:[
 (0,i.jsx)("span",{className:hl,children:"Возраст "+e.age}),
 (0,i.jsxs)("span",{className:xl,children:["ОБЩ "+e.ovr,(0,i.jsx)(Hn,{value:e.change})]}),
 (0,i.jsx)("span",{className:jl,children:"ПОТ "+e.grade}),
-e.canEdit&&(0,i.jsx)(Z,{onClick:()=>setEditing(!editing),children:"✏️"})
+e.canEdit&&(0,i.jsx)("div",{className:"coachEditButton",children:(0,i.jsx)(Z,{onClick:()=>setEditing(!editing),children:"✏️"})})
 ]}),
 (e.hometown||e.played)&&(0,i.jsx)("div",{className:Zi,children:[e.hometown?"Из "+e.hometown:"",e.played||""].filter(e=>!!e).join("  ·  ")}),
 void 0!==e.playerId&&e.playerId>=0&&(0,i.jsx)(X,{children:(0,i.jsx)(Z,{onClick:()=>{o(),w(e.playerId)},children:"Игровая карьера"})}),
