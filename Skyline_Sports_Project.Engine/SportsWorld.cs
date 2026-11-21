@@ -2846,7 +2846,7 @@ public class SportsWorld
 			Sport = sport,
 			Level = v.Level,
 			VenueId = v.Id,
-			LogoId = _random.Next(ClubBranding.GenericLogoCount),
+			LogoId = ClubBranding.NoLogoId,
 			Rating = _random.Next(45, 66),
 			IsUser = true
 		};
@@ -3367,7 +3367,7 @@ public class SportsWorld
 			Sport = league.Sport,
 			Level = league.Level,
 			VenueId = -1,
-			LogoId = _random.Next(ClubBranding.GenericLogoCount),
+			LogoId = ClubBranding.NoLogoId,
 			Rating = rating,
 			IsUser = false
 		};
