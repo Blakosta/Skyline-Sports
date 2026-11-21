@@ -3868,8 +3868,8 @@ public class SportsWorld
 			list.Add("команда «" + text + "»" + text2);
 		}
 		string topTitle = Views.LeagueTitle(top);
-		string secondTitle = "Вторая лига";
-		Post(top, NewsKind.General, Wire, "ВЫЛЕТ: " + Capital(JoinNames(downNames)) + ((count == 1) ? " выбывает" : " выбывают") + " во вторую лигу " + secondTitle + " после " + label + " сезона. " + Capital(JoinNames(upNames.ConvertAll((string x) => x.Split(new[] { '(' }, StringSplitOptions.None)[0].Trim()))) + ((count == 1) ? " занимает его место" : " занимают их места") + ".", isUser: false, now, 3);
+		string secondTitle = Views.LeagueTitle(second);
+		Post(top, NewsKind.General, Wire, "ВЫЛЕТ: " + Capital(JoinNames(downNames)) + ((count == 1) ? " выбывает" : " выбывают") + " в " + secondTitle + " после " + label + " сезона. " + Capital(JoinNames(upNames.ConvertAll((string x) => x.Split(new[] { '(' }, StringSplitOptions.None)[0].Trim()))) + ((count == 1) ? " занимает его место" : " занимают их места") + ".", isUser: false, now, 3);
 		Post(second, NewsKind.General, Wire, "ПОВЫШЕНИЕ: " + Capital(JoinNames(upNames)) + ((count == 1) ? " выходит" : " выходят") + " в " + topTitle + ". " + Capital(JoinNames(downNames)) + ((count == 1) ? " выбывает" : " выбывают") + " в обратном направлении.", isUser: false, now, 3);
 		foreach (int id2 in up)
 		{
@@ -3999,9 +3999,9 @@ public class SportsWorld
 		}
 		if (league.Level == Level.Pro)
 		{
-			return "Последние " + n + " команды выбывают в ФНЛ по итогам сезона (красный цвет)." + last;
+			return "Последние " + n + " команд РПЛ выбывают в ФНЛ по итогам сезона (красный цвет)." + last;
 		}
-		return "Первые " + n + " команд ФНЛ выходят в " + Views.LeagueTitle(top) + " по итогам таблицы сезона (зелёный цвет)." + last;
+		return "Первые " + n + " команды ФНЛ выходят в " + Views.LeagueTitle(top) + " по итогам таблицы сезона (зелёный цвет)." + last;
 	}
 
 	private static string JoinNames(List<string> names)
