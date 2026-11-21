@@ -507,8 +507,8 @@ public static class ScheduleBuilder
 		bool open = outdoor?.Invoke(venueId) ?? false;
 		foreach (Booking b in list)
 		{
-			int distance = (sport == Sport.Soccer && b.Sport == Sport.Soccer && GameClock.MonthIndex(b.Time) == GameClock.MonthIndex(time))
-				? Math.Abs(GameClock.MinuteOfDay(b.Time) - GameClock.MinuteOfDay(time))
+			int distance = (sport == Sport.Soccer && b.Sport == Sport.Soccer)
+				? Math.Abs(GameClock.MonthIndex(b.Time) * GameClock.MinutesPerDay + GameClock.MinuteOfDay(b.Time) - (GameClock.MonthIndex(time) * GameClock.MinutesPerDay + GameClock.MinuteOfDay(time)))
 				: Math.Abs(b.Time - time);
 			if ((b.SeriesId != seriesId || seriesId == 0) && distance < GapMinutes(b.Sport, sport, open))
 			{
