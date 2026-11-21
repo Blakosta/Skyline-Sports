@@ -3314,10 +3314,13 @@ public class SportsWorld
 
 		Organization org = GetOrg(team.OrgId);
 		// First prefer a club badge that matches the generated club's name/mascot.
-		int rplLogo = ClubBranding.FindRplLogoId(org?.Name, org?.Mascot);
-		if (rplLogo >= 0) return ClubBranding.RplLogoOffset + rplLogo;
+		// Check specific FNL/Other names before broad names such as "Спартак".
 		int fnlLogo = ClubBranding.FindFnlLogoId(org?.Name, org?.Mascot);
 		if (fnlLogo >= 0) return ClubBranding.FnlLogoOffset + fnlLogo;
+		int otherLogo = ClubBranding.FindOtherLogoId(org?.Name, org?.Mascot);
+		if (otherLogo >= 0) return ClubBranding.OtherLogoOffset + otherLogo;
+		int rplLogo = ClubBranding.FindRplLogoId(org?.Name, org?.Mascot);
+		if (rplLogo >= 0) return ClubBranding.RplLogoOffset + rplLogo;
 
 		// No name match: deterministically cycle through all 41 RPL/FNL/Other badges.
 		// Team IDs are stable, so logos do not change between UI refreshes or saves.
