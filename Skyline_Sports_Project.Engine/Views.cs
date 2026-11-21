@@ -341,7 +341,8 @@ public static class Views
 		j.Prop("away", world.TeamName(g.AwayTeamId));
 		j.Prop("homeLogoId", world.TeamLogoId(g.HomeTeamId));
 		j.Prop("awayLogoId", world.TeamLogoId(g.AwayTeamId));
-		j.Prop("hasRplLogo", league.Sport == Sport.Soccer && league.Level == Level.Pro);
+		j.Prop("hasRplLogo", league.Sport == Sport.Soccer && league.Level == Level.Pro)
+			.Prop("hasFnlLogo", league.Sport == Sport.Soccer && league.Level == Level.Minor);
 		j.Prop("homeFirst", value: true);
 		j.Prop("homeAbbr", world.TeamAbbrev(g.HomeTeamId));
 		j.Prop("awayAbbr", world.TeamAbbrev(g.AwayTeamId));
@@ -2052,7 +2053,8 @@ public static class Views
 		j.Name("league").BeginObject();
 		j.Prop("key", league.Key);
 		j.Prop("title", LeagueTitle(league));
-		j.Prop("hasRplLogo", league.Sport == Sport.Soccer && league.Level == Level.Pro);
+		j.Prop("hasRplLogo", league.Sport == Sport.Soccer && league.Level == Level.Pro)
+			.Prop("hasFnlLogo", league.Sport == Sport.Soccer && league.Level == Level.Minor);
 		j.Prop("isPro", pro);
 		JsonBuilder jsonBuilder = j;
 		string value;
@@ -4451,7 +4453,8 @@ public static class Views
 			}
 			JsonBuilder jsonBuilder = j.BeginObject().Prop("key", league2.Key).Prop("group", group)
 				.Prop("title", LeagueTitle(league2))
-				.Prop("hasRplLogo", league2.Sport == Sport.Soccer && league2.Level == Level.Pro);
+				.Prop("hasRplLogo", league2.Sport == Sport.Soccer && league2.Level == Level.Pro)
+				.Prop("hasFnlLogo", league2.Sport == Sport.Soccer && league2.Level == Level.Minor);
 			string value;
 			if (waiting != null)
 			{
@@ -4650,6 +4653,7 @@ public static class Views
 				.Prop("league", league ?? "")
 				.Prop("leagueKey", p.LeagueKey ?? "")
 				.Prop("hasRplLogo", p.LeagueKey == "Soccer-Pro")
+				.Prop("hasFnlLogo", p.LeagueKey == "Soccer-Minor")
 				.Prop("kind", p.Kind.ToString())
 				.Prop("account", p.Account)
 				.Prop("handle", p.Handle)
