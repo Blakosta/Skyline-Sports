@@ -103,7 +103,7 @@ return(0,i.jsxs)("div",{className:"clubEditorPanel",children:[!s?(0,i.jsx)(X,{ch
 (0,i.jsxs)("button",{type:"button",className:"clubLogoCurrent",onClick:()=>setLogoPickerOpen(!0),children:[(0,i.jsx)(ClubLogo,{id:logoId,size:46}),(0,i.jsx)("span",{children:"Нажмите, чтобы выбрать эмблему"})]}),
 logoPickerOpen&&(0,i.jsx)("div",{className:"clubLogoPickerInline",children:(0,i.jsxs)("div",{className:"clubLogoModal",children:[
 (0,i.jsxs)("div",{className:"clubLogoModalHeader",children:[(0,i.jsx)("strong",{children:"ВЫБОР ЭМБЛЕМЫ КЛУБА"}),(0,i.jsx)(Z,{onClick:()=>setLogoPickerOpen(!1),children:"Закрыть"})]}),
-(0,i.jsxs)("div",{className:"clubLogoModalScroll",onWheel:e=>e.stopPropagation(),children:[
+(0,i.jsxs)("div",{className:"clubLogoModalScroll",onWheel:e=>{e.stopPropagation();e.currentTarget.scrollTop+=e.deltaY},children:[
 (0,i.jsx)("div",{className:ks,children:"Российская Премьер-лига"}),
 (0,i.jsx)("div",{className:"clubLogoGrid",children:rplNames.map((name,q)=>(0,i.jsx)("button",{type:"button",className:t("clubLogoChoice",logoId===24+q&&"clubLogoSelected"),title:name,"aria-label":name,onClick:()=>chooseLogo(24+q),children:(0,i.jsx)(ClubLogo,{id:24+q,size:40})},q))}),
 (0,i.jsx)("div",{className:ks,children:"Стандартные эмблемы"}),
