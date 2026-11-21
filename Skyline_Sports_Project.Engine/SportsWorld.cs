@@ -1167,7 +1167,7 @@ public class SportsWorld
 		EconomyProfile e = Economy.Get(league.Sport);
 		if (SportRules.IsSecondDivision(league.Sport, league.Level))
 		{
-			AddEvent(list, DayOf(e.DraftDate(y)), "Повышение и вылет", "После завершения сезона в обоих дивизионах: лидер этой таблицы повышается в классе, а последняя команда высшего дивизиона выбывает ниже.", now, (league.PromotionDoneFor >= y) ? 1 : 0);
+			AddEvent(list, DayOf(e.DraftDate(y)), "Повышение и вылет", "После завершения сезона в обоих дивизионах: три лучшие команды ФНЛ повышаются в РПЛ, а три последние команды РПЛ выбывают в ФНЛ.", now, (league.PromotionDoneFor >= y) ? 1 : 0);
 			AddEvent(list, DayOf(e.LeagueYearDate(y)), "Открытие рынка свободных агентов", "Начинается новый сезон лиги: контракты заканчиваются. Продлите договоры игроков до этой даты, иначе они станут свободными агентами. Игроки развиваются, взрослеют, некоторые завершают карьеру.", now, (league.LeagueYearDoneFor >= y) ? 1 : 0);
 			return;
 		}
@@ -3697,15 +3697,7 @@ public class SportsWorld
 
 	public static int UpDownCount(int teams)
 	{
-		if (teams > 6)
-		{
-			if (teams > 12)
-			{
-				return 3;
-			}
-			return 2;
-		}
-		return 1;
+		return Math.Min(3, Math.Max(0, teams));
 	}
 
 	public League SecondDivision()
@@ -3796,7 +3788,7 @@ public class SportsWorld
 		{
 			return;
 		}
-		int year = (second.PromotionDoneFor = a.Year);
+		int year = a.Year;
 		League[] array = new League[2] { top, second };
 		foreach (League l in array)
 		{
@@ -3805,6 +3797,7 @@ public class SportsWorld
 				return;
 			}
 		}
+		second.PromotionDoneFor = year;
 		int n = UpDownCount(Math.Min(top.TeamIds.Count, second.TeamIds.Count));
 		List<StandingRow> ta = Standings.Compute(top, a);
 		List<StandingRow> tb = Standings.Compute(second, b);
@@ -3829,36 +3822,16 @@ public class SportsWorld
 			}
 		}
 		List<int> up = new List<int>();
-		for (int j = 0; j < table.Count; j++)
+		for (int j = 0; j < table.Count && up.Count < n; j++)
 		{
-			if (up.Count >= Math.Max(0, n - 1))
-			{
-				break;
-			}
 			up.Add(table[j]);
-		}
-		int champion = ((n >= 2 && b.ChampionTeamId >= 0 && table.Contains(b.ChampionTeamId) && !up.Contains(b.ChampionTeamId)) ? b.ChampionTeamId : (-1));
-		if (champion >= 0)
-		{
-			up.Add(champion);
-		}
-		for (int k = 0; k < table.Count; k++)
-		{
-			if (up.Count >= n)
-			{
-				break;
-			}
-			if (!up.Contains(table[k]))
-			{
-				up.Add(table[k]);
-			}
 		}
 		int count = Math.Min(down.Count, up.Count);
 		down.RemoveRange(count, down.Count - count);
 		up.RemoveRange(count, up.Count - count);
 		second.LastUp = new List<int>(up);
 		second.LastDown = new List<int>(down);
-		second.LastUpByPlayoff = champion;
+		second.LastUpByPlayoff = -1;
 		if (count == 0)
 		{
 			return;
@@ -3879,11 +3852,7 @@ public class SportsWorld
 			int promotedBudget = u.TransferBudget;
 			u.TransferBudget = Math.Min(60000, u.TransferBudget + 6000);
 			u.ClubBalance = (int)Math.Max(0L, Math.Min(int.MaxValue, (long)u.ClubBalance + (long)(u.TransferBudget - promotedBudget) * 1000L));
-			EnsureTransferBudget(d);
-			EnsureClubBalance(d);
-			int relegatedBudget = d.TransferBudget;
-			d.TransferBudget = Math.Max(1500, (int)Math.Round((double)d.TransferBudget * 0.7 / 50.0) * 50) + 2000;
-			d.ClubBalance = (int)Math.Max(0L, Math.Min(int.MaxValue, (long)d.ClubBalance + (long)(d.TransferBudget - relegatedBudget) * 1000L));
+			// Вылет в ФНЛ не сопровождается финансовой выплатой или изменением бюджета клуба.
 		}
 		RostersChanged();
 		StaffChanged();
@@ -3895,14 +3864,7 @@ public class SportsWorld
 			List<string> list = upNames;
 			string text = TeamName(id);
 			string text2;
-			if (id == champion)
-			{
-				text2 = " (победитель плей-офф)";
-			}
-			else
-			{
-				text2 = ((place == 1) ? " (чемпионы)" : (" (" + Views.Ordinal(place) + ")"));
-			}
+			text2 = ((place == 1) ? " (чемпионы)" : (" (" + Views.Ordinal(place) + ")"));
 			list.Add("команда «" + text + "»" + text2);
 		}
 		string topTitle = Views.LeagueTitle(top);
@@ -4013,15 +3975,11 @@ public class SportsWorld
 		{
 			return "";
 		}
-		if (rank <= Math.Max(0, n - 1) || (n == 1 && rank == 1))
+		if (rank <= n)
 		{
 			return "up";
 		}
-		if (n < 2 || rank > PlayoffTeamCount(Profile(league), teams))
-		{
-			return "";
-		}
-		return "playoff";
+		return "";
 	}
 
 	public string DivisionNote(League league)
@@ -4041,13 +3999,9 @@ public class SportsWorld
 		}
 		if (league.Level == Level.Pro)
 		{
-			return "Последняя команда" + ((n == 1) ? " выбывает" : (n + " команды выбывают")) + " во вторую лигу по итогам сезона (красный цвет)." + last;
+			return "Последние " + n + " команды выбывают в ФНЛ по итогам сезона (красный цвет)." + last;
 		}
-		if (n == 1)
-		{
-			return "Лидер выходит в " + Views.LeagueTitle(top) + " по итогам сезона (зелёный цвет)." + last;
-		}
-		return "Первые " + ((n == 2) ? " выбывает" : (n - 1 + " команды выбывают")) + " выходит в " + Views.LeagueTitle(top) + " по итогам сезона (зелёный цвет), а победитель стыкового плей-офф получает последнее место (бирюзовый цвет: остальные места плей-офф)." + last;
+		return "Первые " + n + " команд ФНЛ выходят в " + Views.LeagueTitle(top) + " по итогам таблицы сезона (зелёный цвет)." + last;
 	}
 
 	private static string JoinNames(List<string> names)
