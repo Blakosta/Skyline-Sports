@@ -89,23 +89,6 @@ public static class GameClock
 		return DayNumber(new DateTime(d.Year, d.Month, 1).AddMonths(1));
 	}
 
-	public static int SoccerMinuteOfMonth(int dayNumber)
-	{
-		DateTime date = DateOf(dayNumber);
-		int day = date.Day;
-		if (day <= 10)
-		{
-			return 30 + (int)Math.Round((double)(day - 1) * 420.0 / 9.0);
-		}
-		if (day <= 20)
-		{
-			return 480 + (int)Math.Round((double)(day - 11) * 630.0 / 9.0);
-		}
-		int lastDay = DateTime.DaysInMonth(date.Year, date.Month);
-		if (day == lastDay) return 1439;
-		return Math.Min(1438, 1140 + (day - 21) * 30);
-	}
-
 	public static int MonthIndex(int now)
 	{
 		DateTime d = DateOf(DayOf(now));
