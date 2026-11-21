@@ -171,7 +171,13 @@ public static class Views
 			}
 			j.EndArray();
 			j.Name("homeGames").BeginArray();
-			foreach (Match g in UpcomingAtVenue(world, v.Id, 5, now))
+			List<Match> venueGames = UpcomingAtVenue(world, v.Id, 5, now);
+			foreach (Match fanGame in world.FanZoneGames(now))
+			{
+				if (fanGame.VenueId == v.Id) venueGames.Add(fanGame);
+			}
+			venueGames.Sort((Match a, Match b) => a.Time.CompareTo(b.Time));
+			foreach (Match g in venueGames)
 			{
 				Team home = world.GetTeam(g.HomeTeamId);
 				League league = world.LeagueOf(home);
@@ -185,11 +191,11 @@ public static class Views
 				}
 				else
 				{
-					value = (tonight ? ("Сегодня вечером, " + GameClock.ClockLabel(GameClock.MinuteOfDay(g.Time))) : GameClock.TimeLabel(g.Time));
+					value = (g.FanZone ? "ФАН-ЗОНА · " : "") + (tonight ? ("Сегодня в " + GameClock.ClockLabel(GameClock.MinuteOfDay(g.Time))) : GameClock.TimeLabel(g.Time));
 				}
 				jsonBuilder.Prop("time", value).Prop("live", live != null).Prop("featured", tonight)
 					.Prop("sport", (home == null) ? "" : SportRules.SportLabel(home.Sport))
-					.Prop("label", world.TeamShortName(g.HomeTeamId) + " — " + world.TeamShortName(g.AwayTeamId))
+					.Prop("label", (g.FanZone ? "Трансляция: " : "") + world.TeamShortName(g.HomeTeamId) + " — " + world.TeamShortName(g.AwayTeamId))
 					.Prop("stage", (league == null) ? "" : world.StageLabel(league, g))
 					.EndObject();
 			}
@@ -357,7 +363,7 @@ public static class Views
 		j.Prop("played", g.Played);
 		j.Prop("featured", g.Featured);
 		j.Prop("spotlight", g.Spotlight);
-		j.Prop("stars", g.Summary ?? "");
+		j.Prop("stars", CleanStars(g.Summary));
 		j.Prop("rival", RivalTagText(world.FindRivalry(league, g.HomeTeamId, g.AwayTeamId, create: false), game: true));
 		LiveSnapshot live = (g.Played ? null : Live(league.Sport, league.Level, g, world.LastTime));
 		if (live != null)
@@ -459,7 +465,7 @@ public static class Views
 		}
 		j.Prop("gameOfMonth", gom);
 		j.Prop("gameOfMonthLive", featured != null && !featured.Played);
-		j.Prop("gameOfMonthStars", (featured != null && featured.Played) ? (featured.Summary ?? "") : "");
+		j.Prop("gameOfMonthStars", (featured != null && featured.Played) ? (CleanStars(featured.Summary)) : "");
 		Match last = null;
 		Match next = null;
 		int restOfMonth = 0;
@@ -1292,6 +1298,11 @@ public static class Views
 		return rows;
 	}
 
+	private static string CleanStars(string value)
+	{
+		return (value ?? "").Replace("ср/пасв", "ср. пасов").Replace("ср./пасв", "ср. пасов");
+	}
+
 	private static void WriteSide(JsonBuilder j, string name, SportsWorld world, Team t, League league, Season s)
 	{
 		string record = "";
@@ -1363,7 +1374,7 @@ public static class Views
 			jsonBuilder.Prop("winner", value);
 			string suffix = SportRules.ResultSuffix(sport, g.Result);
 			j.Prop("status", "Завершён" + ((suffix.Length > 0) ? ("/" + suffix) : "") + ((g.Result == ResultType.Penalties) ? (" (пенальти " + g.HomePenalties + "-" + g.AwayPenalties + ")") : ""));
-			j.Prop("stars", g.Summary ?? "");
+			j.Prop("stars", CleanStars(g.Summary));
 			if (g.Box != null)
 			{
 				WriteBox(j, world, league, g.Box, g.HomeScore, g.AwayScore, g.WinnerId, g, home, away);
