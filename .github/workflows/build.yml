@@ -72,7 +72,10 @@ jobs:
           Copy-Item ".\AdditionalSourceFiles\Skyline_Sports_Project.mjs" $package
           Copy-Item ".\AdditionalSourceFiles\Skyline_Sports_Project.css" $package
           Copy-Item ".\AdditionalSourceFiles\images" (Join-Path $package "images") -Recurse -Force
-          Copy-Item ".\Logo\Football" (Join-Path $package "Logo\Football") -Recurse -Force
+          New-Item -ItemType Directory -Force -Path (Join-Path $package "Logo\Football") | Out-Null
+          Copy-Item ".\Logo\Football\RPL" (Join-Path $package "Logo\Football\RPL") -Recurse -Force
+          Copy-Item ".\Logo\Football\FNL" (Join-Path $package "Logo\Football\FNL") -Recurse -Force
+          Copy-Item ".\Logo\Football\Other" (Join-Path $package "Logo\Football\Other") -Recurse -Force
 
           @'
           Полная русская сборка мода «Спорт России».
