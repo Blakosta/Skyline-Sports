@@ -3848,10 +3848,9 @@ public class SportsWorld
 			MoveDivision(d, Level.Minor);
 			MoveDivision(u, Level.Pro);
 			EnsureTransferBudget(u);
-			EnsureClubBalance(u);
-			int promotedBudget = u.TransferBudget;
-			u.TransferBudget = Math.Min(60000, u.TransferBudget + 6000);
-			u.ClubBalance = (int)Math.Max(0L, Math.Min(int.MaxValue, (long)u.ClubBalance + (long)(u.TransferBudget - promotedBudget) * 1000L));
+			int place = table.IndexOf(u.Id) + 1;
+			int rewardThousands = (place == 1) ? 8000 : ((place == 2) ? 5000 : 3000);
+			u.TransferBudget = Math.Min(60000, u.TransferBudget + rewardThousands);
 			// Вылет в ФНЛ не сопровождается финансовой выплатой или изменением бюджета клуба.
 		}
 		RostersChanged();
