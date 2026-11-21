@@ -1123,14 +1123,21 @@ public class SportsWorld
 			AddEvent(list, first, "Начало регулярного сезона", SeasonLabel(league, cur) + " сезон: " + TargetGames(league) + " матчей на команду.", now, -1);
 			if (pro && league.Sport == Sport.Soccer)
 			{
-				AddEvent(list, DayOf(new DateTime(y, 7, 13)), "Летнее трансферное окно", "Открыто до 2 сентября: клубы покупают и продают игроков за трансферную плату (Офис клуба → Трансферы).", now, -1);
-				AddEvent(list, DayOf(new DateTime(y + 1, 1, 26)), "Зимнее трансферное окно", "Открыто до 26 марта: клубы покупают и продают игроков за трансферную плату (Офис клуба → Трансферы).", now, -1);
+				AddEvent(list, DayOf(new DateTime(y, 6, 1)), "Летнее трансферное окно", "Открыто в июне, июле и августе: клубы покупают и продают игроков за трансферную плату (Офис клуба → Трансферы).", now, -1);
+				AddEvent(list, DayOf(new DateTime(y + 1, 1, 1)), "Зимнее трансферное окно", "Открыто весь январь: клубы покупают и продают игроков за трансферную плату (Офис клуба → Трансферы).", now, -1);
 			}
 			else if (pro)
 			{
 				AddEvent(list, DayOf(e.TradeDeadline(y)), "Дедлайн обменов", "Обмены запрещены до окончания плей-офф.", now, -1);
 			}
-			AddEvent(list, last, "Окончание регулярного сезона", "Начинается плей-офф. Команды, не прошедшие в него, могут сменить тренеров (открывается окно смены тренеров).", now, cur.PlayoffsCreated ? 1 : (-1));
+			if (league.Sport == Sport.Soccer)
+			{
+				AddEvent(list, last, "Завершение чемпионата", "Последний тур завершает чемпионат. После сезона автоматически выполняется повышение и понижение клубов между РПЛ и ФНЛ.", now, cur.PlayoffsCreated ? 1 : (-1));
+			}
+			else
+			{
+				AddEvent(list, last, "Окончание регулярного сезона", "Начинается плей-офф. Команды, не прошедшие в него, могут сменить тренеров (открывается окно смены тренеров).", now, cur.PlayoffsCreated ? 1 : (-1));
+			}
 			if (!pro)
 			{
 				int end = ((cur.PlayoffsCreated && cur.PlayoffEndDay > 0) ? cur.PlayoffEndDay : (last + 21));
@@ -13596,70 +13603,6 @@ public class SportsWorld
 		return list;
 	}
 
-	public List<Match> FanZoneGames(int now)
-	{
-		List<Match> result = new List<Match>();
-		int monthStart = GameClock.MonthStartDay(now);
-		int nextMonth = GameClock.NextMonthStartDay(now);
-		Dictionary<int, List<int>> booked = new Dictionary<int, List<int>>();
-		foreach (League league in Leagues)
-		{
-			if (league.Sport != Sport.Soccer || league.Current == null) continue;
-			foreach (int teamId in league.TeamIds)
-			{
-				Team team = GetTeam(teamId);
-				if (team == null || !team.IsUser || team.VenueId < 0) continue;
-				foreach (Match game in league.Current.Games)
-				{
-					if (game.AwayTeamId != team.Id) continue;
-					int day = GameClock.DayOf(game.Time);
-					if (day < monthStart || day >= nextMonth || game.VenueId == team.VenueId) continue;
-					int minute = GameClock.MinuteOfDay(game.Time);
-					int mappedTime = GameClock.MonthIndex(game.Time) * GameClock.MinutesPerDay + minute;
-					int end = GameClock.ToTime(monthStart, minute) + PlannedMinutes(league.Sport, league.Level);
-					if (now >= end) continue;
-					bool conflict = false;
-					foreach (League otherLeague in Leagues)
-					{
-						if (otherLeague.Current == null) continue;
-						foreach (Match other in otherLeague.Current.Games)
-						{
-							if (other == game || other.VenueId != team.VenueId) continue;
-							int otherMonth = GameClock.MonthIndex(other.Time);
-							int gameMonth = GameClock.MonthIndex(game.Time);
-							if (otherMonth < gameMonth - 1 || otherMonth > gameMonth + 1) continue;
-							int otherMappedTime = otherMonth * GameClock.MinutesPerDay + GameClock.MinuteOfDay(other.Time);
-							int gap = PlannedMinutes(otherLeague.Sport, otherLeague.Level) + 60;
-							if (Math.Abs(otherMappedTime - mappedTime) < gap) { conflict = true; break; }
-						}
-						if (conflict) break;
-					}
-					if (conflict) continue;
-					if (!booked.TryGetValue(team.VenueId, out var times)) booked[team.VenueId] = times = new List<int>();
-					if (times.Exists(x => Math.Abs(x - mappedTime) < PlannedMinutes(league.Sport, league.Level) + 60)) continue;
-					times.Add(mappedTime);
-					result.Add(new Match
-					{
-						Id = -Math.Max(1, game.Id), Time = game.Time,
-						HomeTeamId = game.HomeTeamId, AwayTeamId = game.AwayTeamId,
-						VenueId = team.VenueId, Stage = game.Stage, Featured = true, Spotlight = true,
-						FanZone = true, FanZoneTeamId = team.Id
-					});
-				}
-			}
-		}
-		result.Sort(ByTime);
-		return result;
-	}
-
-	public int FanZoneTarget(int teamId)
-	{
-		Team team = GetTeam(teamId);
-		if (team == null) return 1;
-		int capacity = VenueCapacity(team.Sport, team.Level, team.VenueId, team.Id);
-		return Math.Max(1, (int)Math.Round((double)capacity * 0.4));
-	}
-
 	public Match SpotlightGame(int now)
 	{
 		int monthStart = GameClock.MonthStartDay(now);
@@ -13924,14 +13867,6 @@ public class SportsWorld
 		};
 		season.PlayoffEndDay = season.RegularEndDay;
 		season.Games = ScheduleBuilder.BuildRegularSeason(p, year, league.TeamIds, today, target, _random, () => NextId++);
-		if (league.Sport == Sport.Soccer)
-		{
-			foreach (Match game in season.Games)
-			{
-				int day = GameClock.DayOf(game.Time);
-				game.Time = GameClock.ToTime(day, GameClock.SoccerMinuteOfMonth(day));
-			}
-		}
 		return season;
 	}
 
@@ -13964,7 +13899,7 @@ public class SportsWorld
 
 	public static int PlayoffTeamCount(SportProfile p, int teams)
 	{
-		if (teams < 2)
+		if (p.PlayoffShare <= 0.0 || p.MaxPlayoffTeams < 2 || teams < 2)
 		{
 			return 0;
 		}
@@ -14749,29 +14684,16 @@ public class SportsWorld
 	public static bool TransferWindowOpen(int now)
 	{
 		int month = GameClock.DateOf(GameClock.DayOf(now)).Month;
-		if (month != 1 && month != 2 && month != 3 && month != 7 && month != 8)
-		{
-			return month == 9;
-		}
-		return true;
+		return month == 1 || month == 6 || month == 7 || month == 8;
 	}
 
 	public static string TransferWindowText(int now)
 	{
 		int month = GameClock.DateOf(GameClock.DayOf(now)).Month;
-		if (month >= 1 && month <= 3)
-		{
-			return "Зимнее трансферное окно открыто до 26 марта.";
-		}
-		if (month >= 7 && month <= 9)
-		{
-			return "Летнее трансферное окно открыто до 2 сентября.";
-		}
-		if (month < 10)
-		{
-			return "Трансферное окно закрыто. Летнее окно откроется 13 июля.";
-		}
-		return "Трансферное окно закрыто. Зимнее окно откроется 26 января.";
+		if (month == 1) return "Зимнее трансферное окно открыто весь январь.";
+		if (month >= 6 && month <= 8) return "Летнее трансферное окно открыто в июне, июле и августе.";
+		if (month < 6) return "Трансферное окно закрыто. Летнее окно откроется в июне.";
+		return "Трансферное окно закрыто. Зимнее окно откроется в январе.";
 	}
 
 	public int TransferValue(Player p)
