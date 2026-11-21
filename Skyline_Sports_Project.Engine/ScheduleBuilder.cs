@@ -86,8 +86,56 @@ public static class ScheduleBuilder
 		return 720;
 	}
 
+	private static List<Slot> SoccerSeasonSlots(SportProfile p, int year)
+	{
+		List<Slot> slots = new List<Slot>();
+		if (p.Week == null || p.Week.Length == 0) return slots;
+		SlotTemplate primary = p.Week[p.Week.Length - 1];
+		int[] months = new int[10] { 7, 8, 9, 10, 11, 12, 2, 3, 4, 5 };
+		int[] counts = new int[10] { 3, 3, 4, 3, 3, 3, 3, 4, 3, 1 };
+		for (int m = 0; m < months.Length; m++)
+		{
+			int month = months[m];
+			int calendarYear = (month >= 7) ? year : year + 1;
+			DateTime first = new DateTime(calendarYear, month, 1);
+			DateTime last = first.AddMonths(1).AddDays(-1.0);
+			List<DateTime> saturdays = new List<DateTime>();
+			for (DateTime d = first; d <= last; d = d.AddDays(1.0))
+			{
+				if (d.DayOfWeek == DayOfWeek.Saturday) saturdays.Add(d);
+			}
+			int count = counts[m];
+			for (int i = 0; i < count && saturdays.Count > 0; i++)
+			{
+				int index = (count == 1) ? (saturdays.Count - 1) : (int)Math.Round((double)i * (double)(saturdays.Count - 1) / (double)(count - 1), MidpointRounding.AwayFromZero);
+				DateTime date = saturdays[index];
+				slots.Add(new Slot { Template = primary, Days = new int[1] { GameClock.DayNumber(date) }, Optional = false });
+			}
+		}
+		// Optional midweek slots extend the calendar only when a division has more than 16 clubs.
+		if (p.Week.Length > 1 && p.Week[0].Optional)
+		{
+			int[] extraMonths = new int[8] { 7, 8, 9, 10, 11, 12, 2, 3 };
+			foreach (int month in extraMonths)
+			{
+				int calendarYear = (month >= 7) ? year : year + 1;
+				DateTime date = GameClock.Nth(calendarYear, month, p.Week[0].Anchor, 2);
+				if (!p.IsBreak(year, date))
+				{
+					slots.Add(new Slot { Template = p.Week[0], Days = new int[1] { GameClock.DayNumber(date) }, Optional = true });
+				}
+			}
+		}
+		slots.Sort((Slot a, Slot b) => a.FirstDay.CompareTo(b.FirstDay));
+		return slots;
+	}
+
 	public static List<Slot> SeasonSlots(SportProfile p, int year)
 	{
+		if (p.Sport == Sport.Soccer && (p.Level == Level.Pro || p.Level == Level.Minor))
+		{
+			return SoccerSeasonSlots(p, year);
+		}
 		List<Slot> slots = new List<Slot>();
 		DateTime start = p.Start(year).Date;
 		DateTime end = p.End(year).Date;
@@ -191,6 +239,10 @@ public static class ScheduleBuilder
 		{
 			RemoveByes(rounds, byes, random);
 		}
+		if (p.Sport == Sport.Soccer)
+		{
+			BalanceSoccerRounds(rounds, teamIds, random);
+		}
 		TimePicker picker = new TimePicker(random);
 		HomeBalancer balancer = new HomeBalancer();
 		DateTime start = p.Start(year).Date;
@@ -207,8 +259,9 @@ public static class ScheduleBuilder
 				{
 					List<TimeOption> options = ValidOptions(p, year, slot.FirstDay, slot.Template.Times(GameClock.Weekday(slot.FirstDay), arg2: true), start, end, today);
 					TimeOption o = picker.Pick(scope, options);
-					int day = ((o == null) ? slot.FirstDay : (slot.FirstDay + o.DayOffset));
-					int minute = o?.Minute ?? 1140;
+					bool finalRound = p.Sport == Sport.Soccer && i == rounds.Count - 1;
+					int day = finalRound ? slot.FirstDay : ((o == null) ? slot.FirstDay : (slot.FirstDay + o.DayOffset));
+					int minute = finalRound ? 1200 : (o?.Minute ?? 1140);
 					games.Add(new Match
 					{
 						Id = nextId(),
@@ -414,6 +467,70 @@ public static class ScheduleBuilder
 			}
 		}
 		return result;
+	}
+
+	private static long PairKey(int a, int b)
+	{
+		return (a < b) ? (((long)a << 32) | (uint)b) : (((long)b << 32) | (uint)a);
+	}
+
+	private static int SoccerHomePenalty(int team, Dictionary<int, int> home, Dictionary<int, int> away, Dictionary<int, bool> lastHome, Dictionary<int, int> streak)
+	{
+		int penalty = Math.Max(0, home[team] - away[team]) * 4;
+		if (lastHome.TryGetValue(team, out var last) && last) penalty += (streak[team] >= 2) ? 1000 : 20;
+		return penalty;
+	}
+
+	private static int SoccerAwayPenalty(int team, Dictionary<int, int> home, Dictionary<int, int> away, Dictionary<int, bool> lastHome, Dictionary<int, int> streak)
+	{
+		int penalty = Math.Max(0, away[team] - home[team]) * 4;
+		if (lastHome.TryGetValue(team, out var last) && !last) penalty += (streak[team] >= 2) ? 1000 : 20;
+		return penalty;
+	}
+
+	private static void RecordSoccerVenue(int team, bool isHome, Dictionary<int, bool> lastHome, Dictionary<int, int> streak)
+	{
+		if (lastHome.TryGetValue(team, out var last) && last == isHome) streak[team]++;
+		else streak[team] = 1;
+		lastHome[team] = isHome;
+	}
+
+	private static void BalanceSoccerRounds(List<List<Pairing>> rounds, List<int> teamIds, Random random)
+	{
+		Dictionary<int, int> home = new Dictionary<int, int>();
+		Dictionary<int, int> away = new Dictionary<int, int>();
+		Dictionary<int, bool> lastHome = new Dictionary<int, bool>();
+		Dictionary<int, int> streak = new Dictionary<int, int>();
+		Dictionary<long, int> firstHost = new Dictionary<long, int>();
+		Dictionary<long, int> meetings = new Dictionary<long, int>();
+		foreach (int team in teamIds) { home[team] = 0; away[team] = 0; }
+		foreach (List<Pairing> round in rounds)
+		{
+			for (int i = 0; i < round.Count; i++)
+			{
+				Pairing original = round[i];
+				int a = original.Home;
+				int b = original.Away;
+				long key = PairKey(a, b);
+				int seen = meetings.TryGetValue(key, out var count) ? count : 0;
+				int host;
+				if (seen == 1 && firstHost.TryGetValue(key, out var previousHost)) host = (previousHost == a) ? b : a;
+				else
+				{
+					int scoreA = SoccerHomePenalty(a, home, away, lastHome, streak) + SoccerAwayPenalty(b, home, away, lastHome, streak);
+					int scoreB = SoccerHomePenalty(b, home, away, lastHome, streak) + SoccerAwayPenalty(a, home, away, lastHome, streak);
+					host = (scoreA == scoreB) ? ((random.Next(2) == 0) ? a : b) : ((scoreA < scoreB) ? a : b);
+				}
+				int guest = (host == a) ? b : a;
+				round[i] = new Pairing(host, guest);
+				home[host]++;
+				away[guest]++;
+				RecordSoccerVenue(host, true, lastHome, streak);
+				RecordSoccerVenue(guest, false, lastHome, streak);
+				if (seen == 0) firstHost[key] = host;
+				meetings[key] = seen + 1;
+			}
+		}
 	}
 
 	public static void RemoveByes(List<List<Pairing>> rounds, int byes, Random random)
