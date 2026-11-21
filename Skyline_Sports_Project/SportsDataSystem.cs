@@ -109,6 +109,10 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 		public FanCount Count;
 
 		public bool KickoffLogged;
+
+		public bool FanZone;
+
+		public int TicketPrice;
 	}
 
 	internal struct FanCount
@@ -1301,7 +1305,9 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 					return;
 				}
 				HashSet<int> seen = new HashSet<int>();
-				foreach (Match g in Sports.SpotlightGames(now))
+				List<Match> fanGames = Sports.SpotlightGames(now);
+				fanGames.AddRange(Sports.FanZoneGames(now));
+				foreach (Match g in fanGames)
 				{
 					seen.Add(g.Id);
 					if (!m_VenueEntities.TryGetValue(g.VenueId, out var building) || building == Entity.Null)
@@ -1322,8 +1328,10 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 						}
 						FanGame fanGame = new FanGame();
 						fanGame.Building = building;
-						fanGame.Target = Math.Max(1, s.RealFansCount);
-						fanGame.Name = Sports.TeamName(g.AwayTeamId) + " — " + Sports.TeamName(g.HomeTeamId);
+						fanGame.FanZone = g.FanZone;
+						fanGame.TicketPrice = g.FanZone ? 5 : 0;
+						fanGame.Target = g.FanZone ? Sports.FanZoneTarget(g.FanZoneTeamId) : Math.Max(1, s.RealFansCount);
+						fanGame.Name = g.FanZone ? ("Фан-зона: " + Sports.TeamName(g.HomeTeamId) + " — " + Sports.TeamName(g.AwayTeamId)) : (Sports.TeamName(g.AwayTeamId) + " — " + Sports.TeamName(g.HomeTeamId));
 						fg = fanGame;
 						fg.VisitorTarget = ((s.VisitorFans && m_FanApi.TouristHousehold != null) ? Math.Max(1, fg.Target / 4) : 0);
 						m_FanTrips[g.Id] = fg;
@@ -1377,6 +1385,15 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 				{
 					if (!seen.Contains(id2))
 					{
+						if (m_FanTrips.TryGetValue(id2, out var ended) && ended.FanZone && ended.Count.Inside > 0)
+						{
+							int revenue = ended.Count.Inside * Math.Max(1, ended.TicketPrice);
+							if (ChangeCityMoney(revenue))
+							{
+								Sports.Revision++;
+								Mod.log.Info((object)("Фан-зона: в городской бюджет поступило " + revenue.ToString("N0") + " ¢ за просмотр выездного матча."));
+							}
+						}
 						EndFans(id2);
 					}
 				}
