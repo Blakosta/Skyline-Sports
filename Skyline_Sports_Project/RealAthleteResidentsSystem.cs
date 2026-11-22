@@ -269,6 +269,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         if (!hadResident)
         {
             m_ProfileRefreshPending = true;
+            Mod.log.Info("[Жители-спортсмены] Создан городской житель для игрока «" + player.Name + "» (ID " + player.Id + ").");
         }
 
         ApplyIdentity(link, player.Name, player.BirthYear);
@@ -300,6 +301,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         if (!hadResident)
         {
             m_ProfileRefreshPending = true;
+            Mod.log.Info("[Жители-спортсмены] Создан городской житель для тренера «" + coach.Name + "» (ID " + coach.Id + ").");
         }
 
         ApplyIdentity(link, coach.Name, coach.BirthYear);
@@ -662,11 +664,13 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
             return;
         }
 
+        bool newlyAssigned = !EntityManager.HasComponent<Worker>(link.Citizen);
         if (EntityManager.HasComponent<Worker>(link.Citizen))
         {
             Worker currentWorker = EntityManager.GetComponentData<Worker>(link.Citizen);
             if (currentWorker.m_Workplace != workplace)
             {
+                newlyAssigned = true;
                 RemoveEmployeeEntry(currentWorker.m_Workplace, link.Citizen);
                 currentWorker.m_Workplace = workplace;
                 currentWorker.m_Level = (byte)jobLevel;
@@ -692,6 +696,10 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         }
 
         EnsureEmployeeEntry(workplace, link.Citizen, jobLevel);
+        if (newlyAssigned)
+        {
+            Mod.log.Info("[Жители-спортсмены] Назначено рабочее место на стадионе для жителя «" + (m_NameSystem.TryGetCustomName(link.Citizen, out string residentName) ? residentName : "Спортсмен") + "».");
+        }
     }
 
     private bool TryChooseWorkplacePrefab(int educationLevel, out int jobLevel, out Entity prefab)
