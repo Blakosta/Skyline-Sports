@@ -13481,10 +13481,7 @@ public class SportsWorld
 			}
 			Revision++;
 		}
-		if (picked)
-		{
-			ChooseSpotlight(now);
-		}
+		ChooseSpotlight(now);
 	}
 
 	private double GameAppeal(League league, Team t, Match g)
@@ -13552,7 +13549,8 @@ public class SportsWorld
 					Team home = GetTeam(g.HomeTeamId);
 					Team away = GetTeam(g.AwayTeamId);
 					Team mine = ((home != null && home.IsUser) ? home : away);
-					double score = (double)(((mine != null && mine.WatchFirst) ? 10000 : 0) + (g.Played ? (-5000) : 0)) + GameAppeal(l, mine, g) + (double)(SportRules.Rank(l.Level) * 8) + (double)((g.Stage != GameStage.Regular) ? 40 : 0) - (double)g.Id * 1E-09;
+					// Preserve an explicitly pre-planned Spotlight selection when its month arrives.
+					double score = (double)((g.Spotlight ? 1000000 : 0) + ((mine != null && mine.WatchFirst) ? 10000 : 0) + (g.Played ? (-5000) : 0)) + GameAppeal(l, mine, g) + (double)(SportRules.Rank(l.Level) * 8) + (double)((g.Stage != GameStage.Regular) ? 40 : 0) - (double)g.Id * 1E-09;
 					if (!bestScore.TryGetValue(g.VenueId, out var have) || score > have)
 					{
 						bestScore[g.VenueId] = score;
@@ -13696,27 +13694,25 @@ public class SportsWorld
 		{
 			return CommandResult.Fail("Матч не найден в текущем сезоне.");
 		}
-		if (selected.Played || selected.Live != null || selected.Stage != GameStage.Regular)
+		if (selected.Played || selected.Live != null || selected.Time <= now)
 		{
-			return CommandResult.Fail("Главным можно назначить только ещё не начавшийся матч регулярного чемпионата.");
+			return CommandResult.Fail("Главным можно назначить только будущий матч.");
 		}
-		int monthStart = GameClock.MonthStartDay(now);
-		int nextMonth = GameClock.NextMonthStartDay(now);
-		int day = GameClock.DayOf(selected.Time);
-		if (day < monthStart || day >= nextMonth || selected.Time <= now)
+		Team mine = GetTeam(selected.HomeTeamId);
+		if (mine == null || !mine.IsUser || mine.Retired)
 		{
-			return CommandResult.Fail("Выбрать можно только будущий матч текущего игрового месяца.");
-		}
-		Team home = GetTeam(selected.HomeTeamId);
-		Team away = GetTeam(selected.AwayTeamId);
-		Team mine = (home != null && home.IsUser) ? home : ((away != null && away.IsUser) ? away : null);
-		if (mine == null)
-		{
-			return CommandResult.Fail("Выбрать главное событие можно только для матча вашей команды.");
+			return CommandResult.Fail("Планировать главное событие можно только для домашнего матча вашей команды.");
 		}
 		if (selected.VenueId < 0 || GetVenue(selected.VenueId) == null)
 		{
 			return CommandResult.Fail("У этого матча пока нет назначенного домашнего стадиона. Сначала исправьте площадку.");
+		}
+		int monthStart = GameClock.MonthStartDay(selected.Time);
+		int nextMonth = GameClock.NextMonthStartDay(selected.Time);
+		int selectedDay = GameClock.DayOf(selected.Time);
+		if (selectedDay < monthStart || selectedDay >= nextMonth)
+		{
+			return CommandResult.Fail("Не удалось определить игровой месяц матча.");
 		}
 		foreach (League league2 in Leagues)
 		{
@@ -13726,20 +13722,20 @@ public class SportsWorld
 				int otherDay = GameClock.DayOf(other.Time);
 				if (otherDay >= monthStart && otherDay < nextMonth && other.Id != selected.Id && other.Involves(mine.Id) && other.Featured && (other.Played || other.Live != null))
 				{
-					return CommandResult.Fail("Матч вашей команды в этом месяце уже начался или завершился — заменить его главным событием нельзя.");
+					return CommandResult.Fail("В этом игровом месяце уже начался или завершился выбранный главный матч. Его нельзя заменить задним числом.");
 				}
 			}
 		}
 		HashSet<int> bookedTeams = new HashSet<int>();
 		Dictionary<int, List<KeyValuePair<int, Sport>>> booked = FeaturedBookings(monthStart, nextMonth, bookedTeams, mine.Id);
-		int opponentId = (selected.HomeTeamId == mine.Id) ? selected.AwayTeamId : selected.HomeTeamId;
+		int opponentId = selected.AwayTeamId;
 		if (bookedTeams.Contains(opponentId))
 		{
 			return CommandResult.Fail("Соперник уже участвует в другом главном матче этого месяца.");
 		}
 		if (FeaturedClash(booked, selected, selectedLeague.Sport))
 		{
-			return CommandResult.Fail("В это время домашняя арена занята другим главным матчем. Выберите другой матч.");
+			return CommandResult.Fail("В это время домашняя арена занята другим главным матчем. Выберите другой домашний матч этого месяца.");
 		}
 		foreach (League league3 in Leagues)
 		{
@@ -13760,11 +13756,8 @@ public class SportsWorld
 		}
 		selected.Featured = true;
 		selected.Spotlight = true;
-		int month = GameClock.MonthIndex(now);
-		mine.FeaturedMonth = month;
-		mine.LastLiveMonth = month;
 		Revision++;
-		return CommandResult.Success("Выбран главный матч месяца: " + TeamName(selected.HomeTeamId) + " — " + TeamName(selected.AwayTeamId) + ". Именно он станет главным спортивным событием города.");
+		return CommandResult.Success("Запланировано на весь сезон: " + TeamName(selected.HomeTeamId) + " — " + TeamName(selected.AwayTeamId) + ". Это главное событие выбранного месяца.");
 	}
 
 	private Dictionary<int, List<KeyValuePair<int, Sport>>> FeaturedBookings(int monthStart, int nextMonth, HashSet<int> teams, int ignoreTeamId = -1)
