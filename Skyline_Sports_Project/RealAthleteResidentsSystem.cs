@@ -314,11 +314,16 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         if (!TryResolveCitizen(link))
         {
             int currentDay = CurrentDay();
-            bool timedOut = link.PendingSinceDay == int.MinValue || currentDay - link.PendingSinceDay >= 1;
+            // Не запускаем тайм-аут, пока домохозяйство ещё не создано.
+            // int.MinValue означает отсутствие активного ожидания, а не истёкший срок.
+            bool householdPending = link.PendingSinceDay != int.MinValue &&
+                link.Household != Entity.Null &&
+                EntityManager.Exists(link.Household);
+            bool timedOut = householdPending && currentDay - link.PendingSinceDay >= 1;
             if ((forceCreate || timedOut) && !link.PipelineWarningLogged)
             {
                 link.PipelineWarningLogged = true;
-                Mod.log.Warn("[Жители-спортсмены][Диагностика] Житель «" + player.Name + "» пока не появился через штатную инициализацию домохозяйства. Ручное создание временно отключено для проверки причины вылета. Household=" + link.Household.Index + ", day=" + currentDay + ".");
+                Mod.log.Warn("[Жители-спортсмены][Диагностика] Домохозяйство создано, но штатная инициализация ещё не добавила гражданина. Игрок=«" + player.Name + "», Household=" + link.Household.Index + ", day=" + currentDay + ", PendingSinceDay=" + link.PendingSinceDay + ".");
             }
             if (!TryResolveCitizen(link))
             {
@@ -393,7 +398,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         {
             m_HouseholdsCreatedThisUpdate++;
             link.Household = household;
-            Mod.log.Info("[Жители-спортсмены][Диагностика] Создано домохозяйство для футболиста: Entity=" + household.Index + ", stableId=" + stableId + ". Префаб выбран с AdultCount=1 и ChildCount=1 (игра создаст 0 детей). За один цикл создаётся не более одного домохозяйства.");
+            Mod.log.Info("[Жители-спортсмены][Диагностика] Создано домохозяйство с маркером Created для штатной инициализации: Entity=" + household.Index + ", stableId=" + stableId + ". Префаб: AdultCount=1, ChildCount=1 (штатная система создаст 0 детей). За один цикл создаётся не более одного домохозяйства.");
             link.PendingSinceDay = CurrentDay();
             link.LastSalaryDay = CurrentDay();
             link.StartingWealthInitialized = false;
@@ -496,12 +501,15 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
             }
         }
 
+        // HouseholdInitializeSystem processes newly spawned households through Created.
+        // Without this marker the entity can exist indefinitely without vanilla initialization.
         household = EntityManager.CreateEntity(
             ComponentType.ReadWrite<Household>(),
             ComponentType.ReadWrite<PrefabRef>(),
             ComponentType.ReadWrite<HouseholdCitizen>(),
             ComponentType.ReadWrite<Resources>(),
-            ComponentType.ReadWrite<CurrentBuilding>());
+            ComponentType.ReadWrite<CurrentBuilding>(),
+            ComponentType.ReadWrite<Created>());
 
         EntityManager.SetComponentData(household, new PrefabRef(selectedPrefab));
 
