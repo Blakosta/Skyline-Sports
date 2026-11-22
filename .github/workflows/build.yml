@@ -165,7 +165,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Skyline-Sports-Game-API-Decompiled
-          path: ${{ runner.temp }}\\game-api-decompiled
+          path: ${{ runner.temp }}\game-api-decompiled
           if-no-files-found: error
 
       - name: Upload game API inspection
