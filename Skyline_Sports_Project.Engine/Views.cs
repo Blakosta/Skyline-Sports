@@ -2525,7 +2525,7 @@ public static class Views
 		List<Coach> pool = world.AvailableCoaches(league.Sport, league.Level);
 		for (int i = 0; i < pool.Count && i < 8; i++)
 		{
-			WriteCoachLine(j, world, pool[i], year);
+			WriteCoachLine(j, world, pool[i], year, residents);
 		}
 		j.EndArray();
 	}
