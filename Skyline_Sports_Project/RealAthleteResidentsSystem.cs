@@ -258,6 +258,10 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         link.VenueId = team.VenueId;
 
         bool hadResident = link.Citizen != Entity.Null && EntityManager.Exists(link.Citizen) && EntityManager.HasComponent<Citizen>(link.Citizen) && EntityManager.HasComponent<HouseholdMember>(link.Citizen);
+        if (!hadResident && link.Citizen != Entity.Null)
+        {
+            m_ProfileRefreshPending = true;
+        }
         EnsureHousehold(link, player.Id);
         if (!TryResolveCitizen(link))
         {
@@ -284,7 +288,11 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         link.TeamId = team.Id;
         link.VenueId = team.VenueId;
 
-        bool hadResident = link.Citizen != Entity.Null && EntityManager.Exists(link.Citizen);
+        bool hadResident = link.Citizen != Entity.Null && EntityManager.Exists(link.Citizen) && EntityManager.HasComponent<Citizen>(link.Citizen) && EntityManager.HasComponent<HouseholdMember>(link.Citizen);
+        if (!hadResident && link.Citizen != Entity.Null)
+        {
+            m_ProfileRefreshPending = true;
+        }
         EnsureHousehold(link, coach.Id ^ int.MinValue);
         if (!TryResolveCitizen(link))
         {
@@ -456,13 +464,24 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
             // selects a transport type the city does not have, retry with road only.
             if (!hasOutside)
             {
-                hasOutside = BuildingUtils.GetRandomOutsideConnectionByParameters(
-                    ref outsideConnections,
-                    ref outsideData,
-                    ref prefabRefs,
-                    random,
+                float4[] fallbackTypes =
+                {
                     new float4(1f, 0f, 0f, 0f),
-                    out outside);
+                    new float4(0f, 1f, 0f, 0f),
+                    new float4(0f, 0f, 1f, 0f),
+                    new float4(0f, 0f, 0f, 1f)
+                };
+
+                for (int i = 0; i < fallbackTypes.Length && !hasOutside; i++)
+                {
+                    hasOutside = BuildingUtils.GetRandomOutsideConnectionByParameters(
+                        ref outsideConnections,
+                        ref outsideData,
+                        ref prefabRefs,
+                        random,
+                        fallbackTypes[i],
+                        out outside);
+                }
             }
 
             if (!hasOutside)
