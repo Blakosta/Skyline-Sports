@@ -170,6 +170,14 @@ public class SportsUISystem : UISystemBase
 		m_PanelData.Update(Views.LeaguePanel(m_Data.Sports, timeKnown ? now : m_Data.NowOrLast(), timeKnown, m_View, m_Residents));
 	}
 
+	public void NotifyResidentLinksChanged()
+	{
+		if (m_PanelOpen)
+		{
+			RefreshPanel();
+		}
+	}
+
 	private void OnSetPanelOpen(bool open)
 	{
 		m_PanelOpen = open;
