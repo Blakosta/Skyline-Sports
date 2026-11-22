@@ -222,7 +222,8 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
                 ReleaseLinkEmployment(pair.Value);
                 pair.Value.TeamId = -1;
                 pair.Value.VenueId = -1;
-            }
+                World.GetOrCreateSystemManaged<SportsUISystem>().NotifyResidentLinksChanged();
+    }
         }
     }
 
