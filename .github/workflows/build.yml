@@ -95,7 +95,12 @@ jobs:
             "Game.UI.NameSystem",
             "Game.Prefabs.PrefabSystem",
             "Game.Economy.EconomyUtils",
-            "Game.Simulation.UpdateFrame"
+            "Game.Simulation.UpdateFrame",
+            "Game.UI.NameSystem",
+            "Game.Companies.FreeWorkplaces",
+            "Game.Prefabs.WorkplaceComplexity",
+            "Game.Common.UpdateFrame",
+            "Game.Common.Created"
           )
 
            $decompileDir = Join-Path $env:RUNNER_TEMP "game-api-decompiled"
