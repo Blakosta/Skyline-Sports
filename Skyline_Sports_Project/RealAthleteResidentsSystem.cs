@@ -373,7 +373,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         }
 
         uint seed = (uint)stableId ^ m_SimulationSystem.frameIndex;
-        Random random = Random.CreateFromIndex(seed);
+        Unity.Mathematics.Random random = Unity.Mathematics.Random.CreateFromIndex(seed);
         int roll = random.NextInt(totalWeight);
         Entity selectedPrefab = candidates[0];
         for (int i = 0; i < candidates.Count; i++)
