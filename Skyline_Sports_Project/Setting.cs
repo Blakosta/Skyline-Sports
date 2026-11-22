@@ -9,7 +9,7 @@ using UnityEngine;
 namespace Skyline_Sports_Project;
 
 [FileLocation("ModsSettings/Skyline_Sports_Project/Skyline_Sports_Project")]
-[SettingsUIGroupOrder(new string[] { "Leagues", "Fans", "Display", "Data", "About" })]
+[SettingsUIGroupOrder(new string[] { "Leagues", "Fans", "Residents", "Display", "Data", "About" })]
 [SettingsUIShowGroupName(new string[] { "Leagues", "Fans", "Display", "Data", "About" })]
 public class Setting : ModSetting
 {
@@ -29,6 +29,8 @@ public class Setting : ModSetting
 	public const string kDataGroup = "Data";
 
 	public const string kFansGroup = "Fans";
+
+	public const string kResidentsGroup = "Residents";
 
 	public const string kAboutGroup = "About";
 
@@ -122,5 +124,6 @@ public class Setting : ModSetting
 		RealFansCount = 500;
 		VisitorFans = false;
 		GameDayTourism = false;
+		RealAthleteResidentsEnabled = false;
 	}
 }
