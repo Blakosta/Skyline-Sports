@@ -512,6 +512,12 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
             return;
         }
 
+        if (EntityManager.HasComponent<MovingAway>(member.m_Household))
+        {
+            ReleaseLinkEmployment(link);
+            return;
+        }
+
         if (team.VenueId < 0 ||
             !m_SportsData.TryGetVenueEntity(team.VenueId, out Entity stadium) ||
             stadium == Entity.Null ||
