@@ -1045,7 +1045,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         m_LegacyWorkplaces.Clear();
 
         reader.Read(out int version);
-        if (version != 1 && version != kSaveVersion)
+        if (version != 1 && version != 2 && version != kSaveVersion)
         {
             Mod.log.Warn("[Жители-спортсмены] Версия сохранённых связей не поддерживается. Жители города останутся нетронутыми; связи будут восстановлены для текущего состава.");
             return;
