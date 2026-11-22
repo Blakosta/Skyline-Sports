@@ -620,7 +620,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
 
         Citizen citizenData = EntityManager.GetComponentData<Citizen>(link.Citizen);
         int educationLevel = Math.Max(0, Math.Min(4, citizenData.GetEducationLevel()));
-        if (!TryChooseWorkplacePrefab(educationLevel, out int jobLevel, out Entity workplacePrefab))
+        if (!TryChooseWorkplacePrefab(educationLevel, stadium, out int jobLevel, out Entity workplacePrefab))
         {
             ReleaseLinkEmployment(link);
             return;
@@ -665,7 +665,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         EnsureEmployeeEntry(workplace, link.Citizen, jobLevel);
     }
 
-    private bool TryChooseWorkplacePrefab(int educationLevel, out int jobLevel, out Entity prefab)
+    private bool TryChooseWorkplacePrefab(int educationLevel, Entity stadium, out int jobLevel, out Entity prefab)
     {
         jobLevel = educationLevel;
         prefab = Entity.Null;
@@ -684,11 +684,12 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         int bestLevel = educationLevel;
         Entity bestPrefab = Entity.Null;
         ComponentLookup<SpawnableBuildingData> spawnableLookup = GetComponentLookup<SpawnableBuildingData>(true);
+        PrefabRef stadiumPrefab = EntityManager.GetComponentData<PrefabRef>(stadium);
+        int stadiumLevel = Math.Max(1, PropertyUtils.GetBuildingLevel(stadiumPrefab.m_Prefab, spawnableLookup));
 
         foreach (KeyValuePair<WorkplaceComplexity, Entity> pair in m_WorkplacePrefabs)
         {
-            int prefabLevel = Math.Max(1, PropertyUtils.GetBuildingLevel(pair.Value, spawnableLookup));
-            Workplaces available = EconomyUtils.CalculateNumberOfWorkplaces(1, pair.Key, prefabLevel);
+            Workplaces available = EconomyUtils.CalculateNumberOfWorkplaces(1, pair.Key, stadiumLevel);
             if (available[educationLevel] > 0)
             {
                 jobLevel = educationLevel;
