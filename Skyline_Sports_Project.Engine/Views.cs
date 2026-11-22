@@ -4857,7 +4857,7 @@ public static class Views
 		j.Prop("position", PositionName(p.Position));
 		j.Prop("teamId", team?.Id ?? (-1));
 		j.Prop("team", (team == null) ? "" : world.TeamName(team.Id));
-		j.Prop("teamIsUser", team?.IsUser ?? false);
+		j.Prop("teamIsUser", team != null && team.IsUser && p.Sport == Sport.Soccer);
 		j.Prop("hasResident", residents != null && residents.HasPlayerResident(p.Id));
 		j.Prop("residentsEnabled", Mod.Settings != null && Mod.Settings.RealAthleteResidentsEnabled);
 		j.Prop("leagueKey", League.MakeKey(p.Sport, p.Level));
