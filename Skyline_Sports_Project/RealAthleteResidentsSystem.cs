@@ -777,7 +777,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
             DynamicBuffer<TripNeeded> trips = EntityManager.GetBuffer<TripNeeded>(link.Citizen);
             for (int i = trips.Length - 1; i >= 0; i--)
             {
-                if (trips[i].m_Purpose == Purpose.GoingToWork)
+                if (trips[i].m_Purpose == Game.Citizens.Purpose.GoingToWork)
                 {
                     trips.RemoveAtSwapBack(i);
                 }
