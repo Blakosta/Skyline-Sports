@@ -397,7 +397,14 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
 
         EntityManager.SetComponentData(household, new PrefabRef(selectedPrefab));
 
-        NativeList<Entity> outsideConnections = m_OutsideConnectionQuery.ToEntityList(Allocator.Temp);
+        NativeArray<Entity> outsideArray = m_OutsideConnectionQuery.ToEntityArray(Allocator.Temp);
+        NativeList<Entity> outsideConnections = new NativeList<Entity>(Allocator.Temp);
+        for (int i = 0; i < outsideArray.Length; i++)
+        {
+            outsideConnections.Add(outsideArray[i]);
+        }
+        outsideArray.Dispose();
+
         try
         {
             if (outsideConnections.Length == 0 || m_DemandParameterQuery.IsEmptyIgnoreFilter)
