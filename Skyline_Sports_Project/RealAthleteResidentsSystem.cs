@@ -907,6 +907,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
     public void ForgetAllLinks()
     {
         ReleaseAllEmployment();
+        DestroyLegacyWorkplaces();
         m_PlayerResidents.Clear();
         m_CoachResidents.Clear();
     }
@@ -915,6 +916,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
     {
         m_PlayerResidents.Clear();
         m_CoachResidents.Clear();
+        m_LegacyWorkplaces.Clear();
     }
 
     public void Serialize<TWriter>(TWriter writer) where TWriter : IWriter
