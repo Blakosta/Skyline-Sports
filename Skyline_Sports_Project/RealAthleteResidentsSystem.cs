@@ -256,7 +256,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         link.TeamId = team.Id;
         link.VenueId = team.VenueId;
 
-        bool hadResident = link.Citizen != Entity.Null && EntityManager.Exists(link.Citizen);
+        bool hadResident = link.Citizen != Entity.Null && EntityManager.Exists(link.Citizen) && EntityManager.HasComponent<Citizen>(link.Citizen) && EntityManager.HasComponent<HouseholdMember>(link.Citizen);
         EnsureHousehold(link, player.Id);
         if (!TryResolveCitizen(link))
         {
@@ -443,18 +443,33 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
             ComponentLookup<PrefabRef> prefabRefs = GetComponentLookup<PrefabRef>(true);
             DemandParameterData demandParameters = m_DemandParameterQuery.GetSingleton<DemandParameterData>();
 
-            if (!BuildingUtils.GetRandomOutsideConnectionByParameters(
+            bool hasOutside = BuildingUtils.GetRandomOutsideConnectionByParameters(
+                ref outsideConnections,
+                ref outsideData,
+                ref prefabRefs,
+                random,
+                demandParameters.m_CitizenOCSpawnParameters,
+                out Entity outside);
+
+            // Vanilla first uses the city's configured distribution. If that roll
+            // selects a transport type the city does not have, retry with road only.
+            if (!hasOutside)
+            {
+                hasOutside = BuildingUtils.GetRandomOutsideConnectionByParameters(
                     ref outsideConnections,
                     ref outsideData,
                     ref prefabRefs,
                     random,
-                    demandParameters.m_CitizenOCSpawnParameters,
-                    out Entity outside))
+                    new float4(1f, 0f, 0f, 0f),
+                    out outside);
+            }
+
+            if (!hasOutside)
             {
                 if (!m_OutsideConnectionWarningLogged)
                 {
                     m_OutsideConnectionWarningLogged = true;
-                    Mod.log.Warn("[Жители-спортсмены] Игровая система не нашла подходящее внешнее соединение для домохозяйства. Создание жителя отложено.");
+                    Mod.log.Warn("[Жители-спортсмены] Не найдено подходящее внешнее соединение. Создание домохозяйства отложено без появления пустого домохозяйства.");
                 }
                 EntityManager.DestroyEntity(household);
                 household = Entity.Null;
@@ -779,14 +794,19 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         link.Workplace = Entity.Null;
 
         Entity workplace = EntityManager.CreateEntity(
-            ComponentType.ReadWrite<Building>(),
             ComponentType.ReadWrite<WorkProvider>(),
             ComponentType.ReadWrite<PrefabRef>(),
             ComponentType.ReadWrite<PropertyRenter>(),
             ComponentType.ReadWrite<Employee>(),
-            ComponentType.ReadWrite<UpdateFrame>());
+            ComponentType.ReadWrite<UpdateFrame>(),
+            ComponentType.ReadWrite<CompanyData>(),
+            ComponentType.ReadWrite<Profitability>(),
+            ComponentType.ReadWrite<Resources>(),
+            ComponentType.ReadWrite<Created>());
 
         EntityManager.SetComponentData(workplace, new PrefabRef(prefab));
+        EntityManager.SetComponentData(workplace, default(CompanyData));
+        EntityManager.SetComponentData(workplace, default(Profitability));
         EntityManager.SetComponentData(workplace, new PropertyRenter
         {
             m_Property = stadium,
