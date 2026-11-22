@@ -661,7 +661,11 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
 
     private Entity EnsureResidentWorkplace(ResidentLink link, int venueId, Entity stadium, Entity prefab)
     {
-        if (link.Workplace != Entity.Null && EntityManager.Exists(link.Workplace))
+        if (link.Workplace != Entity.Null && EntityManager.Exists(link.Workplace) &&
+            EntityManager.HasComponent<PropertyRenter>(link.Workplace) &&
+            EntityManager.HasComponent<PrefabRef>(link.Workplace) &&
+            EntityManager.HasComponent<WorkProvider>(link.Workplace) &&
+            EntityManager.HasComponent<Employee>(link.Workplace))
         {
             PropertyRenter propertyRenter = EntityManager.GetComponentData<PropertyRenter>(link.Workplace);
             if (propertyRenter.m_Property != stadium)
@@ -686,6 +690,12 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
 
             return link.Workplace;
         }
+
+        if (link.Workplace != Entity.Null && EntityManager.Exists(link.Workplace))
+        {
+            m_EndFrameBarrier.CreateCommandBuffer().DestroyEntity(link.Workplace);
+        }
+        link.Workplace = Entity.Null;
 
         Entity workplace = EntityManager.CreateEntity(
             ComponentType.ReadWrite<Building>(),
