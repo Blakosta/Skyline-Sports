@@ -13674,7 +13674,98 @@ public class SportsWorld
 		return CommandResult.Success(on ? (TeamName(t.Id) + " — ваша главная команда месяца: её матч станет главным спортивным событием города.") : "Главная команда месяца не выбрана: главным станет лучший матч месяца.");
 	}
 
-	private Dictionary<int, List<KeyValuePair<int, Sport>>> FeaturedBookings(int monthStart, int nextMonth, HashSet<int> teams)
+	public CommandResult SetSpotlightGame(int gameId, int now)
+	{
+		Match selected = null;
+		League selectedLeague = null;
+		foreach (League league in Leagues)
+		{
+			if (league.Current == null) continue;
+			foreach (Match game in league.Current.Games)
+			{
+				if (game.Id == gameId)
+				{
+					selected = game;
+					selectedLeague = league;
+					break;
+				}
+			}
+			if (selected != null) break;
+		}
+		if (selected == null)
+		{
+			return CommandResult.Fail("Матч не найден в текущем сезоне.");
+		}
+		if (selected.Played || selected.Live != null || selected.Stage != GameStage.Regular)
+		{
+			return CommandResult.Fail("Главным можно назначить только ещё не начавшийся матч регулярного чемпионата.");
+		}
+		int monthStart = GameClock.MonthStartDay(now);
+		int nextMonth = GameClock.NextMonthStartDay(now);
+		int day = GameClock.DayOf(selected.Time);
+		if (day < monthStart || day >= nextMonth || selected.Time <= now)
+		{
+			return CommandResult.Fail("Выбрать можно только будущий матч текущего игрового месяца.");
+		}
+		Team home = GetTeam(selected.HomeTeamId);
+		Team away = GetTeam(selected.AwayTeamId);
+		Team mine = (home != null && home.IsUser) ? home : ((away != null && away.IsUser) ? away : null);
+		if (mine == null)
+		{
+			return CommandResult.Fail("Выбрать главное событие можно только для матча вашей команды.");
+		}
+		if (selected.VenueId < 0 || GetVenue(selected.VenueId) == null)
+		{
+			return CommandResult.Fail("У этого матча пока нет назначенного домашнего стадиона. Сначала исправьте площадку.");
+		}
+		foreach (League league2 in Leagues)
+		{
+			if (league2.Current == null) continue;
+			foreach (Match other in league2.Current.Games)
+			{
+				if (other.Id != selected.Id && other.Involves(mine.Id) && other.Featured && (other.Played || other.Live != null))
+				{
+					return CommandResult.Fail("Матч вашей команды в этом месяце уже начался или завершился — заменить его главным событием нельзя.");
+				}
+			}
+		}
+		HashSet<int> bookedTeams = new HashSet<int>();
+		Dictionary<int, List<KeyValuePair<int, Sport>>> booked = FeaturedBookings(monthStart, nextMonth, bookedTeams, mine.Id);
+		int opponentId = (selected.HomeTeamId == mine.Id) ? selected.AwayTeamId : selected.HomeTeamId;
+		if (bookedTeams.Contains(opponentId))
+		{
+			return CommandResult.Fail("Соперник уже участвует в другом главном матче этого месяца.");
+		}
+		if (FeaturedClash(booked, selected, selectedLeague.Sport))
+		{
+			return CommandResult.Fail("В это время домашняя арена занята другим главным матчем. Выберите другой матч.");
+		}
+		foreach (League league3 in Leagues)
+		{
+			if (league3.Current == null) continue;
+			foreach (Match other2 in league3.Current.Games)
+			{
+				if (other2.Id == selected.Id || other2.Played || other2.Live != null) continue;
+				if (other2.Involves(mine.Id) && other2.Featured)
+				{
+					other2.Featured = false;
+				}
+				if (other2.Spotlight && (other2.Involves(mine.Id) || other2.VenueId == selected.VenueId))
+				{
+					other2.Spotlight = false;
+				}
+			}
+		}
+		selected.Featured = true;
+		selected.Spotlight = true;
+		int month = GameClock.MonthIndex(now);
+		mine.FeaturedMonth = month;
+		mine.LastLiveMonth = month;
+		Revision++;
+		return CommandResult.Success("Выбран главный матч месяца: " + TeamName(selected.HomeTeamId) + " — " + TeamName(selected.AwayTeamId) + ". Именно он станет главным спортивным событием города.");
+	}
+
+	private Dictionary<int, List<KeyValuePair<int, Sport>>> FeaturedBookings(int monthStart, int nextMonth, HashSet<int> teams, int ignoreTeamId = -1)
 	{
 		Dictionary<int, List<KeyValuePair<int, Sport>>> booked = new Dictionary<int, List<KeyValuePair<int, Sport>>>();
 		foreach (League l in Leagues)
@@ -13691,6 +13782,10 @@ public class SportsWorld
 				}
 				int day = GameClock.DayOf(g.Time);
 				if (day < monthStart || day >= nextMonth)
+				{
+					continue;
+				}
+				if (ignoreTeamId >= 0 && g.Involves(ignoreTeamId))
 				{
 					continue;
 				}
