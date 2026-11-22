@@ -10,6 +10,7 @@ using Game.Economy;
 using Game.Objects;
 using Game.Prefabs;
 using Game.Simulation;
+using Game.Tools;
 using Game.UI;
 using Skyline_Sports_Project.Engine;
 using Unity.Collections;
@@ -69,15 +70,15 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
 
         m_HouseholdPrefabQuery = GetEntityQuery(
             ComponentType.ReadOnly<HouseholdData>(),
-            ComponentType.ReadOnly<ArchetypeData>(),
+            ComponentType.ReadOnly<PrefabData>(),
             ComponentType.Exclude<DynamicHousehold>(),
             ComponentType.Exclude<Deleted>(),
             ComponentType.Exclude<Temp>());
 
         m_OutsideConnectionQuery = GetEntityQuery(
-            ComponentType.ReadOnly<OutsideConnection>(),
-            ComponentType.Exclude<ElectricityOutsideConnection>(),
-            ComponentType.Exclude<WaterPipeOutsideConnection>(),
+            ComponentType.ReadOnly<Game.Objects.OutsideConnection>(),
+            ComponentType.Exclude<Game.Objects.ElectricityOutsideConnection>(),
+            ComponentType.Exclude<Game.Objects.WaterPipeOutsideConnection>(),
             ComponentType.Exclude<Deleted>(),
             ComponentType.Exclude<Temp>());
 
@@ -359,8 +360,12 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
             return false;
         }
 
-        ArchetypeData archetypeData = EntityManager.GetComponentData<ArchetypeData>(selectedPrefab);
-        household = EntityManager.CreateEntity(archetypeData.m_Archetype);
+        household = EntityManager.CreateEntity(
+            ComponentType.ReadWrite<Household>(),
+            ComponentType.ReadWrite<PrefabRef>(),
+            ComponentType.ReadWrite<HouseholdCitizen>(),
+            ComponentType.ReadWrite<Resources>(),
+            ComponentType.ReadWrite<CurrentBuilding>());
         EntityManager.SetComponentData(household, new PrefabRef(selectedPrefab));
 
         NativeArray<Entity> outsideConnections = m_OutsideConnectionQuery.ToEntityArray(Allocator.Temp);
@@ -377,14 +382,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
             Entity outside = outsideConnections[(int)(index % (uint)outsideConnections.Length)];
             CurrentBuilding currentBuilding = new() { m_CurrentBuilding = outside };
 
-            if (EntityManager.HasComponent<CurrentBuilding>(household))
-            {
-                EntityManager.SetComponentData(household, currentBuilding);
-            }
-            else
-            {
-                EntityManager.AddComponentData(household, currentBuilding);
-            }
+            EntityManager.SetComponentData(household, currentBuilding);
         }
         finally
         {
@@ -768,7 +766,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         if (EntityManager.HasComponent<TravelPurpose>(link.Citizen))
         {
             TravelPurpose purpose = EntityManager.GetComponentData<TravelPurpose>(link.Citizen);
-            if (purpose.m_Purpose == Purpose.GoingToWork || purpose.m_Purpose == Purpose.Working)
+            if (purpose.m_Purpose == Game.Citizens.Purpose.GoingToWork || purpose.m_Purpose == Game.Citizens.Purpose.Working)
             {
                 EntityManager.RemoveComponent<TravelPurpose>(link.Citizen);
             }
