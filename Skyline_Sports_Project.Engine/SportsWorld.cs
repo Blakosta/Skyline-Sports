@@ -14752,6 +14752,17 @@ public class SportsWorld
 		}
 	}
 
+	public void RescheduleSoccerVenues()
+	{
+		foreach (League league in OrderedLeagues())
+		{
+			if (league.Sport == Sport.Soccer && league.Current != null && !league.Current.PlayoffsCreated)
+			{
+				ReassignVenues(league);
+			}
+		}
+	}
+
 	private void ReassignVenues(League league)
 	{
 		Season s = league.Current;
