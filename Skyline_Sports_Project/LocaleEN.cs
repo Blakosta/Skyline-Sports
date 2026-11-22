@@ -42,6 +42,18 @@ public class LocaleEN : IDictionarySource
 				"Болельщики"
 			},
 			{
+				((ModSetting)m_Setting).GetOptionGroupLocaleID("Residents"),
+				"Реальные спортсмены"
+			},
+			{
+				((ModSetting)m_Setting).GetOptionLabelLocaleID("RealAthleteResidentsEnabled"),
+				"Создавать спортсменов жителями города"
+			},
+			{
+				((ModSetting)m_Setting).GetOptionDescLocaleID("RealAthleteResidentsEnabled"),
+				"Экспериментальная функция для футболистов, хоккеистов и тренеров вашего клуба: создаёт настоящих жителей города и связывает их со спортивным составом. При отключении новые операции прекращаются; уже созданные жители, их жильё и автомобили сохраняются. Пока функция находится в разработке, она выключена по умолчанию."
+			},
+			{
 				((ModSetting)m_Setting).GetOptionLabelLocaleID("RealFans"),
 				"Болельщики на главных матчах"
 			},
