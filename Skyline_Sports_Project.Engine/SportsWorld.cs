@@ -14756,7 +14756,7 @@ public class SportsWorld
 	{
 		foreach (League league in OrderedLeagues())
 		{
-			if (league.Sport == Sport.Soccer && league.Current != null && !league.Current.PlayoffsCreated)
+			if (league.Sport == Sport.Soccer && league.Current != null)
 			{
 				ReassignVenues(league);
 			}
