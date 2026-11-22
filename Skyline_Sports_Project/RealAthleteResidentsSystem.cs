@@ -46,6 +46,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
     private EntityQuery m_HouseholdPrefabQuery;
     private EntityQuery m_OutsideConnectionQuery;
     private EntityQuery m_WorkplacePrefabQuery;
+    private EntityQuery m_CompanyWorkplacePrefabQuery;
     private EntityQuery m_TimeDataQuery;
     private EntityQuery m_DemandParameterQuery;
 
@@ -90,6 +91,13 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         m_WorkplacePrefabQuery = GetEntityQuery(
             ComponentType.ReadOnly<PrefabData>(),
             ComponentType.ReadOnly<WorkplaceData>(),
+            ComponentType.Exclude<Deleted>(),
+            ComponentType.Exclude<Temp>());
+
+        m_CompanyWorkplacePrefabQuery = GetEntityQuery(
+            ComponentType.ReadOnly<PrefabData>(),
+            ComponentType.ReadOnly<WorkplaceData>(),
+            ComponentType.ReadOnly<CompanyBrandElement>(),
             ComponentType.Exclude<Deleted>(),
             ComponentType.Exclude<Temp>());
 
@@ -766,12 +774,16 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
 
     private void RefreshWorkplacePrefabs()
     {
-        if (m_WorkplacePrefabQuery.IsEmptyIgnoreFilter)
+        EntityQuery source = !m_CompanyWorkplacePrefabQuery.IsEmptyIgnoreFilter
+            ? m_CompanyWorkplacePrefabQuery
+            : m_WorkplacePrefabQuery;
+
+        if (source.IsEmptyIgnoreFilter)
         {
             return;
         }
 
-        NativeArray<Entity> prefabs = m_WorkplacePrefabQuery.ToEntityArray(Allocator.Temp);
+        NativeArray<Entity> prefabs = source.ToEntityArray(Allocator.Temp);
         try
         {
             for (int i = 0; i < prefabs.Length; i++)
