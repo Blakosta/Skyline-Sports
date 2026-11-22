@@ -4,6 +4,7 @@ using Colossal.Serialization.Entities;
 using Game;
 using Game.Buildings;
 using Game.Citizens;
+using Game.City;
 using Game.Common;
 using Game.Companies;
 using Game.Economy;
@@ -44,6 +45,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
     private EntityQuery m_OutsideConnectionQuery;
     private EntityQuery m_WorkplacePrefabQuery;
     private EntityQuery m_TimeDataQuery;
+    private EntityQuery m_DemandParameterQuery;
 
     private readonly Dictionary<int, ResidentLink> m_PlayerResidents = new();
     private readonly Dictionary<int, ResidentLink> m_CoachResidents = new();
@@ -70,7 +72,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
 
         m_HouseholdPrefabQuery = GetEntityQuery(
             ComponentType.ReadOnly<HouseholdData>(),
-            ComponentType.ReadOnly<PrefabData>(),
+            ComponentType.ReadOnly<ArchetypeData>(),
             ComponentType.Exclude<DynamicHousehold>(),
             ComponentType.Exclude<Deleted>(),
             ComponentType.Exclude<Temp>());
@@ -89,6 +91,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
             ComponentType.Exclude<Temp>());
 
         m_TimeDataQuery = GetEntityQuery(ComponentType.ReadOnly<TimeData>());
+        m_DemandParameterQuery = GetEntityQuery(ComponentType.ReadOnly<DemandParameterData>());
 
         Mod.log.Info("[Жители-спортсмены] Система создана. Функция управляется отдельной настройкой.");
     }
@@ -314,8 +317,13 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
             return false;
         }
 
-        Entity selectedPrefab = Entity.Null;
-        Entity fallbackPrefab = Entity.Null;
+        List<Entity> petFreePrefabs = new();
+        List<int> petFreeWeights = new();
+        List<Entity> fallbackPrefabs = new();
+        List<int> fallbackWeights = new();
+        int petFreeWeight = 0;
+        int fallbackWeight = 0;
+
         NativeArray<Entity> prefabs = m_HouseholdPrefabQuery.ToEntityArray(Allocator.Temp);
         try
         {
@@ -333,15 +341,15 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
                     continue;
                 }
 
-                if (fallbackPrefab == Entity.Null)
-                {
-                    fallbackPrefab = prefab;
-                }
+                fallbackPrefabs.Add(prefab);
+                fallbackWeights.Add(data.m_Weight);
+                fallbackWeight += data.m_Weight;
 
                 if (data.m_FirstPetProbability == 0 && data.m_NextPetProbability == 0)
                 {
-                    selectedPrefab = prefab;
-                    break;
+                    petFreePrefabs.Add(prefab);
+                    petFreeWeights.Add(data.m_Weight);
+                    petFreeWeight += data.m_Weight;
                 }
             }
         }
@@ -350,12 +358,11 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
             prefabs.Dispose();
         }
 
-        if (selectedPrefab == Entity.Null)
-        {
-            selectedPrefab = fallbackPrefab;
-        }
+        List<Entity> candidates = petFreeWeight > 0 ? petFreePrefabs : fallbackPrefabs;
+        List<int> weights = petFreeWeight > 0 ? petFreeWeights : fallbackWeights;
+        int totalWeight = petFreeWeight > 0 ? petFreeWeight : fallbackWeight;
 
-        if (selectedPrefab == Entity.Null)
+        if (candidates.Count == 0 || totalWeight <= 0)
         {
             if (!m_HouseholdPrefabWarningLogged)
             {
@@ -363,6 +370,20 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
                 Mod.log.Warn("[Жители-спортсмены] Не найдено штатное домохозяйство с одним взрослым без детей. Создание пропущено, чтобы не порождать лишних горожан.");
             }
             return false;
+        }
+
+        uint seed = (uint)stableId ^ m_SimulationSystem.frameIndex;
+        Random random = Random.CreateFromIndex(seed);
+        int roll = random.NextInt(totalWeight);
+        Entity selectedPrefab = candidates[0];
+        for (int i = 0; i < candidates.Count; i++)
+        {
+            roll -= weights[i];
+            if (roll < 0)
+            {
+                selectedPrefab = candidates[i];
+                break;
+            }
         }
 
         household = EntityManager.CreateEntity(
@@ -377,15 +398,30 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         NativeArray<Entity> outsideConnections = m_OutsideConnectionQuery.ToEntityArray(Allocator.Temp);
         try
         {
-            if (outsideConnections.Length == 0)
+            if (outsideConnections.Length == 0 || m_DemandParameterQuery.IsEmptyIgnoreFilter)
             {
                 EntityManager.DestroyEntity(household);
                 household = Entity.Null;
                 return false;
             }
 
-            uint index = (uint)stableId;
-            Entity outside = outsideConnections[(int)(index % (uint)outsideConnections.Length)];
+            ComponentLookup<OutsideConnectionData> outsideData = GetComponentLookup<OutsideConnectionData>(true);
+            ComponentLookup<PrefabRef> prefabRefs = GetComponentLookup<PrefabRef>(true);
+            DemandParameterData demandParameters = m_DemandParameterQuery.GetSingleton<DemandParameterData>();
+
+            if (!BuildingUtils.GetRandomOutsideConnectionByParameters(
+                    ref outsideConnections,
+                    ref outsideData,
+                    ref prefabRefs,
+                    random,
+                    demandParameters.m_CitizenOCSpawnParameters,
+                    out Entity outside))
+            {
+                EntityManager.DestroyEntity(household);
+                household = Entity.Null;
+                return false;
+            }
+
             EntityManager.SetComponentData(household, new CurrentBuilding { m_CurrentBuilding = outside });
         }
         finally
