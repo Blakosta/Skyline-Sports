@@ -383,6 +383,9 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         {
             link.Household = household;
             link.PendingSinceDay = CurrentDay();
+            link.LastSalaryDay = CurrentDay();
+            link.StartingWealthInitialized = false;
+            link.BirthYear = int.MinValue;
         }
     }
 
@@ -686,6 +689,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
 
         link.Citizen = citizen;
         link.PendingSinceDay = int.MinValue;
+        link.BirthYear = int.MinValue;
         link.EmploymentLogged = false;
         return true;
     }
