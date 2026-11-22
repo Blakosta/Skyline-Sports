@@ -51,6 +51,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
     private readonly Dictionary<int, ResidentLink> m_PlayerResidents = new();
     private readonly Dictionary<int, ResidentLink> m_CoachResidents = new();
     private readonly Dictionary<WorkplaceComplexity, Entity> m_WorkplacePrefabs = new();
+    private readonly List<Entity> m_LegacyWorkplaces = new();
 
     private bool m_LastEnabled;
     private bool m_InitialCleanupPending = true;
@@ -102,6 +103,12 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
     {
         try
         {
+            if (m_LegacyWorkplaces.Count > 0)
+            {
+                ReleaseAllEmployment();
+                DestroyLegacyWorkplaces();
+            }
+
             if (Mod.Settings == null || !Mod.Settings.RealAthleteResidentsEnabled)
             {
                 if (m_LastEnabled || m_InitialCleanupPending)
@@ -884,6 +891,19 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         }
     }
 
+    private void DestroyLegacyWorkplaces()
+    {
+        EntityCommandBuffer commandBuffer = m_EndFrameBarrier.CreateCommandBuffer();
+        foreach (Entity workplace in m_LegacyWorkplaces)
+        {
+            if (workplace != Entity.Null && EntityManager.Exists(workplace))
+            {
+                commandBuffer.DestroyEntity(workplace);
+            }
+        }
+        m_LegacyWorkplaces.Clear();
+    }
+
     public void ForgetAllLinks()
     {
         ReleaseAllEmployment();
@@ -924,6 +944,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
     {
         m_PlayerResidents.Clear();
         m_CoachResidents.Clear();
+        m_LegacyWorkplaces.Clear();
 
         reader.Read(out int version);
         if (version != 1 && version != kSaveVersion)
@@ -934,6 +955,24 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
 
         ReadResidentLinks(reader, m_PlayerResidents, version);
         ReadResidentLinks(reader, m_CoachResidents, version);
+
+        if (version == 1)
+        {
+            reader.Read(out int legacyVenueCount);
+            legacyVenueCount = Math.Max(0, Math.Min(legacyVenueCount, 10000));
+            for (int i = 0; i < legacyVenueCount; i++)
+            {
+                reader.Read(out int venueId);
+                reader.Read(out int workplaceCount);
+                workplaceCount = Math.Max(0, Math.Min(workplaceCount, 8));
+                for (int j = 0; j < workplaceCount; j++)
+                {
+                    reader.Read(out int complexity);
+                    reader.Read(out Entity workplace);
+                    m_LegacyWorkplaces.Add(workplace);
+                }
+            }
+        }
     }
 
     private static void ReadResidentLinks<TReader>(TReader reader, Dictionary<int, ResidentLink> destination, int version)
