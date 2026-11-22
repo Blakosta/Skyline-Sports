@@ -58,6 +58,11 @@ jobs:
           dotnet tool install ilspycmd --tool-path .\\.tools
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
+          $tool = Get-ChildItem -LiteralPath ".\\.tools" -Filter "ilspycmd*" -File | Select-Object -First 1
+          if (-not $tool) { throw "ilspycmd executable was not found in .tools." }
+          $gameDll = Join-Path $env:GAME_MANAGED_DIR "Game.dll"
+          if (-not (Test-Path -LiteralPath $gameDll)) { throw "Game.dll was not found: $gameDll" }
+
           $targets = @(
             "Game.Citizens.HouseholdInitializeSystem",
             "Game.Citizens.HouseholdInitializeSystem+InitializeHouseholdJob",
@@ -68,15 +73,26 @@ jobs:
             "Game.Citizens.Worker",
             "Game.Companies.WorkProvider",
             "Game.Companies.Employee",
+            "Game.Simulation.HouseholdFindPropertySystem",
+            "Game.Simulation.HouseholdSpawnSystem+SpawnHouseholdJob",
+            "Game.Simulation.WorkerSystem",
+            "Game.Simulation.WorkProviderSystem",
+            "Game.Simulation.WorkProviderSystem+WorkProviderTickJob",
+            "Game.Simulation.PropertyRenterSystem",
             "Game.Buildings.PropertyRenter",
-            "Game.Prefabs.PersonalCarSelectData"
+            "Game.Prefabs.PersonalCarSelectData",
+            "Game.Prefabs.WorkplaceData",
+            "Game.UI.InGame.CitizenUIUtils",
+            "Game.UI.InGame.SelectedInfoUISystem",
+            "Game.UI.InGame.CitizenSection",
+            "Game.UI.InGame.CameraUISystem"
           )
 
-          New-Item -ItemType Directory -Force -Path .\\game-api-decompiled | Out-Null
+          New-Item -ItemType Directory -Force -Path ".\\game-api-decompiled" | Out-Null
           foreach ($type in $targets) {
             $safe = $type -replace '[^A-Za-z0-9._-]', '_'
-            & .\\.tools\\ilspycmd.exe -t $type "$env:GAME_MANAGED_DIR\\Game.dll" 2>&1 |
-              Out-File -LiteralPath ".\\game-api-decompiled\\$safe.cs" -Encoding utf8
+            $output = Join-Path ".\\game-api-decompiled" "$safe.cs"
+            & $tool.FullName -t $type $gameDll 2>&1 | Out-File -LiteralPath $output -Encoding utf8
             if ($LASTEXITCODE -ne 0) {
               Write-Warning "Could not decompile $type"
             }
