@@ -10,7 +10,7 @@ namespace Skyline_Sports_Project;
 
 [FileLocation("ModsSettings/Skyline_Sports_Project/Skyline_Sports_Project")]
 [SettingsUIGroupOrder(new string[] { "Leagues", "Fans", "Residents", "Display", "Data", "About" })]
-[SettingsUIShowGroupName(new string[] { "Leagues", "Fans", "Display", "Data", "About" })]
+[SettingsUIShowGroupName(new string[] { "Leagues", "Fans", "Residents", "Display", "Data", "About" })]
 public class Setting : ModSetting
 {
 	public enum TemperatureUnit
@@ -70,6 +70,9 @@ public class Setting : ModSetting
 
 	[SettingsUISection("Main", "Fans")]
 	public bool GameDayTourism { get; set; }
+
+	[SettingsUISection("Main", "Residents")]
+	public bool RealAthleteResidentsEnabled { get; set; }
 
 	[SettingsUIButton]
 	[SettingsUIConfirmation(null, null)]
