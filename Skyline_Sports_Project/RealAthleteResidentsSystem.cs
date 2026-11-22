@@ -938,10 +938,19 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         if (link.Workplace != Entity.Null && EntityManager.Exists(link.Workplace))
         {
             RemoveEmployeeEntry(link.Workplace, link.Citizen);
-            m_EndFrameBarrier.CreateCommandBuffer().DestroyEntity(link.Workplace);
-        }
 
-        link.Workplace = Entity.Null;
+            if (EntityManager.HasBuffer<Employee>(link.Workplace))
+            {
+                EntityManager.GetBuffer<Employee>(link.Workplace).Clear();
+            }
+
+            if (EntityManager.HasComponent<WorkProvider>(link.Workplace))
+            {
+                WorkProvider provider = EntityManager.GetComponentData<WorkProvider>(link.Workplace);
+                provider.m_MaxWorkers = 0;
+                EntityManager.SetComponentData(link.Workplace, provider);
+            }
+        }
     }
 
     private void ReleaseAllEmployment()
@@ -959,14 +968,26 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
 
     private void DestroyLegacyWorkplaces()
     {
-        EntityCommandBuffer commandBuffer = m_EndFrameBarrier.CreateCommandBuffer();
         foreach (Entity workplace in m_LegacyWorkplaces)
         {
-            if (workplace != Entity.Null && EntityManager.Exists(workplace))
+            if (workplace == Entity.Null || !EntityManager.Exists(workplace))
             {
-                commandBuffer.DestroyEntity(workplace);
+                continue;
+            }
+
+            if (EntityManager.HasBuffer<Employee>(workplace))
+            {
+                EntityManager.GetBuffer<Employee>(workplace).Clear();
+            }
+
+            if (EntityManager.HasComponent<WorkProvider>(workplace))
+            {
+                WorkProvider provider = EntityManager.GetComponentData<WorkProvider>(workplace);
+                provider.m_MaxWorkers = 0;
+                EntityManager.SetComponentData(workplace, provider);
             }
         }
+
         m_LegacyWorkplaces.Clear();
     }
 
