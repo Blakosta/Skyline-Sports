@@ -58,6 +58,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
     private bool m_WorkplacePrefabWarningLogged;
     private bool m_HouseholdPrefabWarningLogged;
     private bool m_OutsideConnectionWarningLogged;
+    private bool m_ProfileRefreshPending;
 
     public override int GetUpdateInterval(SystemUpdatePhase phase) => 32;
 
@@ -229,8 +230,13 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
                 ReleaseLinkEmployment(pair.Value);
                 pair.Value.TeamId = -1;
                 pair.Value.VenueId = -1;
-                World.GetOrCreateSystemManaged<SportsUISystem>().NotifyResidentLinksChanged();
-    }
+            }
+        }
+
+        if (m_ProfileRefreshPending)
+        {
+            m_ProfileRefreshPending = false;
+            World.GetOrCreateSystemManaged<SportsUISystem>().NotifyResidentLinksChanged();
         }
     }
 
@@ -250,10 +256,16 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         link.TeamId = team.Id;
         link.VenueId = team.VenueId;
 
+        bool hadResident = link.Citizen != Entity.Null && EntityManager.Exists(link.Citizen);
         EnsureHousehold(link, player.Id);
         if (!TryResolveCitizen(link))
         {
             return;
+        }
+
+        if (!hadResident)
+        {
+            m_ProfileRefreshPending = true;
         }
 
         ApplyIdentity(link.Citizen, player.Name, player.BirthYear);
@@ -271,10 +283,16 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         link.TeamId = team.Id;
         link.VenueId = team.VenueId;
 
+        bool hadResident = link.Citizen != Entity.Null && EntityManager.Exists(link.Citizen);
         EnsureHousehold(link, coach.Id ^ int.MinValue);
         if (!TryResolveCitizen(link))
         {
             return;
+        }
+
+        if (!hadResident)
+        {
+            m_ProfileRefreshPending = true;
         }
 
         ApplyIdentity(link.Citizen, coach.Name, coach.BirthYear);
