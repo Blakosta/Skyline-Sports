@@ -5583,7 +5583,7 @@ public static class Views
 				WriteStaff(j, world, t, league, now, office: false);
 				break;
 			case "schedule":
-				WriteTeamSchedule(j, world, t, league);
+				WriteTeamSchedule(j, world, t, league, now);
 				break;
 			case "history":
 				WriteTeamHistory(j, world, t, league);
@@ -6340,7 +6340,7 @@ public static class Views
 		return RivalTagText(world.FindRivalry(league, g.HomeTeamId, g.AwayTeamId, create: false), game: false);
 	}
 
-	private static void WriteTeamSchedule(JsonBuilder j, SportsWorld world, Team t, League league)
+	private static void WriteTeamSchedule(JsonBuilder j, SportsWorld world, Team t, League league, int now)
 	{
 		List<Match> results = new List<Match>();
 		List<Match> coming = new List<Match>();
@@ -6387,6 +6387,7 @@ public static class Views
 				.Prop("text", (live != null) ? (world.TeamAbbrev(g3.AwayTeamId) + " " + live.AwayScore + ", " + world.TeamAbbrev(g3.HomeTeamId) + " " + live.HomeScore + "  ·  " + live.Status) : NextGameText(world, league, t.Id, g3).Substring(GameClock.TimeLabel(g3.Time).Length).Trim())
 				.Prop("rival", RivalryTag(world, league, g3))
 				.Prop("featured", g3.Featured)
+				.Prop("canPlanSpotlight", g3.HomeTeamId == t.Id && !g3.Played && g3.Live == null && g3.Time > now && g3.VenueId >= 0 && world.GetVenue(g3.VenueId) != null)
 				.EndObject();
 		}
 		j.EndArray();
