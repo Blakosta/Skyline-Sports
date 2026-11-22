@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Colossal.Serialization.Entities;
 using Game;
 using Game.Agents;
@@ -673,9 +674,19 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         }
 
         ArchetypeData archetype = EntityManager.GetComponentData<ArchetypeData>(malePrefab);
-        NativeArray<Entity> createdCitizens = EntityManager.CreateEntity(archetype.m_Archetype, 1, Allocator.Temp);
-        Entity citizen = createdCitizens[0];
-        createdCitizens.Dispose();
+        object citizenArchetype = archetype.m_Archetype;
+        MethodInfo createEntityMethod = typeof(EntityManager).GetMethod(
+            "CreateEntity",
+            BindingFlags.Instance | BindingFlags.Public,
+            null,
+            new[] { citizenArchetype.GetType() },
+            null);
+        if (createEntityMethod == null)
+        {
+            Mod.log.Warn("[Жители-спортсмены] Не найдена штатная ECS-функция создания гражданина по префабу.");
+            return false;
+        }
+        Entity citizen = (Entity)createEntityMethod.Invoke(EntityManager, new[] { citizenArchetype });
         EntityManager.SetComponentData(citizen, new PrefabRef(malePrefab));
         EntityManager.SetComponentData(citizen, new Citizen
         {
