@@ -524,15 +524,16 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
 
         Citizen citizenData = EntityManager.GetComponentData<Citizen>(link.Citizen);
         int educationLevel = Math.Max(0, Math.Min(4, citizenData.GetEducationLevel()));
-        int buildingLevel = GetBuildingLevel(stadium);
-        if (!TryChooseWorkplacePrefab(educationLevel, buildingLevel, out int jobLevel, out Entity workplacePrefab))
+        if (!TryChooseWorkplacePrefab(educationLevel, out int jobLevel, out Entity workplacePrefab))
         {
+            ReleaseLinkEmployment(link);
             return;
         }
 
         Entity workplace = EnsureResidentWorkplace(link, team.VenueId, stadium, workplacePrefab);
         if (workplace == Entity.Null)
         {
+            ReleaseLinkEmployment(link);
             return;
         }
 
@@ -568,14 +569,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         EnsureEmployeeEntry(workplace, link.Citizen, jobLevel);
     }
 
-    private int GetBuildingLevel(Entity stadium)
-    {
-        PrefabRef prefabRef = EntityManager.GetComponentData<PrefabRef>(stadium);
-        ComponentLookup<SpawnableBuildingData> spawnableLookup = GetComponentLookup<SpawnableBuildingData>(true);
-        return Math.Max(1, PropertyUtils.GetBuildingLevel(prefabRef.m_Prefab, spawnableLookup));
-    }
-
-    private bool TryChooseWorkplacePrefab(int educationLevel, int buildingLevel, out int jobLevel, out Entity prefab)
+    private bool TryChooseWorkplacePrefab(int educationLevel, out int jobLevel, out Entity prefab)
     {
         jobLevel = educationLevel;
         prefab = Entity.Null;
@@ -593,10 +587,12 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         int bestScore = int.MinValue;
         int bestLevel = educationLevel;
         Entity bestPrefab = Entity.Null;
+        ComponentLookup<SpawnableBuildingData> spawnableLookup = GetComponentLookup<SpawnableBuildingData>(true);
 
         foreach (KeyValuePair<WorkplaceComplexity, Entity> pair in m_WorkplacePrefabs)
         {
-            Workplaces available = EconomyUtils.CalculateNumberOfWorkplaces(1, pair.Key, buildingLevel);
+            int prefabLevel = Math.Max(1, PropertyUtils.GetBuildingLevel(pair.Value, spawnableLookup));
+            Workplaces available = EconomyUtils.CalculateNumberOfWorkplaces(1, pair.Key, prefabLevel);
             if (available[educationLevel] > 0)
             {
                 jobLevel = educationLevel;
