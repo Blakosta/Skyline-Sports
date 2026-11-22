@@ -1349,6 +1349,13 @@ public static class Views
 		}
 		j.Prop("featured", g.Featured);
 		j.Prop("spotlight", g.Spotlight);
+		int gameDay = GameClock.DayOf(g.Time);
+		bool canSelectSpotlight = ((home != null && home.IsUser) || (away != null && away.IsUser))
+			&& !g.Played && g.Live == null && g.Stage == GameStage.Regular && g.Time > now
+			&& gameDay >= GameClock.MonthStartDay(now) && gameDay < GameClock.NextMonthStartDay(now)
+			&& g.VenueId >= 0 && world.GetVenue(g.VenueId) != null;
+		j.Prop("canSelectSpotlight", canSelectSpotlight);
+		j.Prop("ticketRevenue", g.Played ? g.TicketRevenue : 0);
 		j.Prop("rival", RivalTagText(world.FindRivalry(league, g.HomeTeamId, g.AwayTeamId, create: false), game: true));
 		PlayoffSeries ps = ((g.Stage == GameStage.Playoff) ? s.FindSeries(g.SeriesId) : null);
 		j.Prop("series", (ps == null || ps.BestOf <= 1) ? "" : SeriesText(world, s, ps, g));
