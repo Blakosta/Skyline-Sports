@@ -287,6 +287,10 @@ public class SportsUISystem : UISystemBase
 	{
 		Entity citizen;
 		bool found = coach ? m_Residents.TryGetCoachResident(id, out citizen) : m_Residents.TryGetPlayerResident(id, out citizen);
+		if (!found && !coach && m_Residents.ForceCreatePlayerResident(id))
+		{
+			found = m_Residents.TryGetPlayerResident(id, out citizen);
+		}
 		if (!found || citizen == Entity.Null || !EntityManager.Exists(citizen) || !EntityManager.HasComponent<Citizen>(citizen))
 		{
 			return CommandResult.Fail("Житель ещё создаётся или больше недоступен. Подождите немного и попробуйте снова.");
