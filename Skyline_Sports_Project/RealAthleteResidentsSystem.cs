@@ -35,6 +35,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         public int TeamId = -1;
         public int VenueId = -1;
         public int BirthYear = int.MinValue;
+        public bool EmploymentLogged;
     }
 
     private SportsDataSystem m_SportsData;
@@ -541,6 +542,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
 
             link.Citizen = citizen;
             link.BirthYear = int.MinValue;
+            link.EmploymentLogged = false;
             return true;
         }
 
@@ -696,8 +698,9 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         }
 
         EnsureEmployeeEntry(workplace, link.Citizen, jobLevel);
-        if (newlyAssigned)
+        if (newlyAssigned && !link.EmploymentLogged)
         {
+            link.EmploymentLogged = true;
             Mod.log.Info("[Жители-спортсмены] Назначено рабочее место на стадионе для жителя «" + (m_NameSystem.TryGetCustomName(link.Citizen, out string residentName) ? residentName : "Спортсмен") + "».");
         }
     }
@@ -920,6 +923,8 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         {
             return;
         }
+
+        link.EmploymentLogged = false;
 
         if (link.Citizen != Entity.Null && EntityManager.Exists(link.Citizen))
         {
