@@ -672,6 +672,10 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         {
             EntityManager.AddComponent<PropertySeeker>(link.Household);
         }
+        else if (!EntityManager.IsComponentEnabled<PropertySeeker>(link.Household))
+        {
+            EntityManager.SetComponentEnabled<PropertySeeker>(link.Household, true);
+        }
 
         ArchetypeData archetype = EntityManager.GetComponentData<ArchetypeData>(malePrefab);
         object citizenArchetype = archetype.m_Archetype;
