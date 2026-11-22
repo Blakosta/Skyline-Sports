@@ -393,7 +393,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         {
             m_HouseholdsCreatedThisUpdate++;
             link.Household = household;
-            Mod.log.Info("[Жители-спортсмены][Диагностика] Создано домохозяйство для футболиста: Entity=" + household.Index + ", stableId=" + stableId + ". За один цикл создаётся не более одного домохозяйства.");
+            Mod.log.Info("[Жители-спортсмены][Диагностика] Создано домохозяйство для футболиста: Entity=" + household.Index + ", stableId=" + stableId + ". Префаб выбран с AdultCount=1 и ChildCount=1 (игра создаст 0 детей). За один цикл создаётся не более одного домохозяйства.");
             link.PendingSinceDay = CurrentDay();
             link.LastSalaryDay = CurrentDay();
             link.StartingWealthInitialized = false;
@@ -441,7 +441,9 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
                 HouseholdData data = EntityManager.GetComponentData<HouseholdData>(prefab);
 
                 if (data.m_AdultCount != 1 ||
-                    data.m_ChildCount != 0 ||
+                    // HouseholdInitializeSystem calls Random.NextInt(m_ChildCount) unconditionally.
+                    // A value of zero crashes when simulation starts; one guarantees zero spawned children.
+                    data.m_ChildCount != 1 ||
                     data.m_ElderCount != 0 ||
                     data.m_StudentCount != 0 ||
                     data.m_Weight <= 0)
