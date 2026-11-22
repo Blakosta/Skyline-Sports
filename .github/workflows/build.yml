@@ -88,10 +88,11 @@ jobs:
             "Game.UI.InGame.CameraUISystem"
           )
 
-          New-Item -ItemType Directory -Force -Path ".\\game-api-decompiled" | Out-Null
+           $decompileDir = Join-Path $env:RUNNER_TEMP "game-api-decompiled"
+          New-Item -ItemType Directory -Force -Path $decompileDir | Out-Null
           foreach ($type in $targets) {
             $safe = $type -replace '[^A-Za-z0-9._-]', '_'
-            $output = Join-Path ".\\game-api-decompiled" "$safe.cs"
+            $output = Join-Path $decompileDir "$safe.cs"
             & $tool.FullName -t $type $gameDll 2>&1 | Out-File -LiteralPath $output -Encoding utf8
             if ($LASTEXITCODE -ne 0) {
               Write-Warning "Could not decompile $type"
@@ -164,7 +165,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Skyline-Sports-Game-API-Decompiled
-          path: game-api-decompiled
+          path: ${{ runner.temp }}\\game-api-decompiled
           if-no-files-found: error
 
       - name: Upload game API inspection
