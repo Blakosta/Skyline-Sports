@@ -277,11 +277,6 @@ public class SportsUISystem : UISystemBase
 
 	private CommandResult FindResident(int id, bool coach)
 	{
-		if (Mod.Settings == null || !Mod.Settings.RealAthleteResidentsEnabled)
-		{
-			return CommandResult.Fail("Функция реальных жителей-спортсменов выключена в настройках мода.");
-		}
-
 		Entity citizen;
 		bool found = coach ? m_Residents.TryGetCoachResident(id, out citizen) : m_Residents.TryGetPlayerResident(id, out citizen);
 		if (!found || citizen == Entity.Null || !EntityManager.Exists(citizen) || !EntityManager.HasComponent<Citizen>(citizen))
