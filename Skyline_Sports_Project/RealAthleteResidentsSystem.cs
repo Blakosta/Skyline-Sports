@@ -974,7 +974,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         }
     }
 
-    private void DestroyLegacyWorkplaces()
+    private void DeactivateLegacyWorkplaces()
     {
         foreach (Entity workplace in m_LegacyWorkplaces)
         {
@@ -1002,7 +1002,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
     public void ForgetAllLinks()
     {
         ReleaseAllEmployment();
-        DestroyLegacyWorkplaces();
+        DeactivateLegacyWorkplaces();
         m_PlayerResidents.Clear();
         m_CoachResidents.Clear();
     }
