@@ -25,7 +25,7 @@ namespace Skyline_Sports_Project;
 [Preserve]
 public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSerializable, ISerializable
 {
-    private const int kSaveVersion = 2;
+    private const int kSaveVersion = 3;
 
     private sealed class ResidentLink
     {
@@ -34,6 +34,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         public Entity Workplace;
         public int TeamId = -1;
         public int VenueId = -1;
+        public int BirthYear = int.MinValue;
     }
 
     private SportsDataSystem m_SportsData;
@@ -268,7 +269,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
             m_ProfileRefreshPending = true;
         }
 
-        ApplyIdentity(link.Citizen, player.Name, player.BirthYear);
+        ApplyIdentity(link, player.Name, player.BirthYear);
         AssignEmployment(link, team);
     }
 
@@ -295,7 +296,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
             m_ProfileRefreshPending = true;
         }
 
-        ApplyIdentity(link.Citizen, coach.Name, coach.BirthYear);
+        ApplyIdentity(link, coach.Name, coach.BirthYear);
         AssignEmployment(link, team);
     }
 
@@ -526,23 +527,27 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         return false;
     }
 
-    private void ApplyIdentity(Entity citizenEntity, string fullName, int birthYear)
+    private void ApplyIdentity(ResidentLink link, string fullName, int birthYear)
     {
-        if (citizenEntity == Entity.Null ||
-            !EntityManager.Exists(citizenEntity) ||
-            !EntityManager.HasComponent<Citizen>(citizenEntity))
+        if (link == null ||
+            link.Citizen == Entity.Null ||
+            !EntityManager.Exists(link.Citizen) ||
+            !EntityManager.HasComponent<Citizen>(link.Citizen))
         {
             return;
         }
 
         string name = string.IsNullOrWhiteSpace(fullName) ? "Спортсмен" : fullName.Trim();
-        if (!m_NameSystem.TryGetCustomName(citizenEntity, out string currentName) ||
+        if (!m_NameSystem.TryGetCustomName(link.Citizen, out string currentName) ||
             !string.Equals(currentName, name, StringComparison.Ordinal))
         {
-            m_NameSystem.SetCustomName(citizenEntity, name);
+            m_NameSystem.SetCustomName(link.Citizen, name);
         }
 
-        if (m_TimeDataQuery.IsEmptyIgnoreFilter)
+        // Set the birthday only when the roster birth year changes. Recalculating
+        // it every update would move the citizen's birthday forward every day and
+        // prevent the citizen from aging naturally in the simulation.
+        if (link.BirthYear == birthYear || m_TimeDataQuery.IsEmptyIgnoreFilter)
         {
             return;
         }
@@ -552,20 +557,14 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         int age = Math.Max(18, Math.Min(80, currentYear - birthYear));
         TimeData timeData = m_TimeDataQuery.GetSingleton<TimeData>();
         int currentDay = TimeSystem.GetDay(m_SimulationSystem.frameIndex, timeData);
-        short desiredBirthDay = (short)(currentDay - age * daysPerYear);
+        short desiredBirthDay = unchecked((short)(currentDay - age * daysPerYear));
 
-        Citizen citizen = EntityManager.GetComponentData<Citizen>(citizenEntity);
+        Citizen citizen = EntityManager.GetComponentData<Citizen>(link.Citizen);
         bool changed = false;
 
         if (citizen.m_BirthDay != desiredBirthDay)
         {
             citizen.m_BirthDay = desiredBirthDay;
-            changed = true;
-        }
-
-        if ((citizen.m_State & CitizenFlags.Male) == 0)
-        {
-            citizen.m_State |= CitizenFlags.Male;
             changed = true;
         }
 
@@ -577,8 +576,10 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
 
         if (changed)
         {
-            EntityManager.SetComponentData(citizenEntity, citizen);
+            EntityManager.SetComponentData(link.Citizen, citizen);
         }
+
+        link.BirthYear = birthYear;
     }
 
     private void AssignEmployment(ResidentLink link, Team team)
@@ -978,6 +979,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
             writer.Write(pair.Value.Workplace);
             writer.Write(pair.Value.TeamId);
             writer.Write(pair.Value.VenueId);
+            writer.Write(pair.Value.BirthYear);
         }
     }
 
@@ -1037,13 +1039,20 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
             reader.Read(out int teamId);
             reader.Read(out int venueId);
 
+            int birthYear = int.MinValue;
+            if (version >= 3)
+            {
+                reader.Read(out birthYear);
+            }
+
             destination[id] = new ResidentLink
             {
                 Household = household,
                 Citizen = citizen,
                 Workplace = workplace,
                 TeamId = teamId,
-                VenueId = venueId
+                VenueId = venueId,
+                BirthYear = birthYear
             };
         }
     }
