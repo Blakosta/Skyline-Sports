@@ -41,7 +41,6 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
     private NameSystem m_NameSystem;
     private SimulationSystem m_SimulationSystem;
     private TimeSystem m_TimeSystem;
-    private EndFrameBarrier m_EndFrameBarrier;
 
     private EntityQuery m_HouseholdPrefabQuery;
     private EntityQuery m_OutsideConnectionQuery;
@@ -72,7 +71,6 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         m_NameSystem = World.GetOrCreateSystemManaged<NameSystem>();
         m_SimulationSystem = World.GetOrCreateSystemManaged<SimulationSystem>();
         m_TimeSystem = World.GetOrCreateSystemManaged<TimeSystem>();
-        m_EndFrameBarrier = World.GetOrCreateSystemManaged<EndFrameBarrier>();
 
         m_HouseholdPrefabQuery = GetEntityQuery(
             ComponentType.ReadOnly<HouseholdData>(),
