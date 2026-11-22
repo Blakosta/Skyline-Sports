@@ -246,6 +246,7 @@ public class SportsUISystem : UISystemBase
 				"recruit" => w.Recruit(Int(a, 1), Int(a, 2), (a.Length > 3) ? a[3] : "", now),
 				"callUp" => w.CallUp(Int(a, 1), Int(a, 2), now),
 				"watchFirst" => w.ToggleWatchFirst(Int(a, 1), now),
+				"spotlight" => w.SetSpotlightGame(Int(a, 1), now),
 				"farmPref" => w.SetFarmPref(Int(a, 1), Int(a, 2), now),
 				"sendDown" => w.SendDown(Int(a, 1), Int(a, 2), now),
 				"bid" => w.BidForPlayer(Int(a, 1), Int(a, 2), Int(a, 3), now),
