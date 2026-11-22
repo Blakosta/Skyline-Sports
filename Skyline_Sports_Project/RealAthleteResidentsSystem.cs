@@ -521,6 +521,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
             }
 
             link.Citizen = citizen;
+            link.BirthYear = int.MinValue;
             return true;
         }
 
