@@ -609,6 +609,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
             !EntityManager.HasComponent<TripNeeded>(link.Citizen) ||
             !EntityManager.HasComponent<HouseholdMember>(link.Citizen))
         {
+            ReleaseLinkEmployment(link);
             return;
         }
 
