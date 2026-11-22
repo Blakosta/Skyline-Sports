@@ -49,6 +49,7 @@ public class Mod : IMod
 		GameManager.instance.localizationManager.AddSource("ru-RU", (IDictionarySource)(object)new LocaleEN(Settings));
 		AssetDatabase.global.LoadSettings("Skyline_Sports_Project", (object)Settings, (object)new Setting((IMod)(object)this), false);
 		updateSystem.UpdateAt<SportsDataSystem>((SystemUpdatePhase)12);
+		updateSystem.UpdateAt<RealAthleteResidentsSystem>((SystemUpdatePhase)12);
 		updateSystem.UpdateAt<SportsUISystem>((SystemUpdatePhase)22);
 		AddVenueSection();
 	}
