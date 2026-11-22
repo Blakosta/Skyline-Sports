@@ -535,6 +535,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 	{
 		long cityTotal = 0L;
 		long clubTotal = 0L;
+		// Every played fixture is settled here, not only Featured/Spotlight games.
 		foreach (League league in Sports.Leagues)
 		{
 			Season[] seasons = new Season[2] { league.Current, league.Previous };
@@ -1223,6 +1224,8 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 				m_VenueEntities[kv.Key] = kv.Value;
 			}
 		}
+		// Rebuild soccer venue assignments for saved, not-yet-played fixtures so old neutral bookings can use the corrected kickoff allocator.
+		Sports.RescheduleSoccerVenues();
 		Mod.log.Info((object)("Загружены спортивные данные: " + Sports.Venues.Count + " спортивных объектов, " + Sports.UserTeams().Count + " команд."));
 	}
 
