@@ -60,7 +60,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
     private bool m_OutsideConnectionWarningLogged;
     private bool m_ProfileRefreshPending;
 
-    public override int GetUpdateInterval(SystemUpdatePhase phase) => 32;
+    public override int GetUpdateInterval(SystemUpdatePhase phase) => 256;
 
     [Preserve]
     protected override void OnCreate()
