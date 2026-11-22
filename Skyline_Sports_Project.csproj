@@ -16,6 +16,8 @@
     <Reference Include="Colossal.Logging" />
     <Reference Include="Colossal.IO.AssetDatabase" />
     <Reference Include="Colossal.Core" />
+    <Reference Include="Colossal.Collections" />
+    <Reference Include="System.Memory" />
     <Reference Include="Unity.Entities" />
     <Reference Include="System.Core" />
     <Reference Include="UnityEngine.CoreModule" />
