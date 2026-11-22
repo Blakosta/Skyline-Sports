@@ -85,7 +85,15 @@ jobs:
             "Game.UI.InGame.CitizenUIUtils",
             "Game.UI.InGame.SelectedInfoUISystem",
             "Game.UI.InGame.CitizenSection",
-            "Game.UI.InGame.CameraUISystem"
+            "Game.UI.InGame.CameraUISystem",
+            "Game.Companies.CompanyData",
+            "Game.Companies.Workplaces",
+            "Game.Companies.Workshift",
+            "Game.Prefabs.HouseholdData",
+            "Game.Prefabs.ArchetypeData",
+            "Game.Prefabs.CitizenData",
+            "Game.Simulation.NameSystem",
+            "Game.Prefabs.PrefabSystem"
           )
 
            $decompileDir = Join-Path $env:RUNNER_TEMP "game-api-decompiled"
