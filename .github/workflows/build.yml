@@ -52,6 +52,36 @@ jobs:
         shell: pwsh
         run: .\\tools\\InspectGameApi.ps1
 
+      - name: Decompile resident and workplace initialization systems
+        shell: pwsh
+        run: |
+          dotnet tool install ilspycmd --tool-path .\\.tools
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+          $targets = @(
+            "Game.Citizens.HouseholdInitializeSystem",
+            "Game.Citizens.HouseholdInitializeSystem+InitializeHouseholdJob",
+            "Game.Citizens.CitizenInitializeSystem",
+            "Game.Citizens.CitizenInitializeSystem+InitializeCitizenJob",
+            "Game.Citizens.CitizenUtils",
+            "Game.Agents.PropertySeeker",
+            "Game.Citizens.Worker",
+            "Game.Companies.WorkProvider",
+            "Game.Companies.Employee",
+            "Game.Buildings.PropertyRenter",
+            "Game.Prefabs.PersonalCarSelectData"
+          )
+
+          New-Item -ItemType Directory -Force -Path .\\game-api-decompiled | Out-Null
+          foreach ($type in $targets) {
+            $safe = $type -replace '[^A-Za-z0-9._-]', '_'
+            & .\\.tools\\ilspycmd.exe -t $type "$env:GAME_MANAGED_DIR\\Game.dll" 2>&1 |
+              Out-File -LiteralPath ".\\game-api-decompiled\\$safe.cs" -Encoding utf8
+            if ($LASTEXITCODE -ne 0) {
+              Write-Warning "Could not decompile $type"
+            }
+          }
+
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
@@ -112,6 +142,13 @@ jobs:
         with:
           name: Skyline-Sports-RU-Full
           path: Skyline-Sports-RU-Full.zip
+          if-no-files-found: error
+
+      - name: Upload decompiled game API
+        uses: actions/upload-artifact@v4
+        with:
+          name: Skyline-Sports-Game-API-Decompiled
+          path: game-api-decompiled
           if-no-files-found: error
 
       - name: Upload game API inspection
