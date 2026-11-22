@@ -8,6 +8,7 @@ on:
       - main
       - ru-direct-localization
       - feature/real-athlete-residents
+      - diagnostics/resident-spawn-staged
 
 jobs:
   build:
