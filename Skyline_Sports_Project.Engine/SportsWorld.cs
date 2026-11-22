@@ -13723,7 +13723,8 @@ public class SportsWorld
 			if (league2.Current == null) continue;
 			foreach (Match other in league2.Current.Games)
 			{
-				if (other.Id != selected.Id && other.Involves(mine.Id) && other.Featured && (other.Played || other.Live != null))
+				int otherDay = GameClock.DayOf(other.Time);
+				if (otherDay >= monthStart && otherDay < nextMonth && other.Id != selected.Id && other.Involves(mine.Id) && other.Featured && (other.Played || other.Live != null))
 				{
 					return CommandResult.Fail("Матч вашей команды в этом месяце уже начался или завершился — заменить его главным событием нельзя.");
 				}
@@ -13745,7 +13746,8 @@ public class SportsWorld
 			if (league3.Current == null) continue;
 			foreach (Match other2 in league3.Current.Games)
 			{
-				if (other2.Id == selected.Id || other2.Played || other2.Live != null) continue;
+				int otherDay2 = GameClock.DayOf(other2.Time);
+				if (other2.Id == selected.Id || other2.Played || other2.Live != null || otherDay2 < monthStart || otherDay2 >= nextMonth) continue;
 				if (other2.Involves(mine.Id) && other2.Featured)
 				{
 					other2.Featured = false;
