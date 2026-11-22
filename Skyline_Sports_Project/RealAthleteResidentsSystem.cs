@@ -25,7 +25,7 @@ namespace Skyline_Sports_Project;
 [Preserve]
 public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSerializable, ISerializable
 {
-    private const int kSaveVersion = 3;
+    private const int kSaveVersion = 4;
 
     private sealed class ResidentLink
     {
@@ -36,6 +36,9 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         public int VenueId = -1;
         public int BirthYear = int.MinValue;
         public bool EmploymentLogged;
+        public int PendingSinceDay = int.MinValue;
+        public int LastSalaryDay = int.MinValue;
+        public bool StartingWealthInitialized;
     }
 
     private SportsDataSystem m_SportsData;
@@ -49,6 +52,8 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
     private EntityQuery m_CompanyWorkplacePrefabQuery;
     private EntityQuery m_TimeDataQuery;
     private EntityQuery m_DemandParameterQuery;
+    private EntityQuery m_CitizenPrefabQuery;
+    private EntityQuery m_HappinessParameterQuery;
 
     private readonly Dictionary<int, ResidentLink> m_PlayerResidents = new();
     private readonly Dictionary<int, ResidentLink> m_CoachResidents = new();
@@ -60,6 +65,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
     private bool m_WorkplacePrefabWarningLogged;
     private bool m_HouseholdPrefabWarningLogged;
     private bool m_OutsideConnectionWarningLogged;
+    private bool m_CitizenPrefabWarningLogged;
     private bool m_ProfileRefreshPending;
 
     public override int GetUpdateInterval(SystemUpdatePhase phase) => 256;
@@ -103,6 +109,8 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
 
         m_TimeDataQuery = GetEntityQuery(ComponentType.ReadOnly<TimeData>());
         m_DemandParameterQuery = GetEntityQuery(ComponentType.ReadOnly<DemandParameterData>());
+        m_CitizenPrefabQuery = GetEntityQuery(ComponentType.ReadOnly<CitizenData>(), ComponentType.ReadOnly<ArchetypeData>());
+        m_HappinessParameterQuery = GetEntityQuery(ComponentType.ReadOnly<CitizenHappinessParameterData>());
 
         Mod.log.Info("[Жители-спортсмены] Система создана. Функция управляется отдельной настройкой.");
     }
@@ -126,6 +134,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
                     Mod.log.Info("[Жители-спортсмены] Функция выключена. Спортсмены остаются жителями города, их дома и автомобили не удаляются.");
                 }
 
+                ResetSalaryPaymentDays();
                 m_LastEnabled = false;
                 m_InitialCleanupPending = false;
                 return;
@@ -161,6 +170,33 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
     public bool HasPlayerResident(int playerId) => TryGetPlayerResident(playerId, out _);
 
     public bool HasCoachResident(int coachId) => TryGetCoachResident(coachId, out _);
+
+    public bool ForceCreatePlayerResident(int playerId)
+    {
+        if (Mod.Settings == null || !Mod.Settings.RealAthleteResidentsEnabled || m_SportsData?.Sports == null)
+        {
+            return false;
+        }
+
+        foreach (Team team in m_SportsData.Sports.UserTeams())
+        {
+            if (team == null || team.Retired || team.Sport != Sport.Soccer)
+            {
+                continue;
+            }
+
+            foreach (Player player in m_SportsData.Sports.RosterOf(team.Id))
+            {
+                if (player != null && player.Id == playerId)
+                {
+                    SyncPlayer(player, team, forceCreate: true);
+                    return TryGetPlayerResident(playerId, out _);
+                }
+            }
+        }
+
+        return false;
+    }
 
     private bool TryGetResident(Dictionary<int, ResidentLink> links, int id, out Entity citizen)
     {
@@ -250,10 +286,10 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
 
     private static bool IsSupportedSport(Sport sport)
     {
-        return sport == Sport.Football || sport == Sport.Hockey;
+        return sport == Sport.Soccer;
     }
 
-    private void SyncPlayer(Player player, Team team)
+    private void SyncPlayer(Player player, Team team, bool forceCreate = false)
     {
         if (!m_PlayerResidents.TryGetValue(player.Id, out ResidentLink link))
         {
@@ -272,7 +308,16 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         EnsureHousehold(link, player.Id);
         if (!TryResolveCitizen(link))
         {
-            return;
+            int currentDay = CurrentDay();
+            bool timedOut = link.PendingSinceDay == int.MinValue || currentDay - link.PendingSinceDay >= 1;
+            if ((forceCreate || timedOut) && TrySpawnMaleCitizen(link, player.Id))
+            {
+                Mod.log.Warn("[Жители-спортсмены] Штатное создание гражданина не завершилось; создан отдельный мужчина-футболист для «" + player.Name + "».");
+            }
+            if (!TryResolveCitizen(link))
+            {
+                return;
+            }
         }
 
         if (!hadResident)
@@ -282,6 +327,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         }
 
         ApplyIdentity(link, player.Name, player.BirthYear);
+        ApplyPlayerSalary(link, player.Salary);
         AssignEmployment(link, team);
     }
 
@@ -335,6 +381,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         if (TryCreateHousehold(stableId, out Entity household))
         {
             link.Household = household;
+            link.PendingSinceDay = CurrentDay();
         }
     }
 
@@ -515,6 +562,179 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         return true;
     }
 
+    private int CurrentDay()
+    {
+        if (m_TimeDataQuery.IsEmptyIgnoreFilter)
+        {
+            return unchecked((int)m_SimulationSystem.frameIndex);
+        }
+
+        return TimeSystem.GetDay(m_SimulationSystem.frameIndex, m_TimeDataQuery.GetSingleton<TimeData>());
+    }
+
+    private void ResetSalaryPaymentDays()
+    {
+        int day = CurrentDay();
+        foreach (ResidentLink link in m_PlayerResidents.Values)
+        {
+            link.LastSalaryDay = day;
+        }
+    }
+
+    private bool TryGetMaleCitizenPrefab(out Entity prefab)
+    {
+        prefab = Entity.Null;
+        if (m_CitizenPrefabQuery.IsEmptyIgnoreFilter)
+        {
+            return false;
+        }
+
+        NativeArray<Entity> prefabs = m_CitizenPrefabQuery.ToEntityArray(Allocator.Temp);
+        try
+        {
+            for (int i = 0; i < prefabs.Length; i++)
+            {
+                Entity candidate = prefabs[i];
+                if (EntityManager.GetComponentData<CitizenData>(candidate).m_Male)
+                {
+                    prefab = candidate;
+                    return true;
+                }
+            }
+        }
+        finally
+        {
+            prefabs.Dispose();
+        }
+
+        return false;
+    }
+
+    private bool TrySpawnMaleCitizen(ResidentLink link, int stableId)
+    {
+        if (link == null || link.Household == Entity.Null || !EntityManager.Exists(link.Household) ||
+            !EntityManager.HasComponent<Household>(link.Household) || !EntityManager.HasBuffer<HouseholdCitizen>(link.Household))
+        {
+            return false;
+        }
+
+        if (!TryGetMaleCitizenPrefab(out Entity malePrefab) || !EntityManager.HasComponent<ArchetypeData>(malePrefab))
+        {
+            if (!m_CitizenPrefabWarningLogged)
+            {
+                m_CitizenPrefabWarningLogged = true;
+                Mod.log.Warn("[Жители-спортсмены] Не найден мужской префаб гражданина. Принудительное создание отложено.");
+            }
+            return false;
+        }
+
+        Entity spawnBuilding = Entity.Null;
+        if (EntityManager.HasComponent<CurrentBuilding>(link.Household))
+        {
+            spawnBuilding = EntityManager.GetComponentData<CurrentBuilding>(link.Household).m_CurrentBuilding;
+        }
+        if (spawnBuilding == Entity.Null || !EntityManager.Exists(spawnBuilding))
+        {
+            if (m_OutsideConnectionQuery.IsEmptyIgnoreFilter)
+            {
+                return false;
+            }
+            NativeArray<Entity> outside = m_OutsideConnectionQuery.ToEntityArray(Allocator.Temp);
+            try
+            {
+                if (outside.Length > 0)
+                {
+                    uint seed = unchecked((uint)stableId + m_SimulationSystem.frameIndex + 1u);
+                    Unity.Mathematics.Random random = Unity.Mathematics.Random.CreateFromIndex(seed);
+                    spawnBuilding = outside[random.NextInt(outside.Length)];
+                }
+            }
+            finally
+            {
+                outside.Dispose();
+            }
+        }
+        if (spawnBuilding == Entity.Null || !EntityManager.Exists(spawnBuilding))
+        {
+            return false;
+        }
+
+        if (EntityManager.HasComponent<CurrentBuilding>(link.Household))
+        {
+            EntityManager.RemoveComponent<CurrentBuilding>(link.Household);
+        }
+        if (!EntityManager.HasComponent<PropertySeeker>(link.Household))
+        {
+            EntityManager.AddComponent<PropertySeeker>(link.Household);
+        }
+
+        ArchetypeData archetype = EntityManager.GetComponentData<ArchetypeData>(malePrefab);
+        Entity citizen = EntityManager.CreateEntity(archetype.m_Archetype);
+        EntityManager.SetComponentData(citizen, new PrefabRef(malePrefab));
+        EntityManager.SetComponentData(citizen, new Citizen
+        {
+            m_BirthDay = 1,
+            m_State = CitizenFlags.Male
+        });
+        EntityManager.AddComponentData(citizen, new HouseholdMember { m_Household = link.Household });
+        EntityManager.AddComponentData(citizen, new CurrentBuilding { m_CurrentBuilding = spawnBuilding });
+        if (!EntityManager.HasComponent<Created>(citizen))
+        {
+            EntityManager.AddComponent<Created>(citizen);
+        }
+
+        link.Citizen = citizen;
+        link.PendingSinceDay = int.MinValue;
+        link.EmploymentLogged = false;
+        return true;
+    }
+
+    private void ApplyPlayerSalary(ResidentLink link, int seasonSalary)
+    {
+        if (link == null || link.Household == Entity.Null || !EntityManager.Exists(link.Household) ||
+            !EntityManager.HasComponent<Household>(link.Household) || !EntityManager.HasBuffer<Resources>(link.Household))
+        {
+            return;
+        }
+
+        DynamicBuffer<Resources> resources = EntityManager.GetBuffer<Resources>(link.Household);
+        if (!link.StartingWealthInitialized && !m_HappinessParameterQuery.IsEmptyIgnoreFilter)
+        {
+            CitizenHappinessParameterData parameters = m_HappinessParameterQuery.GetSingleton<CitizenHappinessParameterData>();
+            int poorFloor = Math.Max(0, parameters.m_WealthyMoneyAmount.x);
+            int poorCeiling = Math.Max(poorFloor + 1, parameters.m_WealthyMoneyAmount.y);
+            int targetWealth = Math.Min(poorCeiling - 1, poorFloor + 1);
+
+            Household household = EntityManager.GetComponentData<Household>(link.Household);
+            household.m_Resources = 0;
+            EntityManager.SetComponentData(link.Household, household);
+            int currentMoney = EconomyUtils.GetResources(Resource.Money, resources);
+            EconomyUtils.AddResources(Resource.Money, targetWealth - currentMoney, resources);
+            link.StartingWealthInitialized = true;
+            Mod.log.Info("[Жители-спортсмены] Домохозяйство футболиста начинает с уровня «Бедные».");
+        }
+
+        int currentDay = CurrentDay();
+        if (link.LastSalaryDay == int.MinValue)
+        {
+            link.LastSalaryDay = currentDay;
+            return;
+        }
+        if (currentDay <= link.LastSalaryDay)
+        {
+            return;
+        }
+
+        int elapsedDays = Math.Min(30, currentDay - link.LastSalaryDay);
+        long monthlySalary = Math.Max(0L, (long)seasonSalary) * 1000L / 12L;
+        long payment = monthlySalary * elapsedDays;
+        if (payment > 0)
+        {
+            EconomyUtils.AddResources(Resource.Money, (int)Math.Min(int.MaxValue, payment), resources);
+        }
+        link.LastSalaryDay = currentDay;
+    }
+
     private bool TryResolveCitizen(ResidentLink link)
     {
         if (link.Citizen != Entity.Null &&
@@ -567,7 +787,23 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
             return;
         }
 
-        string name = string.IsNullOrWhiteSpace(fullName) ? "Спортсмен" : fullName.Trim();
+        Citizen citizen = EntityManager.GetComponentData<Citizen>(link.Citizen);
+        if ((citizen.m_State & CitizenFlags.Male) == 0)
+        {
+            citizen.m_State |= CitizenFlags.Male;
+            EntityManager.SetComponentData(link.Citizen, citizen);
+        }
+        if (TryGetMaleCitizenPrefab(out Entity malePrefab) && EntityManager.HasComponent<PrefabRef>(link.Citizen))
+        {
+            PrefabRef currentPrefab = EntityManager.GetComponentData<PrefabRef>(link.Citizen);
+            if (currentPrefab.m_Prefab != malePrefab)
+            {
+                currentPrefab.m_Prefab = malePrefab;
+                EntityManager.SetComponentData(link.Citizen, currentPrefab);
+            }
+        }
+
+        string name = string.IsNullOrWhiteSpace(fullName) ? "Футболист" : fullName.Trim();
         if (!m_NameSystem.TryGetCustomName(link.Citizen, out string currentName) ||
             !string.Equals(currentName, name, StringComparison.Ordinal))
         {
@@ -584,7 +820,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
 
         int daysPerYear = Math.Max(1, m_TimeSystem.daysPerYear);
         int currentYear = m_TimeSystem.year;
-        int age = Math.Max(18, Math.Min(80, currentYear - birthYear));
+        int age = Math.Max(1, Math.Min(100, currentYear - birthYear));
         TimeData timeData = m_TimeDataQuery.GetSingleton<TimeData>();
         int currentDay = TimeSystem.GetDay(m_SimulationSystem.frameIndex, timeData);
         short desiredBirthDay = unchecked((short)(currentDay - age * daysPerYear));
@@ -598,9 +834,10 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
             changed = true;
         }
 
-        if (citizen.GetAge() != CitizenAge.Adult)
+        CitizenAge desiredAge = age < 13 ? CitizenAge.Child : age < 18 ? CitizenAge.Teen : age < 65 ? CitizenAge.Adult : CitizenAge.Elderly;
+        if (citizen.GetAge() != desiredAge)
         {
-            citizen.SetAge(CitizenAge.Adult);
+            citizen.SetAge(desiredAge);
             changed = true;
         }
 
@@ -1067,6 +1304,9 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
             writer.Write(pair.Value.TeamId);
             writer.Write(pair.Value.VenueId);
             writer.Write(pair.Value.BirthYear);
+            writer.Write(pair.Value.PendingSinceDay);
+            writer.Write(pair.Value.LastSalaryDay);
+            writer.Write(pair.Value.StartingWealthInitialized);
         }
     }
 
@@ -1077,7 +1317,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         m_LegacyWorkplaces.Clear();
 
         reader.Read(out int version);
-        if (version != 1 && version != 2 && version != kSaveVersion)
+        if (version != 1 && version != 2 && version != 3 && version != kSaveVersion)
         {
             Mod.log.Warn("[Жители-спортсмены] Версия сохранённых связей не поддерживается. Жители города останутся нетронутыми; связи будут восстановлены для текущего состава.");
             return;
@@ -1132,6 +1372,16 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
                 reader.Read(out birthYear);
             }
 
+            int pendingSinceDay = int.MinValue;
+            int lastSalaryDay = int.MinValue;
+            bool startingWealthInitialized = false;
+            if (version >= 4)
+            {
+                reader.Read(out pendingSinceDay);
+                reader.Read(out lastSalaryDay);
+                reader.Read(out startingWealthInitialized);
+            }
+
             destination[id] = new ResidentLink
             {
                 Household = household,
@@ -1139,7 +1389,10 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
                 Workplace = workplace,
                 TeamId = teamId,
                 VenueId = venueId,
-                BirthYear = birthYear
+                BirthYear = birthYear,
+                PendingSinceDay = pendingSinceDay,
+                LastSalaryDay = lastSalaryDay,
+                StartingWealthInitialized = startingWealthInitialized
             };
         }
     }
