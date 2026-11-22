@@ -212,7 +212,8 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         }
 
         if (!EntityManager.HasComponent<Citizen>(link.Citizen) ||
-            !EntityManager.HasComponent<HouseholdMember>(link.Citizen))
+            !EntityManager.HasComponent<HouseholdMember>(link.Citizen) ||
+            EntityManager.HasComponent<Created>(link.Citizen))
         {
             return false;
         }
@@ -300,7 +301,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         link.TeamId = team.Id;
         link.VenueId = team.VenueId;
 
-        bool hadResident = link.Citizen != Entity.Null && EntityManager.Exists(link.Citizen) && EntityManager.HasComponent<Citizen>(link.Citizen) && EntityManager.HasComponent<HouseholdMember>(link.Citizen);
+        bool hadResident = link.Citizen != Entity.Null && EntityManager.Exists(link.Citizen) && EntityManager.HasComponent<Citizen>(link.Citizen) && EntityManager.HasComponent<HouseholdMember>(link.Citizen) && !EntityManager.HasComponent<Created>(link.Citizen);
         if (!hadResident && link.Citizen != Entity.Null)
         {
             m_ProfileRefreshPending = true;
@@ -808,6 +809,13 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
             !string.Equals(currentName, name, StringComparison.Ordinal))
         {
             m_NameSystem.SetCustomName(link.Citizen, name);
+        }
+
+        // CitizenInitializeSystem assigns a random adult age to newly spawned citizens.
+        // Wait until its Created marker is gone before applying the footballer's exact age.
+        if (EntityManager.HasComponent<Created>(link.Citizen))
+        {
+            return;
         }
 
         // Set the birthday only when the roster birth year changes. Recalculating
