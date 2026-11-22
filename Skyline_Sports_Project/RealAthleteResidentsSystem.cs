@@ -661,7 +661,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
 
         Citizen citizenData = EntityManager.GetComponentData<Citizen>(link.Citizen);
         int educationLevel = Math.Max(0, Math.Min(4, citizenData.GetEducationLevel()));
-        if (!TryChooseWorkplacePrefab(educationLevel, out int jobLevel, out Entity workplacePrefab))
+        if (!TryChooseWorkplacePrefab(educationLevel, stadium, out int jobLevel, out Entity workplacePrefab))
         {
             ReleaseLinkEmployment(link);
             return;
@@ -713,7 +713,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         }
     }
 
-    private bool TryChooseWorkplacePrefab(int educationLevel, out int jobLevel, out Entity prefab)
+    private bool TryChooseWorkplacePrefab(int educationLevel, Entity stadium, out int jobLevel, out Entity prefab)
     {
         jobLevel = educationLevel;
         prefab = Entity.Null;
@@ -732,11 +732,12 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         int bestLevel = educationLevel;
         Entity bestPrefab = Entity.Null;
         ComponentLookup<SpawnableBuildingData> spawnableLookup = GetComponentLookup<SpawnableBuildingData>(true);
+        PrefabRef stadiumPrefab = EntityManager.GetComponentData<PrefabRef>(stadium);
+        int stadiumLevel = Math.Max(1, PropertyUtils.GetBuildingLevel(stadiumPrefab.m_Prefab, spawnableLookup));
 
         foreach (KeyValuePair<WorkplaceComplexity, Entity> pair in m_WorkplacePrefabs)
         {
-            int prefabLevel = Math.Max(1, PropertyUtils.GetBuildingLevel(pair.Value, spawnableLookup));
-            Workplaces available = EconomyUtils.CalculateNumberOfWorkplaces(1, pair.Key, prefabLevel);
+            Workplaces available = EconomyUtils.CalculateNumberOfWorkplaces(1, pair.Key, stadiumLevel);
             if (available[educationLevel] > 0)
             {
                 jobLevel = educationLevel;
@@ -809,31 +810,26 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
 
     private Entity EnsureResidentWorkplace(ResidentLink link, int venueId, Entity stadium, Entity prefab)
     {
-        if (!EntityManager.HasComponent<Transform>(stadium))
-        {
-            return Entity.Null;
-        }
-
-        Transform stadiumTransform = EntityManager.GetComponentData<Transform>(stadium);
-
         if (link.Workplace != Entity.Null && EntityManager.Exists(link.Workplace) &&
-            EntityManager.HasComponent<Building>(link.Workplace) &&
-            EntityManager.HasComponent<Transform>(link.Workplace) &&
+            EntityManager.HasComponent<CompanyData>(link.Workplace) &&
+            EntityManager.HasComponent<PropertyRenter>(link.Workplace) &&
             EntityManager.HasComponent<PrefabRef>(link.Workplace) &&
             EntityManager.HasComponent<WorkProvider>(link.Workplace) &&
             EntityManager.HasBuffer<Employee>(link.Workplace))
         {
+            PropertyRenter renter = EntityManager.GetComponentData<PropertyRenter>(link.Workplace);
+            if (renter.m_Property != stadium || renter.m_Rent != 0)
+            {
+                renter.m_Property = stadium;
+                renter.m_Rent = 0;
+                EntityManager.SetComponentData(link.Workplace, renter);
+            }
+
             PrefabRef currentPrefab = EntityManager.GetComponentData<PrefabRef>(link.Workplace);
             if (currentPrefab.m_Prefab != prefab)
             {
                 currentPrefab.m_Prefab = prefab;
                 EntityManager.SetComponentData(link.Workplace, currentPrefab);
-            }
-
-            Transform currentTransform = EntityManager.GetComponentData<Transform>(link.Workplace);
-            if (!currentTransform.Equals(stadiumTransform))
-            {
-                EntityManager.SetComponentData(link.Workplace, stadiumTransform);
             }
 
             WorkProvider provider = EntityManager.GetComponentData<WorkProvider>(link.Workplace);
@@ -862,16 +858,26 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         }
         link.Workplace = Entity.Null;
 
+        uint seed = unchecked((uint)link.Citizen.Index + (uint)venueId * 397u + 1u);
         Entity workplace = EntityManager.CreateEntity(
-            ComponentType.ReadWrite<Building>(),
-            ComponentType.ReadWrite<Transform>(),
+            ComponentType.ReadWrite<CompanyData>(),
+            ComponentType.ReadWrite<PropertyRenter>(),
             ComponentType.ReadWrite<WorkProvider>(),
             ComponentType.ReadWrite<PrefabRef>(),
             ComponentType.ReadWrite<Employee>(),
             ComponentType.ReadWrite<UpdateFrame>());
 
+        EntityManager.SetComponentData(workplace, new CompanyData
+        {
+            m_RandomSeed = Unity.Mathematics.Random.CreateFromIndex(seed),
+            m_Brand = Entity.Null
+        });
+        EntityManager.SetComponentData(workplace, new PropertyRenter
+        {
+            m_Property = stadium,
+            m_Rent = 0
+        });
         EntityManager.SetComponentData(workplace, new PrefabRef(prefab));
-        EntityManager.SetComponentData(workplace, stadiumTransform);
         EntityManager.SetComponentData(workplace, new WorkProvider
         {
             m_MaxWorkers = 1
