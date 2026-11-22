@@ -833,25 +833,25 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         int currentDay = TimeSystem.GetDay(m_SimulationSystem.frameIndex, timeData);
         short desiredBirthDay = unchecked((short)(currentDay - age * daysPerYear));
 
-        Citizen citizen = EntityManager.GetComponentData<Citizen>(link.Citizen);
+        Citizen citizenData = EntityManager.GetComponentData<Citizen>(link.Citizen);
         bool changed = false;
 
-        if (citizen.m_BirthDay != desiredBirthDay)
+        if (citizenData.m_BirthDay != desiredBirthDay)
         {
-            citizen.m_BirthDay = desiredBirthDay;
+            citizenData.m_BirthDay = desiredBirthDay;
             changed = true;
         }
 
         CitizenAge desiredAge = age < 13 ? CitizenAge.Child : age < 18 ? CitizenAge.Teen : age < 65 ? CitizenAge.Adult : CitizenAge.Elderly;
-        if (citizen.GetAge() != desiredAge)
+        if (citizenData.GetAge() != desiredAge)
         {
-            citizen.SetAge(desiredAge);
+            citizenData.SetAge(desiredAge);
             changed = true;
         }
 
         if (changed)
         {
-            EntityManager.SetComponentData(link.Citizen, citizen);
+            EntityManager.SetComponentData(link.Citizen, citizenData);
         }
 
         link.BirthYear = birthYear;
