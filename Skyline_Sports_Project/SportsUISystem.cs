@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using Colossal.UI.Binding;
 using Game.SceneFlow;
+using Game.Citizens;
 using Game.UI;
 using Game.UI.InGame;
 using Skyline_Sports_Project.Engine;
@@ -18,6 +19,7 @@ namespace Skyline_Sports_Project;
 public class SportsUISystem : UISystemBase
 {
 	private SportsDataSystem m_Data;
+	private RealAthleteResidentsSystem m_Residents;
 	private SelectedInfoUISystem m_SelectedInfo;
 	private ValueBinding<string> m_PanelData;
 	private ValueBinding<bool> m_ShowButton;
@@ -36,6 +38,7 @@ public class SportsUISystem : UISystemBase
 	{
 		base.OnCreate();
 		m_Data = ((ComponentSystemBase)this).World.GetOrCreateSystemManaged<SportsDataSystem>();
+		m_Residents = ((ComponentSystemBase)this).World.GetOrCreateSystemManaged<RealAthleteResidentsSystem>();
 		m_SelectedInfo = ((ComponentSystemBase)this).World.GetOrCreateSystemManaged<SelectedInfoUISystem>();
 		AddBinding((IBinding)(object)(m_PanelData = new ValueBinding<string>("SkylineSports", "PanelData", "{}", (IWriter<string>)null, (EqualityComparer<string>)null)));
 		AddBinding((IBinding)(object)(m_ShowButton = new ValueBinding<bool>("SkylineSports", "ShowButton", true, (IWriter<bool>)null, (EqualityComparer<bool>)null)));
@@ -164,7 +167,7 @@ public class SportsUISystem : UISystemBase
 	private void RefreshPanel()
 	{
 		bool timeKnown = m_Data.TryGetNow(out var now);
-		m_PanelData.Update(Views.LeaguePanel(m_Data.Sports, timeKnown ? now : m_Data.NowOrLast(), timeKnown, m_View));
+		m_PanelData.Update(Views.LeaguePanel(m_Data.Sports, timeKnown ? now : m_Data.NowOrLast(), timeKnown, m_View, m_Residents));
 	}
 
 	private void OnSetPanelOpen(bool open)
@@ -221,6 +224,8 @@ public class SportsUISystem : UISystemBase
 			CommandResult r = a[0] switch
 			{
 				"manage" => w.SetManaged(Int(a, 1), Int(a, 2) == 1, now),
+				"findPlayerResident" => FindResident(Int(a, 1), false),
+				"findCoachResident" => FindResident(Int(a, 1), true),
 				"editClub" => w.EditClub(Int(a, 1), (a.Length > 2) ? a[2] : "", (a.Length > 3) ? a[3] : "", Int(a, 4), Int(a, 5), (a.Length > 6) ? a[6] : "", now),
 				"editPlayer" => w.EditPlayer(Int(a, 1), (a.Length > 2) ? a[2] : "", (a.Length > 3) ? a[3] : "", Int(a, 4), Int(a, 5), Int(a, 6), Int(a, 7), Int(a, 8), Int(a, 9), Int(a, 10), (a.Length > 11) ? a[11] : "", (a.Length > 12) ? a[12] : ""),
 				"editCoach" => w.EditCoach(Int(a, 1), (a.Length > 2) ? a[2] : "", (a.Length > 3) ? a[3] : "", Int(a, 4), Int(a, 5), Int(a, 6), Int(a, 7), Int(a, 8), Int(a, 9), Int(a, 10)),
@@ -267,6 +272,26 @@ public class SportsUISystem : UISystemBase
 		{
 			Mod.Error("Не удалось выполнить команду спортивной панели", ex);
 		}
+	}
+
+
+	private CommandResult FindResident(int id, bool coach)
+	{
+		if (Mod.Settings == null || !Mod.Settings.RealAthleteResidentsEnabled)
+		{
+			return CommandResult.Fail("Функция реальных жителей-спортсменов выключена в настройках мода.");
+		}
+
+		Entity citizen;
+		bool found = coach ? m_Residents.TryGetCoachResident(id, out citizen) : m_Residents.TryGetPlayerResident(id, out citizen);
+		if (!found || citizen == Entity.Null || !EntityManager.Exists(citizen) || !EntityManager.HasComponent<Citizen>(citizen))
+		{
+			return CommandResult.Fail("Житель ещё создаётся или больше недоступен. Подождите немного и попробуйте снова.");
+		}
+
+		m_SelectedInfo.SetSelection(citizen);
+		m_SelectedInfo.Focus(citizen);
+		return CommandResult.Success("Камера перемещена к жителю. Открыта стандартная карточка гражданина.");
 	}
 
 	private static int Int(string[] a, int i)
