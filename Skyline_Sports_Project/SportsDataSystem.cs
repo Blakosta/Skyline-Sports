@@ -270,6 +270,7 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 			if (m_ResetRequested)
 			{
 				m_ResetRequested = false;
+				World.GetOrCreateSystemManaged<RealAthleteResidentsSystem>().ForgetAllLinks();
 				Sports.Clear();
 				m_VenueEntities.Clear();
 				Mod.log.Info((object)"Все спортивные данные сброшены через меню настроек.");
