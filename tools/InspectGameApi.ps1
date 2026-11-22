@@ -14,7 +14,7 @@ $targets = @(
     "Citizen", "CurrentBuilding", "PersonalCarSelectData", "CitizenUIUtils",
     "HouseholdWealthKey", "SelectedInfoUISystem", "Camera", "TripNeeded",
     "TravelPurpose", "HouseholdMember", "Created", "PropertySeeker", "ResidentialProperty",
-    "SpawnCitizen", "m_InitialWealthRange", "m_InitialWealthOffset"
+    "SpawnCitizen", "m_InitialWealthRange", "m_InitialWealthOffset", "NameSystem", "CitizenName", "NameData", "CompanyData", "Workplaces", "Workshift", "ArchetypeData", "PrefabRef", "DynamicHousehold", "OutsideConnection", "BuildingData"
 )
 
 $out = New-Object System.Collections.Generic.List[string]
