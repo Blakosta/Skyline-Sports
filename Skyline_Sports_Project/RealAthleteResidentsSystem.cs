@@ -673,7 +673,9 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         }
 
         ArchetypeData archetype = EntityManager.GetComponentData<ArchetypeData>(malePrefab);
-        Entity citizen = EntityManager.CreateEntity(archetype.m_Archetype);
+        NativeArray<Entity> createdCitizens = EntityManager.CreateEntity(archetype.m_Archetype, 1, Allocator.Temp);
+        Entity citizen = createdCitizens[0];
+        createdCitizens.Dispose();
         EntityManager.SetComponentData(citizen, new PrefabRef(malePrefab));
         EntityManager.SetComponentData(citizen, new Citizen
         {
