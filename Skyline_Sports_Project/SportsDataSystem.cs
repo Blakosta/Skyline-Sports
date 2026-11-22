@@ -1014,7 +1014,17 @@ public class SportsDataSystem : GameSystemBase, IDefaultSerializable, ISerializa
 		return ctx;
 	}
 
-	public string BuildingName(Entity building)
+public bool TryGetVenueEntity(int venueId, out Entity entity)
+	{
+		if (m_VenueEntities.TryGetValue(venueId, out entity) && entity != Entity.Null && EntityManager.Exists(entity))
+		{
+			return true;
+		}
+		entity = Entity.Null;
+		return false;
+	}
+
+		public string BuildingName(Entity building)
 	{
 		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
 		try
