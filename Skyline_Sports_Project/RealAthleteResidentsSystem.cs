@@ -40,6 +40,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         public int PendingSinceDay = int.MinValue;
         public int LastSalaryDay = int.MinValue;
         public bool StartingWealthInitialized;
+        public bool PipelineWarningLogged;
     }
 
     private SportsDataSystem m_SportsData;
@@ -68,6 +69,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
     private bool m_OutsideConnectionWarningLogged;
     private bool m_CitizenPrefabWarningLogged;
     private bool m_ProfileRefreshPending;
+    private int m_HouseholdsCreatedThisUpdate;
 
     public override int GetUpdateInterval(SystemUpdatePhase phase) => 256;
 
@@ -225,6 +227,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
 
     private void SyncResidents()
     {
+        m_HouseholdsCreatedThisUpdate = 0;
         SportsWorld world = m_SportsData.Sports;
         HashSet<int> activePlayers = new();
         HashSet<int> activeCoaches = new();
@@ -312,9 +315,10 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         {
             int currentDay = CurrentDay();
             bool timedOut = link.PendingSinceDay == int.MinValue || currentDay - link.PendingSinceDay >= 1;
-            if ((forceCreate || timedOut) && TrySpawnMaleCitizen(link, player.Id))
+            if ((forceCreate || timedOut) && !link.PipelineWarningLogged)
             {
-                Mod.log.Warn("[Жители-спортсмены] Штатное создание гражданина не завершилось; создан отдельный мужчина-футболист для «" + player.Name + "».");
+                link.PipelineWarningLogged = true;
+                Mod.log.Warn("[Жители-спортсмены][Диагностика] Житель «" + player.Name + "» пока не появился через штатную инициализацию домохозяйства. Ручное создание временно отключено для проверки причины вылета. Household=" + link.Household.Index + ", day=" + currentDay + ".");
             }
             if (!TryResolveCitizen(link))
             {
@@ -380,9 +384,16 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         link.Household = Entity.Null;
         link.Citizen = Entity.Null;
 
+        if (m_HouseholdsCreatedThisUpdate >= 1)
+        {
+            return;
+        }
+
         if (TryCreateHousehold(stableId, out Entity household))
         {
+            m_HouseholdsCreatedThisUpdate++;
             link.Household = household;
+            Mod.log.Info("[Жители-спортсмены][Диагностика] Создано домохозяйство для футболиста: Entity=" + household.Index + ", stableId=" + stableId + ". За один цикл создаётся не более одного домохозяйства.");
             link.PendingSinceDay = CurrentDay();
             link.LastSalaryDay = CurrentDay();
             link.StartingWealthInitialized = false;
@@ -876,6 +887,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         }
 
         link.BirthYear = birthYear;
+        link.PipelineWarningLogged = false;
     }
 
     private void AssignEmployment(ResidentLink link, Team team)
