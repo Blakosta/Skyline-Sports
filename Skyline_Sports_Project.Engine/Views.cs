@@ -657,7 +657,7 @@ public static class Views
 	private static string NextGameText(SportsWorld world, League league, int teamId, Match g)
 	{
 		bool home = g.HomeTeamId == teamId;
-		string text = GameClock.TimeLabel(g.Time) + (home ? " против " : " в ") + world.TeamShortName(home ? g.AwayTeamId : g.HomeTeamId);
+		string text = GameClock.TimeLabel(g.Time) + (home ? " Домашний с " : " Выездной в ") + world.TeamShortName(home ? g.AwayTeamId : g.HomeTeamId);
 		if (g.Stage != GameStage.Regular && league != null)
 		{
 			text = text + " (" + world.StageLabel(league, g) + ")";
