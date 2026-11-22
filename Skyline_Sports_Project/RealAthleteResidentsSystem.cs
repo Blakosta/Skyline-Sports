@@ -91,6 +91,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         m_WorkplacePrefabQuery = GetEntityQuery(
             ComponentType.ReadOnly<PrefabData>(),
             ComponentType.ReadOnly<WorkplaceData>(),
+            ComponentType.ReadOnly<CompanyBrandElement>(),
             ComponentType.Exclude<Deleted>(),
             ComponentType.Exclude<Temp>());
 
@@ -598,6 +599,15 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
         if (member.m_Household == Entity.Null ||
             !EntityManager.Exists(member.m_Household) ||
             !EntityManager.HasComponent<PropertyRenter>(member.m_Household))
+        {
+            ReleaseLinkEmployment(link);
+            return;
+        }
+
+        PropertyRenter home = EntityManager.GetComponentData<PropertyRenter>(member.m_Household);
+        if (home.m_Property == Entity.Null ||
+            !EntityManager.Exists(home.m_Property) ||
+            !EntityManager.HasComponent<PrefabRef>(home.m_Property))
         {
             ReleaseLinkEmployment(link);
             return;
