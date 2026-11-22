@@ -685,7 +685,12 @@ public static class ScheduleBuilder
 			{
 				if (sport == Sport.Soccer)
 				{
-					venue = -2;
+					// A game day represents a whole sports month. Keep the home venue and
+					// move kickoff to a free time instead of sending soccer matches neutral.
+					if (!TryFindSoccerTimes(occupancy, venue, series, key2, sport, outdoor))
+					{
+						venue = -2;
+					}
 				}
 				else
 				{
@@ -712,6 +717,44 @@ public static class ScheduleBuilder
 				Occupy(occupancy, venue, g3.Time, key2, sport);
 			}
 		}
+	}
+
+	private static bool TryFindSoccerTimes(Dictionary<int, List<Booking>> occupancy, int venue, List<Match> series, int seriesKey, Sport sport, Func<int, bool> outdoor)
+	{
+		int[] candidates = new int[15] { 480, 540, 600, 660, 720, 780, 840, 900, 960, 1020, 1080, 1140, 1200, 1260, 1320 };
+		List<int> chosenMinutes = new List<int>();
+		foreach (Match game in series)
+		{
+			int originalMinute = GameClock.MinuteOfDay(game.Time);
+			int day = GameClock.DayOf(game.Time);
+			int chosen = -1;
+			int bestDistance = int.MaxValue;
+			foreach (int minute in candidates)
+			{
+				int candidateTime = GameClock.ToTime(day, minute);
+				if (Conflicts(occupancy, venue, candidateTime, seriesKey, sport, outdoor))
+				{
+					continue;
+				}
+				int distance = Math.Abs(minute - originalMinute);
+				if (distance < bestDistance)
+				{
+					bestDistance = distance;
+					chosen = minute;
+				}
+			}
+			if (chosen < 0)
+			{
+				return false;
+			}
+			chosenMinutes.Add(chosen);
+		}
+		for (int i = 0; i < series.Count; i++)
+		{
+			Match game2 = series[i];
+			game2.Time = GameClock.ToTime(GameClock.DayOf(game2.Time), chosenMinutes[i]);
+		}
+		return true;
 	}
 
 	private static bool AnyConflict(Dictionary<int, List<Booking>> occupancy, int venue, List<Match> series, int seriesKey, Sport sport, Func<int, bool> outdoor)
