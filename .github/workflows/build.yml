@@ -48,6 +48,10 @@ jobs:
           "GAME_MANAGED_DIR=$($gameDll.Directory.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Append
           Write-Host "Managed directory: $($gameDll.Directory.FullName)"
 
+      - name: Inspect real citizen and workplace APIs
+        shell: pwsh
+        run: .\\tools\\InspectGameApi.ps1
+
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
@@ -108,6 +112,13 @@ jobs:
         with:
           name: Skyline-Sports-RU-Full
           path: Skyline-Sports-RU-Full.zip
+          if-no-files-found: error
+
+      - name: Upload game API inspection
+        uses: actions/upload-artifact@v4
+        with:
+          name: Skyline-Sports-Game-API-Inspection
+          path: game-api-inspection.txt
           if-no-files-found: error
 
       - name: Upload compiled DLL separately
