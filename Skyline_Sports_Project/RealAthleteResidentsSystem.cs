@@ -381,13 +381,41 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
             return;
         }
 
-        if (link.Household != Entity.Null && EntityManager.Exists(link.Household))
+        if (link.Household != Entity.Null)
         {
-            return;
-        }
+            if (EntityManager.Exists(link.Household))
+            {
+                // The vanilla property search can mark a household for move-away when
+                // the city has no suitable home yet. Do not create a replacement while
+                // that household is still alive.
+                if (EntityManager.HasComponent<MovingAway>(link.Household) && !link.PipelineWarningLogged)
+                {
+                    link.PipelineWarningLogged = true;
+                    Mod.log.Warn("[Жители-спортсмены][Диагностика] Штатная система пометила домохозяйство футболиста на выселение. Повторное создание не запускается, пока исходное домохозяйство существует. Household=" + link.Household.Index + ", stableId=" + stableId + ".");
+                }
+                return;
+            }
 
-        link.Household = Entity.Null;
-        link.Citizen = Entity.Null;
+            // If the vanilla simulation removed a household (most often after an
+            // unsuccessful property search), wait until the next in-game day before
+            // retrying. This prevents a rapid create/destroy loop during one day.
+            int currentDay = CurrentDay();
+            if (link.PendingSinceDay != int.MinValue && currentDay <= link.PendingSinceDay)
+            {
+                if (!link.PipelineWarningLogged)
+                {
+                    link.PipelineWarningLogged = true;
+                    Mod.log.Warn("[Жители-спортсмены][Диагностика] Предыдущее домохозяйство исчезло до появления жителя. Повторная попытка отложена до следующего игрового дня. stableId=" + stableId + ", day=" + currentDay + ", Household=" + link.Household.Index + ".");
+                }
+                return;
+            }
+
+            Mod.log.Warn("[Жители-спортсмены][Диагностика] Предыдущее домохозяйство больше не существует; разрешена одна повторная попытка. stableId=" + stableId + ", day=" + currentDay + ", Household=" + link.Household.Index + ".");
+            link.Household = Entity.Null;
+            link.Citizen = Entity.Null;
+            link.PendingSinceDay = int.MinValue;
+            link.PipelineWarningLogged = false;
+        }
 
         if (m_HouseholdsCreatedThisUpdate >= 1)
         {
