@@ -426,6 +426,11 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
                     demandParameters.m_CitizenOCSpawnParameters,
                     out Entity outside))
             {
+                if (!m_OutsideConnectionWarningLogged)
+                {
+                    m_OutsideConnectionWarningLogged = true;
+                    Mod.log.Warn("[Жители-спортсмены] Игровая система не нашла подходящее внешнее соединение для домохозяйства. Создание жителя отложено.");
+                }
                 EntityManager.DestroyEntity(household);
                 household = Entity.Null;
                 return false;
