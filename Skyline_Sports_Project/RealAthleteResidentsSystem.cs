@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Colossal.Serialization.Entities;
 using Game;
+using Game.Agents;
 using Game.Buildings;
 using Game.Citizens;
 using Game.City;
