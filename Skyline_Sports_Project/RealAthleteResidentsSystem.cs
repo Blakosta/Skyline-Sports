@@ -108,7 +108,7 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
             if (m_LegacyWorkplaces.Count > 0)
             {
                 ReleaseAllEmployment();
-                DestroyLegacyWorkplaces();
+                DeactivateLegacyWorkplaces();
             }
 
             if (Mod.Settings == null || !Mod.Settings.RealAthleteResidentsEnabled)
@@ -826,7 +826,17 @@ public sealed class RealAthleteResidentsSystem : GameSystemBase, IDefaultSeriali
 
         if (link.Workplace != Entity.Null && EntityManager.Exists(link.Workplace))
         {
-            m_EndFrameBarrier.CreateCommandBuffer().DestroyEntity(link.Workplace);
+            if (EntityManager.HasBuffer<Employee>(link.Workplace))
+            {
+                EntityManager.GetBuffer<Employee>(link.Workplace).Clear();
+            }
+
+            if (EntityManager.HasComponent<WorkProvider>(link.Workplace))
+            {
+                WorkProvider oldProvider = EntityManager.GetComponentData<WorkProvider>(link.Workplace);
+                oldProvider.m_MaxWorkers = 0;
+                EntityManager.SetComponentData(link.Workplace, oldProvider);
+            }
         }
         link.Workplace = Entity.Null;
 
