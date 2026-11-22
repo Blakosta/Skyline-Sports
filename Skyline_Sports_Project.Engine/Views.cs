@@ -359,6 +359,7 @@ public static class Views
 		j.Prop("played", g.Played);
 		j.Prop("featured", g.Featured);
 		j.Prop("spotlight", g.Spotlight);
+		j.Prop("canSelectSpotlight", home != null && home.IsUser && !g.Played && g.Live == null && g.Time > world.LastTime && g.VenueId >= 0 && world.GetVenue(g.VenueId) != null);
 		j.Prop("stars", CleanStars(g.Summary));
 		j.Prop("rival", RivalTagText(world.FindRivalry(league, g.HomeTeamId, g.AwayTeamId, create: false), game: true));
 		LiveSnapshot live = (g.Played ? null : Live(league.Sport, league.Level, g, world.LastTime));
