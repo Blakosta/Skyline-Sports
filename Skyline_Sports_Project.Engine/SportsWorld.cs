@@ -13398,7 +13398,7 @@ public class SportsWorld
 		});
 		HashSet<int> teamsWithGame = new HashSet<int>();
 		Dictionary<int, List<KeyValuePair<int, Sport>>> booked = FeaturedBookings(monthStart, nextMonth, teamsWithGame);
-		bool picked = false;
+
 		foreach (KeyValuePair<Team, League> entry in waiting)
 		{
 			Team t2 = entry.Key;
@@ -13466,7 +13466,7 @@ public class SportsWorld
 				continue;
 			}
 			best.Featured = true;
-			picked = true;
+
 			t2.LastLiveMonth = month;
 			teamsWithGame.Add(best.HomeTeamId);
 			teamsWithGame.Add(best.AwayTeamId);
