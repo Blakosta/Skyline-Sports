@@ -2056,7 +2056,7 @@ public static class Views
 		return tabs;
 	}
 
-	private static void WriteLeaguePage(JsonBuilder j, SportsWorld world, League league, int now, string tab)
+	private static void WriteLeaguePage(JsonBuilder j, SportsWorld world, League league, int now, string tab, Skyline_Sports_Project.RealAthleteResidentsSystem residents)
 	{
 		List<KeyValuePair<string, string>> tabs = LeagueTabs(league);
 		if (!tabs.Exists((KeyValuePair<string, string> keyValuePair) => keyValuePair.Key == tab))
@@ -2109,7 +2109,7 @@ public static class Views
 			WriteCalendar(j, world, league, now);
 			break;
 		case "coaches":
-			WriteCoachesPage(j, world, league);
+			WriteCoachesPage(j, world, league, residents);
 			break;
 		case "draft":
 			WriteDraft(j, world, league, now);
@@ -2476,7 +2476,7 @@ public static class Views
 		j.EndArray();
 	}
 
-	private static void WriteCoachesPage(JsonBuilder j, SportsWorld world, League league)
+	private static void WriteCoachesPage(JsonBuilder j, SportsWorld world, League league, Skyline_Sports_Project.RealAthleteResidentsSystem residents)
 	{
 		Season s = league.Current ?? league.Previous;
 		List<int> order = new List<int>();
@@ -2515,7 +2515,7 @@ public static class Views
 			j.Name("staff").BeginArray();
 			foreach (Coach c in world.StaffOf(id2))
 			{
-				WriteCoachLine(j, world, c, year);
+				WriteCoachLine(j, world, c, year, residents);
 			}
 			j.EndArray();
 			j.EndObject();
@@ -2530,7 +2530,7 @@ public static class Views
 		j.EndArray();
 	}
 
-	private static void WriteCoachLine(JsonBuilder j, SportsWorld world, Coach c, int year)
+	private static void WriteCoachLine(JsonBuilder j, SportsWorld world, Coach c, int year, Skyline_Sports_Project.RealAthleteResidentsSystem residents)
 	{
 		Player stand = new Player
 		{
@@ -2547,6 +2547,7 @@ public static class Views
 			.Prop("grade", SportsWorld.CoachGrade(c))
 			.Prop("record", CoachRecord(c))
 			.Prop("titles", c.Titles)
+			.Prop("hasResident", residents != null && residents.HasCoachResident(c.Id))
 			.EndObject();
 	}
 
@@ -4424,6 +4425,11 @@ public static class Views
 
 	public static string LeaguePanel(SportsWorld world, int now, bool timeKnown, PanelView view)
 	{
+		return LeaguePanel(world, now, timeKnown, view, null);
+	}
+
+	public static string LeaguePanel(SportsWorld world, int now, bool timeKnown, PanelView view, Skyline_Sports_Project.RealAthleteResidentsSystem residents)
+	{
 		if (view == null)
 		{
 			view = new PanelView();
@@ -4540,7 +4546,7 @@ public static class Views
 				.Prop("name", player.Name)
 				.Prop("leagueKey", League.MakeKey(player.Sport, player.Level))
 				.EndObject();
-			WritePlayerView(j, world, player, now);
+			WritePlayerView(j, world, player, now, residents);
 		}
 		else if (game != null)
 		{
@@ -4560,7 +4566,7 @@ public static class Views
 		}
 		else if (page != null)
 		{
-			WriteLeaguePage(j, world, page, now, view.Tab ?? "");
+			WriteLeaguePage(j, world, page, now, view.Tab ?? "", residents);
 		}
 		else
 		{
@@ -4817,7 +4823,7 @@ public static class Views
 		return Stats.Groups(p.Sport)[0];
 	}
 
-	private static void WritePlayerView(JsonBuilder j, SportsWorld world, Player p, int now)
+	private static void WritePlayerView(JsonBuilder j, SportsWorld world, Player p, int now, Skyline_Sports_Project.RealAthleteResidentsSystem residents)
 	{
 		int num = GameClock.YearOfDay(GameClock.DayOf(now));
 		Team team = world.GetTeam(p.TeamId);
@@ -4852,6 +4858,7 @@ public static class Views
 		j.Prop("teamId", team?.Id ?? (-1));
 		j.Prop("team", (team == null) ? "" : world.TeamName(team.Id));
 		j.Prop("teamIsUser", team?.IsUser ?? false);
+		j.Prop("hasResident", residents != null && residents.HasPlayerResident(p.Id));
 		j.Prop("leagueKey", League.MakeKey(p.Sport, p.Level));
 		j.Prop("levelLabel", SportRules.LevelLabel(p.Sport, p.Level) + " " + SportRules.SportLabel(p.Sport));
 		j.Prop("status", StatusText(world, p));
